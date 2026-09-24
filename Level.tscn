@@ -1,8 +1,11 @@
 [gd_scene format=3 uid="uid://cdklykyumwt7i"]
 
-[ext_resource type="PackedScene" path="res://Player.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://brdejdk017ayb" path="res://Player.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://Block.tscn" id="2"]
 [ext_resource type="Script" uid="uid://2s2fxxpu21as" path="res://Level.gd" id="3"]
+
+[sub_resource type="CircleShape2D" id="OrbShape"]
+radius = 12.0
 
 [node name="Level" type="Node2D" unique_id=116831945]
 script = ExtResource("3")
@@ -98,7 +101,7 @@ position = Vector2(912, 496)
 position = Vector2(944, 496)
 
 [node name="Wall" parent="." unique_id=1765854434 instance=ExtResource("2")]
-position = Vector2(272, 448)
+position = Vector2(336, 465)
 
 [node name="Ceiling144" parent="." unique_id=1020011646 instance=ExtResource("2")]
 position = Vector2(144, 384)
@@ -117,3 +120,26 @@ position = Vector2(592, 432)
 
 [node name="Platform624" parent="." unique_id=1853384235 instance=ExtResource("2")]
 position = Vector2(624, 432)
+
+[node name="Orb" type="Area2D" parent="." unique_id=1561122874]
+position = Vector2(720, 456)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Visual" type="Polygon2D" parent="Orb" unique_id=709292251]
+color = Color(1, 0.9, 0.2, 1)
+polygon = PackedVector2Array(0, -12, 8, -8, 12, 0, 8, 8, 0, 12, -8, 8, -12, 0, -8, -8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Orb" unique_id=117102797]
+shape = SubResource("OrbShape")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1239502581]
+offset_right = 100.0
+offset_bottom = 300.0
+
+[node name="StateLabel" type="Label" parent="MarginContainer" unique_id=777523075]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[connection signal="body_entered" from="Orb" to="." method="_on_orb_body_entered"]

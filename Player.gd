@@ -90,6 +90,13 @@ func get_state() -> Dictionary:
 	return _state.duplicate(true)
 
 
+func get_state_string() -> String:
+	var lines := PackedStringArray()
+	for key in _state:
+		lines.append("%s: %s" % [key, _state[key]])
+	return "\n".join(lines)
+
+
 func _sample(applied_axis: float, applied_jump: bool) -> void:
 	var hits: Array[bool] = []
 	var clearances: Array[float] = []

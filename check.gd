@@ -58,7 +58,7 @@ func run_check() -> void:
 		await physics_frame
 		player.set_action(1.0, false)
 		player.physics_step(DT)
-	check(player.global_position.x <= 240.1, "wall blocking")
+	check(player.global_position.x <= 304.1, "wall blocking")
 	check(is_zero_approx(player.velocity.x), "wall velocity")
 	var wall_state: Dictionary = player.get_state()
 	check(wall_state.ray_hits[2] and wall_state.ray_clearances[2] < 0.05, "post-move wall sensing")
@@ -91,6 +91,8 @@ func run_check() -> void:
 	state = player.get_state()
 	check(state.tick == 1 and state.action.move_axis == 0.5, "latest applied action")
 	check(state.position.distance_to(player.position / 32.0) < 0.001, "latest position")
+	var state_string: String = player.get_state_string()
+	check(state_string.split("\n").size() == state.size() and state_string.contains("tick: 1"), "state string")
 	player.show_rays = true
 	player.queue_redraw()
 	await process_frame
@@ -116,6 +118,33 @@ func run_check() -> void:
 				check(state.ray_hits == previous.ray_hits, "replay hits")
 				for i in 8:
 					check(absf(state.ray_clearances[i] - previous.ray_clearances[i]) < 0.01, "replay clearance")
+
+	state = level.reset_episode()
+	check(not state.done and state.reward == 0.0 and state.orb_proximity == 0.0, "episode reset")
+	await physics_frame
+	state = level.step(DT, 1.0, false)
+	check(not state.done and state.reward > 0.0, "reward for approaching orb")
+	await physics_frame
+	state = level.step(DT, -1.0, false)
+	check(state.reward < 0.0, "penalty for moving away")
+
+	level.reset_episode()
+	player.global_position = Vector2(80, level.death_y + 10.0)
+	await physics_frame
+	state = level.step(DT, 0.0, false)
+	check(state.done and state.reward == -1.0 and not state.orb_collected, "death outcome")
+	var death_tick: int = state.tick
+	check(level.step(DT, 1.0, false).tick == death_tick, "terminal stops movement")
+
+	level.reset_episode()
+	player.reset_to(level.get_node("Orb").global_position + Vector2(-30, 0))
+	await physics_frame
+	player.velocity.x = 6.0 * 32.0
+	state = level.step(DT, 1.0, false)
+	check(state.done and state.reward == 1.0 and state.orb_collected, "orb outcome")
+	check(not level.get_node("Orb").visible, "collected orb hidden")
+	state = level.reset_episode()
+	check(not state.done and state.reward == 0.0 and level.get_node("Orb").visible, "orb restored")
 	if not failed:
 		print("Platformer check passed")
 	quit(1 if failed else 0)

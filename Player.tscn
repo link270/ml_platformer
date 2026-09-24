@@ -1,52 +1,35 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://brdejdk017ayb"]
 
-[ext_resource type="Script" path="res://Player.gd" id="1"]
+[ext_resource type="Script" uid="uid://clfkmwwrsadmf" path="res://Player.gd" id="1"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(32, 32)
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" unique_id=1626612443]
 collision_layer = 2
-collision_mask = 1
 script = ExtResource("1")
 
-[node name="Visual" type="Polygon2D" parent="."]
+[node name="Visual" type="Polygon2D" parent="." unique_id=1451659025]
 color = Color(0.2, 0.83, 0.9, 1)
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1495765542]
 shape = SubResource("1")
 
-[node name="Rays" type="Node2D" parent="."]
+[node name="Rays" type="Node2D" parent="." unique_id=1249882367]
 
-[node name="Up" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="Up" type="RayCast2D" parent="Rays" unique_id=2066535243]
 
-[node name="UpRight" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="UpRight" type="RayCast2D" parent="Rays" unique_id=654992554]
 
-[node name="Right" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="Right" type="RayCast2D" parent="Rays" unique_id=1371496719]
 
-[node name="DownRight" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="DownRight" type="RayCast2D" parent="Rays" unique_id=394619863]
 
-[node name="Down" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="Down" type="RayCast2D" parent="Rays" unique_id=1701798589]
 
-[node name="DownLeft" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="DownLeft" type="RayCast2D" parent="Rays" unique_id=391510617]
 
-[node name="Left" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="Left" type="RayCast2D" parent="Rays" unique_id=44758075]
 
-[node name="UpLeft" type="RayCast2D" parent="Rays"]
-collision_mask = 1
-exclude_parent = true
+[node name="UpLeft" type="RayCast2D" parent="Rays" unique_id=2001781021]
