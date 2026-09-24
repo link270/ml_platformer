@@ -1,0 +1,119 @@
+[gd_scene format=3 uid="uid://cdklykyumwt7i"]
+
+[ext_resource type="PackedScene" path="res://Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Block.tscn" id="2"]
+[ext_resource type="Script" uid="uid://2s2fxxpu21as" path="res://Level.gd" id="3"]
+
+[node name="Level" type="Node2D" unique_id=116831945]
+script = ExtResource("3")
+
+[node name="Spawn" type="Marker2D" parent="." unique_id=76136653]
+position = Vector2(80, 464)
+
+[node name="Player" parent="." unique_id=730347531 instance=ExtResource("1")]
+position = Vector2(80, 464)
+
+[node name="FloorLeft16" parent="." unique_id=406739767 instance=ExtResource("2")]
+position = Vector2(16, 496)
+
+[node name="FloorLeft48" parent="." unique_id=1714344473 instance=ExtResource("2")]
+position = Vector2(48, 496)
+
+[node name="FloorLeft80" parent="." unique_id=929096292 instance=ExtResource("2")]
+position = Vector2(80, 496)
+
+[node name="FloorLeft112" parent="." unique_id=748110962 instance=ExtResource("2")]
+position = Vector2(112, 496)
+
+[node name="FloorLeft144" parent="." unique_id=1910787596 instance=ExtResource("2")]
+position = Vector2(144, 496)
+
+[node name="FloorLeft176" parent="." unique_id=557711846 instance=ExtResource("2")]
+position = Vector2(176, 496)
+
+[node name="FloorLeft208" parent="." unique_id=1875583422 instance=ExtResource("2")]
+position = Vector2(208, 496)
+
+[node name="FloorLeft240" parent="." unique_id=228735146 instance=ExtResource("2")]
+position = Vector2(240, 496)
+
+[node name="FloorLeft272" parent="." unique_id=1100296520 instance=ExtResource("2")]
+position = Vector2(272, 496)
+
+[node name="FloorLeft304" parent="." unique_id=1364623440 instance=ExtResource("2")]
+position = Vector2(304, 496)
+
+[node name="FloorLeft336" parent="." unique_id=1309696235 instance=ExtResource("2")]
+position = Vector2(336, 496)
+
+[node name="FloorLeft368" parent="." unique_id=1905174843 instance=ExtResource("2")]
+position = Vector2(368, 496)
+
+[node name="FloorLeft400" parent="." unique_id=1599128805 instance=ExtResource("2")]
+position = Vector2(400, 496)
+
+[node name="FloorRight496" parent="." unique_id=2079763579 instance=ExtResource("2")]
+position = Vector2(496, 496)
+
+[node name="FloorRight528" parent="." unique_id=540252450 instance=ExtResource("2")]
+position = Vector2(528, 496)
+
+[node name="FloorRight560" parent="." unique_id=2061789370 instance=ExtResource("2")]
+position = Vector2(560, 496)
+
+[node name="FloorRight592" parent="." unique_id=2050531099 instance=ExtResource("2")]
+position = Vector2(592, 496)
+
+[node name="FloorRight624" parent="." unique_id=771902472 instance=ExtResource("2")]
+position = Vector2(624, 496)
+
+[node name="FloorRight656" parent="." unique_id=392997778 instance=ExtResource("2")]
+position = Vector2(656, 496)
+
+[node name="FloorRight688" parent="." unique_id=462356575 instance=ExtResource("2")]
+position = Vector2(688, 496)
+
+[node name="FloorRight720" parent="." unique_id=1392461022 instance=ExtResource("2")]
+position = Vector2(720, 496)
+
+[node name="FloorRight752" parent="." unique_id=1743080098 instance=ExtResource("2")]
+position = Vector2(752, 496)
+
+[node name="FloorRight784" parent="." unique_id=2002925472 instance=ExtResource("2")]
+position = Vector2(784, 496)
+
+[node name="FloorRight816" parent="." unique_id=1413140299 instance=ExtResource("2")]
+position = Vector2(816, 496)
+
+[node name="FloorRight848" parent="." unique_id=1038901317 instance=ExtResource("2")]
+position = Vector2(848, 496)
+
+[node name="FloorRight880" parent="." unique_id=1078063432 instance=ExtResource("2")]
+position = Vector2(880, 496)
+
+[node name="FloorRight912" parent="." unique_id=834617058 instance=ExtResource("2")]
+position = Vector2(912, 496)
+
+[node name="FloorRight944" parent="." unique_id=1181549687 instance=ExtResource("2")]
+position = Vector2(944, 496)
+
+[node name="Wall" parent="." unique_id=1765854434 instance=ExtResource("2")]
+position = Vector2(272, 448)
+
+[node name="Ceiling144" parent="." unique_id=1020011646 instance=ExtResource("2")]
+position = Vector2(144, 384)
+
+[node name="Ceiling176" parent="." unique_id=2038864641 instance=ExtResource("2")]
+position = Vector2(176, 384)
+
+[node name="Ceiling208" parent="." unique_id=1478767645 instance=ExtResource("2")]
+position = Vector2(208, 384)
+
+[node name="Platform560" parent="." unique_id=1108028442 instance=ExtResource("2")]
+position = Vector2(560, 432)
+
+[node name="Platform592" parent="." unique_id=1544190197 instance=ExtResource("2")]
+position = Vector2(592, 432)
+
+[node name="Platform624" parent="." unique_id=1853384235 instance=ExtResource("2")]
+position = Vector2(624, 432)
