@@ -16,7 +16,7 @@ func check(condition: bool, message: String) -> void:
 
 
 func make_menu(path: String) -> Control:
-	var menu := preload("res://MainMenu.tscn").instantiate()
+	var menu := preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = path
 	root.add_child(menu)
 	current_scene = menu

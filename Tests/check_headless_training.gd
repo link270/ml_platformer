@@ -1,6 +1,6 @@
 extends SceneTree
 
-const LevelScene := preload("res://Level.tscn")
+const LevelScene := preload("res://Game/Level.tscn")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 var failed := false
 
@@ -43,7 +43,7 @@ func run_check() -> void:
 	check(visible_result == headless_result, "headless and visible runs learn identical tables from the same seed")
 	var args := OS.get_cmdline_user_args()
 	if not args.is_empty():
-		var menu := preload("res://MainMenu.tscn").instantiate()
+		var menu := preload("res://UI/MainMenu.tscn").instantiate()
 		menu.checkpoint_path = args[0]
 		root.add_child(menu)
 		current_scene = menu

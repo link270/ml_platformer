@@ -1,6 +1,6 @@
 extends SceneTree
 
-const LevelScene := preload("res://Level.tscn")
+const LevelScene := preload("res://Game/Level.tscn")
 const QLearning := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 

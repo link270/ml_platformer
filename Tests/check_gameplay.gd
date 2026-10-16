@@ -15,7 +15,7 @@ func _initialize() -> void:
 
 
 func run_check() -> void:
-	var level := preload("res://Level.tscn").instantiate()
+	var level := preload("res://Game/Level.tscn").instantiate()
 	root.add_child(level)
 	level.set_physics_process(false)
 	check(level.get_node("%StatsLabel").text == "Episodes completed: 0\nDeaths: 0\nOrb collections: 0\nTimeouts: 0", "session stats start at zero")
@@ -72,7 +72,7 @@ func run_check() -> void:
 	var wall_state: Dictionary = player.get_state()
 	check(wall_state.ray_hits[2] and wall_state.ray_clearances[2] < 0.05, "post-move wall sensing")
 
-	var block_scene := preload("res://Block.tscn")
+	var block_scene := preload("res://Game/Block.tscn")
 	for point in [Vector2(464, 208), Vector2(464, 144), Vector2(400, 272)]:
 		var block := block_scene.instantiate()
 		block.position = point
@@ -239,7 +239,7 @@ func run_check() -> void:
 
 	level.queue_free()
 	await process_frame
-	level = preload("res://Level.tscn").instantiate()
+	level = preload("res://Game/Level.tscn").instantiate()
 	level.control_mode = level.ControlMode.HUMAN
 	root.add_child(level)
 	level.set_physics_process(false)
@@ -270,9 +270,9 @@ func run_check() -> void:
 	level.queue_free()
 	await process_frame
 
-	check(ProjectSettings.get_setting("application/run/main_scene") == "res://MainMenu.tscn", "game starts at menu")
+	check(ProjectSettings.get_setting("application/run/main_scene") == "res://UI/MainMenu.tscn", "game starts at menu")
 	for mode in 3:
-		var menu := preload("res://MainMenu.tscn").instantiate()
+		var menu := preload("res://UI/MainMenu.tscn").instantiate()
 		root.add_child(menu)
 		current_scene = menu
 		check(not menu.get_node("%QLearningButton").disabled and menu.get_node("%DeepAgentButton").disabled, "Q-learning enabled and deep agent reserved")
@@ -280,7 +280,7 @@ func run_check() -> void:
 		menu.get_node(["%HumanButton", "%RandomButton", "%QLearningButton"][mode]).pressed.emit()
 		var game := current_scene
 		game.set_physics_process(false)
-		check(game.scene_file_path == "res://Level.tscn", "menu starts the level")
+		check(game.scene_file_path == "res://Game/Level.tscn", "menu starts the level")
 		check(game.control_mode == mode, "menu starts selected control mode")
 		check(game.deaths == 0 and game.orb_collections == 0, "menu launch starts a fresh stats session")
 		if mode == game.ControlMode.HUMAN:
@@ -291,7 +291,7 @@ func run_check() -> void:
 		else:
 			game.get_node("HUD/MenuButton").pressed.emit()
 		await scene_changed
-		check(current_scene.scene_file_path == "res://MainMenu.tscn", "game can return to menu")
+		check(current_scene.scene_file_path == "res://UI/MainMenu.tscn", "game can return to menu")
 		current_scene.queue_free()
 		await process_frame
 	if not failed:

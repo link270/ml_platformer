@@ -95,7 +95,7 @@ func _return_to_menu() -> void:
 	if check_in_mode:
 		check_in_cancelled.emit()
 		return
-	get_tree().change_scene_to_file("res://MainMenu.tscn")
+	get_tree().change_scene_to_file("res://UI/MainMenu.tscn")
 
 
 func _set_training_speed(index: int) -> void:

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://dxv72h85swr56"]
 
-[ext_resource type="Script" uid="uid://cexai3wrf2ql" path="res://MainMenu.gd" id="1"]
+[ext_resource type="Script" uid="uid://cexai3wrf2ql" path="res://UI/MainMenu.gd" id="1"]
 
-[ext_resource type="Script" path="res://HeadlessPanel.gd" id="2"]
+[ext_resource type="Script" path="res://UI/HeadlessPanel.gd" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.09, 0.12, 0.18, 1)

@@ -1,7 +1,7 @@
 extends Control
 
-const LEVEL_SCENE := preload("res://Level.tscn")
-const Level := preload("res://Level.gd")
+const LEVEL_SCENE := preload("res://Game/Level.tscn")
+const Level := preload("res://Game/Level.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 var checkpoint_path := Checkpoint.DEFAULT_PATH
 var _check_in_level: Node2D

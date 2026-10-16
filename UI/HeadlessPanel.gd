@@ -55,7 +55,7 @@ func _launch_worker(resume: bool) -> void:
 	var args := PackedStringArray([
 		"--headless", "--path", ProjectSettings.globalize_path("res://"),
 		"--fixed-fps", "60", "--disable-render-loop", "--log-file", status_path + ".log",
-		"--script", "res://train.gd", "--", "--episodes", str(count),
+		"--script", "res://Training/train.gd", "--", "--episodes", str(count),
 		"--save", checkpoint_path, "--status", status_path,
 	])
 	if resume:

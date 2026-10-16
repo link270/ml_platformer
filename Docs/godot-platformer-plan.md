@@ -14,7 +14,7 @@ Build a small human controlled platformer first, then add sensing and learning t
 
 ### Current start menu
 
-The game starts at `MainMenu.tscn`. Human playable, Random agent, and Q-learning launch the same level with the selected control mode. DQN / PPO remains a disabled placeholder. Q-learning offers new training, resuming the saved checkpoint, and evaluating the saved checkpoint. New training starts empty without changing the saved file.
+The game starts at `UI/MainMenu.tscn`. Human playable, Random agent, and Q-learning launch the same level with the selected control mode. DQN / PPO remains a disabled placeholder. Q-learning offers new training, resuming the saved checkpoint, and evaluating the saved checkpoint. New training starts empty without changing the saved file.
 
 The in-game stats panel shows completed episodes, deaths, successful orb collections, and timeouts for the current session. Counts survive automatic and manual episode resets; manual resets do not count as completions. Returning to the menu and launching a level starts fresh counts. Random and Q-learning episodes time out after 20 simulated seconds; human play has no time limit.
 
@@ -26,11 +26,11 @@ Create these scenes and scripts:
 
 | File | Responsibility |
 | --- | --- |
-| `Player.tscn` | `CharacterBody2D`, square visual, and matching `CollisionShape2D` with a rectangle shape |
-| `Player.gd` | Action submission, movement, collision response, and reset |
-| `Block.tscn` | `StaticBody2D`, square visual, and matching rectangle collision shape; no script needed |
-| `Level.tscn` | `Node2D` containing one Player, placed Block instances, and a spawn marker |
-| `Level.gd` | Read keyboard actions each physics tick and submit them before advancing the Player |
+| `Game/Player.tscn` | `CharacterBody2D`, square visual, and matching `CollisionShape2D` with a rectangle shape |
+| `Game/Player.gd` | Action submission, movement, collision response, and reset |
+| `Game/Block.tscn` | `StaticBody2D`, square visual, and matching rectangle collision shape; no script needed |
+| `Game/Level.tscn` | `Node2D` containing one Player, placed Block instances, and a spawn marker |
+| `Game/Level.gd` | Read keyboard actions each physics tick and submit them before advancing the Player |
 
 Use contrasting solid colors and a fixed view that fits the test level. Place Blocks on a 32 pixel grid; build larger structures by duplication. Keep the Player and physics shapes unscaled. Put Blocks on a World collision layer and the Player on a Player layer, with the Player detecting World.
 
@@ -79,8 +79,8 @@ The aim is an understandable baseline for comparison with Snake, including its l
 | `Agents/QState.gd` | Convert observations to a small table key |
 | `Agents/QLearningAgent.gd` | Action selection, Bellman update, and learning parameters |
 | `Agents/QCheckpoint.gd` | Save/load, checkpoint format, and validation |
-| `AgentPanel.gd` | Training/evaluation display |
-| `Level.gd` | Environment rewards, 20-second limit, and common episode runner |
+| `UI/AgentPanel.gd` | Training/evaluation display |
+| `Game/Level.gd` | Environment rewards, 20-second limit, and common episode runner |
 
 The Q-state key contains six binary ray flags in **left, right, up, down, down-left, down-right** order, orb horizontal and vertical direction, and grounded/rising/falling. A ray is 1 only if it hits a surface within one unit (32 pixels) beyond the player's edge, including exactly one unit. Orb alignment has a half-unit tolerance on each axis. Airborne zero vertical speed belongs to falling. This gives `2^6 × 3 × 3 × 3 = 1,728` possible keys, each with six action values initialized to zero. Only learned rows are stored. The encoder does not use exact position, speed magnitude, orb distance, or the two upward diagonal rays.
 
@@ -108,7 +108,7 @@ Set **Check-in every** to show one evaluation episode after each interval of tra
 
 **Stop & save** finishes the current episode, saves, and exits. Closing the menu requests the same saved stop. Normal completion saves and re-enables **Q-learning: evaluate saved**. Errors appear in the panel; hover over the result for the worker's log path. Checkpoints still save every 100 episodes and at the end.
 
-`HeadlessPanel.gd` launches the same `train.gd` runner using Godot's executable directly. With check-ins enabled it runs chunks of at most the chosen interval: each worker saves and exits before `MainMenu.gd` shows an evaluation, then the next worker loads that checkpoint. This reuses the existing runner and checkpoint code without a second training implementation. Like other checkpoint resumptions, it preserves learning settings and counters but starts a new random-number sequence. Check-ins add the time spent watching plus worker startup and checkpoint I/O; small intervals will therefore reduce throughput.
+`UI/HeadlessPanel.gd` launches the same `Training/train.gd` runner using Godot's executable directly. With check-ins enabled it runs chunks of at most the chosen interval: each worker saves and exits before `UI/MainMenu.gd` shows an evaluation, then the next worker loads that checkpoint. This reuses the existing runner and checkpoint code without a second training implementation. Like other checkpoint resumptions, it preserves learning settings and counters but starts a new random-number sequence. Check-ins add the time spent watching plus worker startup and checkpoint I/O; small intervals will therefore reduce throughput.
 
 The runner writes a small atomic progress snapshot about every two seconds (plus start/finish/error); a menu timer reads it once a second. Rendering the menu has some overhead, but it does not render or slow the simulation to real time. Actual performance depends on hardware; no exact GUI overhead benchmark is claimed. Progress and logs use unique files in the Godot user-data directory, and normal panel completion removes its temporary status/stop files. The worker log remains available for troubleshooting.
 
@@ -135,19 +135,19 @@ The last command adds 5,000 episodes and saves into the game's default checkpoin
 
 The tiny progress display lives in the terminal: `1000 / 10000 episodes`, episodes per second, success rate for this batch, and exploration. It updates about once every two wall-clock seconds at episode boundaries, plus at the start/end. A checkpoint is written every 100 episodes by default (`--save-every`) and at completion. Ctrl+C stops the process; restart from its latest completed checkpoint (work since that save may be lost). Errors stop with a nonzero exit code and preserve the last valid checkpoint.
 
-`train.gd` creates the existing Level with `headless_training` enabled and listens for completed episodes. It reuses the same agent, rewards, resets, physics, and checkpoint code; only rendering, input handling, and HUD updates are skipped. `train.sh` launches Godot with `--headless --fixed-fps 60 --disable-render-loop`: real-time synchronization is removed while each physics step remains 1/60 of a game second and decisions remain six ticks apart. Training runs as fast as the machine can process those steps. No changes to Q-learning settings or the state representation are made to speed it up.
+`Training/train.gd` creates the existing Level with `headless_training` enabled and listens for completed episodes. It reuses the same agent, rewards, resets, physics, and checkpoint code; only rendering, input handling, and HUD updates are skipped. `train.sh` launches Godot with `--headless --fixed-fps 60 --disable-render-loop`: real-time synchronization is removed while each physics step remains 1/60 of a game second and decisions remain six ticks apart. Training runs as fast as the machine can process those steps. No changes to Q-learning settings or the state representation are made to speed it up.
 
 The shared agent loop constructs state snapshots only when choosing an action or learning from a completed decision/terminal transition. Intermediate ticks still move, collide, accumulate reward, and check episode endings. Reading `player.tick` no longer copies an entire observation. Each snapshot owns its action dictionary and ray arrays, so agents cannot mutate another observation or the player's cached sensing data.
 
 `Agent.observation_rays` defaults to all eight probes; Q-learning selects its six input rays. Player disables automatic ray updates and samples requested rays on demand, caching each until the next movement/reset. Visible rays still refresh after every movement tick. The initial spawn sensing remains eager to preserve the original first observation. Public `get_state()` and `step()` still return all eight fresh ray readings; callers requesting a subset must only read those indices. This keeps one physics/learning path for visible and headless play.
 
-`benchmark_training.gd` runs the real worker with seed 12345, its usual checkpoint cadence, and additional episode/step counters. It writes timings and a behavior fingerprint next to its checkpoint (`.benchmark.json`). The fingerprint covers every episode's length, return and outcome, plus the full Q-table, exploration, RNG state and update count. Use a temporary save path; its default is a separate `user://q_learning_benchmark.json`, not the normal training save:
+`Training/benchmark_training.gd` runs the real worker with seed 12345, its usual checkpoint cadence, and additional episode/step counters. It writes timings and a behavior fingerprint next to its checkpoint (`.benchmark.json`). The fingerprint covers every episode's length, return and outcome, plus the full Q-table, exploration, RNG state and update count. Use a temporary save path; its default is a separate `user://q_learning_benchmark.json`, not the normal training save:
 
 ```sh
-godot --headless --path . --fixed-fps 60 --disable-render-loop --script res://benchmark_training.gd -- --episodes 1000 --save /tmp/platformer-benchmark.json
+godot --headless --path . --fixed-fps 60 --disable-render-loop --script res://Training/benchmark_training.gd -- --episodes 1000 --save /tmp/platformer-benchmark.json
 ```
 
-`check_training_trace.gd` separately hashes every physics step, chosen action, and learning transition across three seeds, and compares headless with visible runs. Pass a missing JSON path after `--` to write a reference from a pre-change project copy; run the same script in the changed project with that existing path to compare against it. Run with `--headless --fixed-fps 60 --disable-render-loop`. This is a correctness check, not a timing benchmark; tracing adds substantial overhead.
+`Tests/check_training_trace.gd` separately hashes every physics step, chosen action, and learning transition across three seeds, and compares headless with visible runs. Pass a missing JSON path after `--` to write a reference from a pre-change project copy; run the same script in the changed project with that existing path to compare against it. Run with `--headless --fixed-fps 60 --disable-render-loop`. This is a correctness check, not a timing benchmark; tracing adds substantial overhead.
 
 Measured on an Apple M1 Pro with Godot 4.7.1: three serial before/after pairs, alternating order, each training 1,000 fresh episodes with seed 12345. Both project copies used the same frozen level layout from the start of the change; concurrent editor changes were preserved in the working project. Check-ins were disabled, and normal saves every 100 episodes were included. Timings exclude process startup and final fingerprint generation.
 
@@ -161,11 +161,11 @@ That is **46.2% more physics steps per second**, or **31.6% less training time**
 
 The launcher uses `godot` on PATH or the standard macOS app location. Set `GODOT_BIN` to use another executable. `./train.sh --help` lists the options and full default checkpoint path. Engine logs go to the system temporary directory.
 
-`check_headless_menu.gd` exercises actual worker launch, continuation, stop/save, menu closure, error reporting, and evaluation from the menu using temporary checkpoints.
+`Tests/check_headless_menu.gd` exercises actual worker launch, continuation, stop/save, menu closure, error reporting, and evaluation from the menu using temporary checkpoints.
 
-`check_training_checkins.gd` exercises real worker chunks and visible evaluation levels: exact intervals, partial final chunks, continued totals, normal-speed physics, frozen training data, automatic resume after death/orb/timeout, cancellation, and cleanup when the menu closes.
+`Tests/check_training_checkins.gd` exercises real worker chunks and visible evaluation levels: exact intervals, partial final chunks, continued totals, normal-speed physics, frozen training data, automatic resume after death/orb/timeout, cancellation, and cleanup when the menu closes.
 
-Validation: `check_headless_training.gd` compares seeded visible/headless training and, optionally, loads a supplied batch checkpoint through the game menu for evaluation. Run with Godot's `--headless --fixed-fps 60 --script res://check_headless_training.gd`, adding `-- /absolute/checkpoint.json` to test that checkpoint too.
+Validation: `Tests/check_headless_training.gd` compares seeded visible/headless training and, optionally, loads a supplied batch checkpoint through the game menu for evaluation. Run with Godot's `--headless --fixed-fps 60 --script res://Tests/check_headless_training.gd`, adding `-- /absolute/checkpoint.json` to test that checkpoint too.
 
 ### 3 Implement fixed speed movement
 

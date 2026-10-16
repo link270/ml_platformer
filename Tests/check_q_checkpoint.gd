@@ -75,7 +75,7 @@ func run_check() -> void:
 	check(not Checkpoint.load_checkpoint(restored, path + ".missing").is_empty(), "missing checkpoint reports failure")
 
 	for evaluate in [false, true]:
-		var menu := preload("res://MainMenu.tscn").instantiate()
+		var menu := preload("res://UI/MainMenu.tscn").instantiate()
 		menu.checkpoint_path = path
 		root.add_child(menu)
 		current_scene = menu
@@ -113,7 +113,7 @@ func run_check() -> void:
 		level.queue_free()
 		await process_frame
 
-	var menu := preload("res://MainMenu.tscn").instantiate()
+	var menu := preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = path
 	root.add_child(menu)
 	current_scene = menu
@@ -129,7 +129,7 @@ func run_check() -> void:
 	fresh.queue_free()
 	await process_frame
 	DirAccess.remove_absolute(path)
-	menu = preload("res://MainMenu.tscn").instantiate()
+	menu = preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = path
 	root.add_child(menu)
 	check(menu.get_node("%ResumeButton").disabled and menu.get_node("%LoadEvaluationButton").disabled, "load choices disabled without a checkpoint")

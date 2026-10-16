@@ -70,7 +70,7 @@ func finish_preview(menu: Control, outcome: String) -> void:
 
 func run_check() -> void:
 	DirAccess.make_dir_absolute(directory)
-	var menu := preload("res://MainMenu.tscn").instantiate()
+	var menu := preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = checkpoint
 	root.add_child(menu)
 	current_scene = menu

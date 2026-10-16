@@ -86,7 +86,7 @@ func run_check() -> void:
 	check(learner.q_table == table_before and learner.updates == updates_before and learner.epsilon == 0.05, "evaluation freezes values, table size, updates, and epsilon")
 	check(learner.evaluation_episodes == 1 and learner.evaluation_wins == 1, "evaluation stats are separate")
 
-	var level := preload("res://Level.tscn").instantiate()
+	var level := preload("res://Game/Level.tscn").instantiate()
 	level.control_mode = level.ControlMode.Q_LEARNING
 	root.add_child(level)
 	level.set_physics_process(false)

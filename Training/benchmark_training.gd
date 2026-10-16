@@ -1,4 +1,4 @@
-extends "res://train.gd"
+extends "res://Training/train.gd"
 
 # Use the real worker, including its usual saves, with repeatable actions.
 var physics_steps := 0

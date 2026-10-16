@@ -34,7 +34,7 @@ func _initialize() -> void:
 
 
 func run_sample(seed_value: int, headless: bool) -> Dictionary:
-	var level := preload("res://Level.tscn").instantiate()
+	var level := preload("res://Game/Level.tscn").instantiate()
 	var learner := TracedAgent.new()
 	learner.rng.seed = seed_value
 	level.agent = learner

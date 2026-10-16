@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://cdklykyumwt7i"]
 
-[ext_resource type="PackedScene" uid="uid://brdejdk017ayb" path="res://Player.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://Block.tscn" id="2"]
-[ext_resource type="Script" uid="uid://2s2fxxpu21as" path="res://Level.gd" id="3"]
-[ext_resource type="Script" uid="uid://ce7u827pg64da" path="res://AgentPanel.gd" id="4"]
+[ext_resource type="PackedScene" uid="uid://brdejdk017ayb" path="res://Game/Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Game/Block.tscn" id="2"]
+[ext_resource type="Script" uid="uid://2s2fxxpu21as" path="res://Game/Level.gd" id="3"]
+[ext_resource type="Script" uid="uid://ce7u827pg64da" path="res://UI/AgentPanel.gd" id="4"]
 
 [sub_resource type="CircleShape2D" id="OrbShape"]
 radius = 12.0
