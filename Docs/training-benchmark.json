@@ -1,0 +1,140 @@
+{
+  "environment": "Apple M1 Pro, macOS, Godot 4.7.1.stable.official.a13da4feb",
+  "method": "Three serial pairs, alternating order; fixed layout copied at task start; seed 12345; 1000 fresh training episodes per run; --headless --fixed-fps 60 --disable-render-loop; usual checkpoint saves every 100 episodes and at completion; check-ins disabled; timings cover training and saves, excluding process startup and final fingerprint generation.",
+  "runs": {
+    "before": [
+      {
+        "behavior_sha256": "1b72cdacce06c481122ce9bb02b40c37c6c2d61425d89be8d1ce5b4855d4e2a1",
+        "episodes": 1000,
+        "episodes_per_second": 29.5691770898016,
+        "physics_steps": 463743,
+        "seconds": 33.819,
+        "steps_per_second": 13712.4988911559,
+        "updates": 77793,
+        "wins": 502
+      },
+      {
+        "behavior_sha256": "1b72cdacce06c481122ce9bb02b40c37c6c2d61425d89be8d1ce5b4855d4e2a1",
+        "episodes": 1000,
+        "episodes_per_second": 29.4889563858335,
+        "physics_steps": 463743,
+        "seconds": 33.911,
+        "steps_per_second": 13675.2971012356,
+        "updates": 77793,
+        "wins": 502
+      },
+      {
+        "behavior_sha256": "1b72cdacce06c481122ce9bb02b40c37c6c2d61425d89be8d1ce5b4855d4e2a1",
+        "episodes": 1000,
+        "episodes_per_second": 33.8363673276037,
+        "physics_steps": 463743,
+        "seconds": 29.554,
+        "steps_per_second": 15691.3784936049,
+        "updates": 77793,
+        "wins": 502
+      }
+    ],
+    "after": [
+      {
+        "behavior_sha256": "1b72cdacce06c481122ce9bb02b40c37c6c2d61425d89be8d1ce5b4855d4e2a1",
+        "episodes": 1000,
+        "episodes_per_second": 43.2245515452777,
+        "physics_steps": 463743,
+        "seconds": 23.135,
+        "steps_per_second": 20045.0832072617,
+        "updates": 77793,
+        "wins": 502
+      },
+      {
+        "behavior_sha256": "1b72cdacce06c481122ce9bb02b40c37c6c2d61425d89be8d1ce5b4855d4e2a1",
+        "episodes": 1000,
+        "episodes_per_second": 42.8687786684957,
+        "physics_steps": 463743,
+        "seconds": 23.327,
+        "steps_per_second": 19880.0960260642,
+        "updates": 77793,
+        "wins": 502
+      },
+      {
+        "behavior_sha256": "1b72cdacce06c481122ce9bb02b40c37c6c2d61425d89be8d1ce5b4855d4e2a1",
+        "episodes": 1000,
+        "episodes_per_second": 59.3190176770673,
+        "physics_steps": 463743,
+        "seconds": 16.858,
+        "steps_per_second": 27508.7792146162,
+        "updates": 77793,
+        "wins": 502
+      }
+    ]
+  },
+  "medians": {
+    "before": {
+      "seconds": 33.819,
+      "steps_per_second": 13712.4988911559,
+      "episodes_per_second": 29.5691770898016
+    },
+    "after": {
+      "seconds": 23.135,
+      "steps_per_second": 20045.0832072617,
+      "episodes_per_second": 43.2245515452777
+    }
+  },
+  "throughput_gain_percent": 46.181110870974116,
+  "time_reduction_percent": 31.591708802744023,
+  "source_sha256": {
+    "before": {
+      "Player.gd": "64f853d5f884243fbfa841b8fe7793b0c64b88e20ca31bfddaea747de3e4eb85",
+      "Level.gd": "e19fb288f3a4f6da7ad571b394d5706e242fa71b935ca484172cd52c8c838efa",
+      "Agents/Agent.gd": "999d2e56f1a28fab26b2ff2df06bcc11287c897bbc0fb5e11ef6a58b9f81777d",
+      "Agents/QLearningAgent.gd": "f6c2cc96bc2f182614fb64c59c3ae8786fb12dab80ec6f9f33c6f10cfce95358",
+      "Level.tscn": "941f1f1e6a11740687c19278229448bc6cf8b271d912d9a5182a8ac53b334324",
+      "Player.tscn": "11142b007c2a645db4f1842ffbf9c6edbb2b4c621d90f26eb4d330c124a2bb41",
+      "project.godot": "a92469c9a24d67bf6ee8b8e3d72b5bad7d0d9d554b6fe4caa5458ff90cebd420"
+    },
+    "after": {
+      "Player.gd": "731a2704c2e52ac516f0603ca71397e569432eb557a8867f5c0c6ec246658371",
+      "Level.gd": "1836f4fc165de1ac63beb3a14f412cd990d624aa14c2194f70c0f712b7f65ea5",
+      "Agents/Agent.gd": "2966a240cbf890f8911410a5b323773b2aac3cf859dd25a58903412e8f6e51f0",
+      "Agents/QLearningAgent.gd": "3d9ac30bb7e8b577302cd9d612be432c7bad379cbbe297ecdcb84c358a09b895",
+      "Level.tscn": "941f1f1e6a11740687c19278229448bc6cf8b271d912d9a5182a8ac53b334324",
+      "Player.tscn": "11142b007c2a645db4f1842ffbf9c6edbb2b4c621d90f26eb4d330c124a2bb41",
+      "project.godot": "a92469c9a24d67bf6ee8b8e3d72b5bad7d0d9d554b6fe4caa5458ff90cebd420"
+    }
+  },
+  "trace_reference": [
+    {
+      "deaths": 37,
+      "learning": "83c466d0a4a1e07a3beb1439321f963ca73950dace6276202f15c8ce47b8c0a2",
+      "physics": "9b4dc4baa2f2b77410acb29427dba0271301dba0b5de1c07cfb0715443cc02e0",
+      "seed": 12345,
+      "steps": 38862,
+      "table": "4da4564d84ad5f3ec9f2071874d21d1f127c5d42ab9370aae65f471575a7acbf",
+      "timeouts": 10,
+      "updates": 6494,
+      "wins": 3
+    },
+    {
+      "deaths": 26,
+      "learning": "e68b6e6286d7e7d9137060efa2c850af74a671c8ecd06f71daa227755edc82ac",
+      "physics": "66ba89fb7323bc85a09f04b212a83662256c1357bf38a66bdc0e0b7cf7682af6",
+      "seed": 42,
+      "steps": 45814,
+      "table": "40bf1840aa1275d4c178f9b1daf7d9b02b09e85300de17c3151a1882c71be8dc",
+      "timeouts": 22,
+      "updates": 7646,
+      "wins": 2
+    },
+    {
+      "deaths": 43,
+      "learning": "3ae1855375ebcfdc9ebe32198f21c4e7273f2cc97f22427f8eafb3686751c2cf",
+      "physics": "5839eeb180014f6af7f81ff9f3163af2937d4198a802da767b26552392b7a72b",
+      "seed": 98765,
+      "steps": 35829,
+      "table": "a395951e05fa58c4a744c785b59baeea492314e345b6a6c733034db76f8f750e",
+      "timeouts": 6,
+      "updates": 5992,
+      "wins": 1
+    }
+  ],
+  "trace_validation": "Before/after physics, action/observation/learning traces and final tables matched exactly for seeds 12345, 42 and 98765, 50 episodes each. Visible/headless traces matched for each seed as well."
+}
