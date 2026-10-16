@@ -1,0 +1,55 @@
+TIME PENALTY EXPERIMENT — 2026-10-16
+
+Open report.html for the comparison with ../2026-10-16-q-learning-baseline.
+The only behavior change is -0.001 per six-frame decision, charged equally on
+nonterminal physics ticks. Terminal rewards remain exactly +1 / -1.
+
+CONTENTS
+settings.json              Exact settings, protocol and source hashes.
+summary.json               Paired baseline/time-penalty metrics.
+evaluation-results.csv     All checkpoint evaluations for both conditions.
+training-curve.csv         All 500-episode training windows for both conditions.
+training-comparison.svg    Scalable chart for editing/video.
+training-comparison.png    Raster preview of that chart.
+findings.txt               Plain-language interpretation.
+raw-data/                  New per-episode data and first-three evaluation traces.
+checkpoints/               All 27 new milestones and original saved-table probes.
+validation/                Test logs and normal-worker parity checkpoint.
+experiment.zip             Frozen Godot project, diagnostics, data and tables.
+SHA256SUMS.json             Checksums for all other files in this folder.
+
+WATCH A NEW POLICY WITHOUT REPLACING YOUR NORMAL SAVE
+1. Extract experiment.zip outside the working game project.
+2. In the extracted MainMenu.gd, change
+     var checkpoint_path := Checkpoint.DEFAULT_PATH
+   to (choose a seed/milestone):
+     var checkpoint_path := "res://checkpoint-12345-10000.json"
+3. Open the extracted project.godot in Godot 4.7.1 and run it.
+4. Choose "Q-learning: evaluate saved". Evaluation keeps the table unchanged.
+For baseline footage use the baseline archive's frozen project and matching table.
+
+USEFUL VIDEO EXAMPLES
+checkpoint-12345-100.json    Repeated jumping on upper platform, timeout.
+checkpoint-12345-300.json    One move right, then 19.9 seconds idle.
+checkpoint-42-100.json       Jumping loop near the first wall.
+checkpoint-98765-100.json    Holds right into wall for 18.83 seconds.
+checkpoint-98765-3000.json   Successful route before regression.
+checkpoint-98765-5000.json   Falls into the staircase gap: 30/30 deaths.
+checkpoint-98765-10000.json  Recovers to a successful route.
+checkpoint-12345-10000.json  Successful, but slower/more jumps than baseline.
+
+CONTINUE TRAINING
+In the extracted experiment, run for example:
+  sh ./train.sh --episodes 1000 --load ./checkpoint-12345-10000.json --save ./continued-checkpoint.json --save-every 100
+Use a new save filename to preserve original results.
+The checkpoint does not contain RNG state, so this is continued learning,
+not an exact continuation of the original seeded sequence.
+
+REPRODUCE
+See REPRODUCE.txt inside experiment.zip. Training uses three fresh seeded agents,
+not the old 16,988-episode saved agent. Diagnostic scripts are unchanged.
+The comparison report uses the original saved baseline data, not a new baseline run.
+Raw returns differ by definition and are not compared as a learning-quality metric.
+Only three training seeds and one fixed map/spawn were tested; repeated greedy
+runs often repeat the same path. This is not a statistical convergence claim.
+.gdignore prevents Godot from importing archived scripts and resources.

@@ -1,0 +1,13 @@
+The time penalty changed the learned behavior, but it did not produce a consistent improvement in these three seeds.
+
+Across all 30,000 training episodes, success fell from 83.1% to 81.7% (1.4 percentage points). Timeouts decreased from 1,584 to 1,419, while deaths increased from 3,487 to 4,079. The final 1,000 episodes per seed improved from 78.4% to 84.9%, but the wider 5,001–10,000 window declined from 83.8% to 81.6%. The result depends on which checkpoint/window you inspect.
+
+At 10,000 episodes, both conditions won all 90 greedy evaluations. The new policies averaged 8.54 seconds instead of 8.18, and 14.0 actual takeoffs instead of 13.3. Idle actions fell from 11.8% to 4.3%, but jump-containing actions increased from 45.5% to 55.8%. Less idling did not translate into faster or less jump-heavy final routes.
+
+There were earlier improvements: all three new policies succeeded at the 600-, 1,000- and 2,000-episode checkpoints, versus two of three baseline policies at each of those checkpoints. But seed 98765 regressed from success at 3,000 episodes to 30/30 deaths at 5,000, then recovered by 10,000. It fell through the staircase gap and crossed the death threshold near x=482, y=601 after 3.47 seconds. Training still does not improve steadily.
+
+Loops and stops remain. New seed 12345 at 100 episodes repeats jumps on the upper platform near x=709 (32 takeoffs, then timeout). At 300 episodes it moves right once, then idles near x=99 for 19.9 seconds. Seed 42 at 100 episodes loops between x=272 and x=291 while jumping. Seed 98765 at 100 episodes continually presses right into the wall near x=304 and remains stationary for 18.83 seconds. Removing Idle alone would not prevent that last failure.
+
+The state-aliasing probe is unchanged: several distinct platform locations still share the same Q-table key. A time cost does not give the learner more information about which location it occupies. That remains a plausible limitation, not a cause isolated by this reward-only experiment. The main early gains still occur in roughly the first 600–1,000 episodes, followed by fluctuations; these tests do not establish a precise convergence point.
+
+For the video, this is a useful mixed result: a plausible reward adjustment reduced some waiting and helped some early policies, while leaving jumping, regression and ambiguous observations unresolved. Keep the penalty as this experiment's only change; compare the next adjustment separately.

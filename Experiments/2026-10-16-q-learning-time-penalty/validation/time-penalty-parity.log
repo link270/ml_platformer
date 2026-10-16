@@ -1,0 +1,43 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: res://Level.tscn:3 - ext_resource, invalid UID: uid://brdejdk017ayb - using text path instead: res://Player.tscn
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:5 - ext_resource, invalid UID: uid://2s2fxxpu21as - using text path instead: res://Level.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:6 - ext_resource, invalid UID: uid://ce7u827pg64da - using text path instead: res://AgentPanel.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+Training 1000 additional episodes; 0 previously trained.
+Checkpoint every 1000 episodes and at completion: /tmp/ml-time-penalty-20261016/experiment/parity-checkpoint.json
+0 / 1000 episodes | 0.0 episodes/s | success 0.0% | exploration 100%
+19 / 1000 episodes | 9.4 episodes/s | success 0.0% | exploration 91%
+34 / 1000 episodes | 8.4 episodes/s | success 0.0% | exploration 84%
+51 / 1000 episodes | 8.2 episodes/s | success 2.0% | exploration 77%
+66 / 1000 episodes | 8.1 episodes/s | success 10.6% | exploration 72%
+85 / 1000 episodes | 8.2 episodes/s | success 9.4% | exploration 65%
+108 / 1000 episodes | 8.7 episodes/s | success 12.0% | exploration 58%
+132 / 1000 episodes | 9.1 episodes/s | success 13.6% | exploration 52%
+153 / 1000 episodes | 9.2 episodes/s | success 17.0% | exploration 46%
+185 / 1000 episodes | 9.9 episodes/s | success 21.6% | exploration 40%
+213 / 1000 episodes | 10.3 episodes/s | success 24.4% | exploration 34%
+246 / 1000 episodes | 10.9 episodes/s | success 28.9% | exploration 29%
+286 / 1000 episodes | 11.6 episodes/s | success 34.3% | exploration 24%
+311 / 1000 episodes | 11.6 episodes/s | success 34.7% | exploration 21%
+345 / 1000 episodes | 12.0 episodes/s | success 37.4% | exploration 18%
+378 / 1000 episodes | 12.3 episodes/s | success 40.7% | exploration 15%
+423 / 1000 episodes | 12.9 episodes/s | success 46.3% | exploration 12%
+469 / 1000 episodes | 13.4 episodes/s | success 51.2% | exploration 10%
+514 / 1000 episodes | 13.9 episodes/s | success 55.1% | exploration 8%
+560 / 1000 episodes | 14.4 episodes/s | success 57.9% | exploration 6%
+603 / 1000 episodes | 14.7 episodes/s | success 60.4% | exploration 5%
+641 / 1000 episodes | 14.9 episodes/s | success 62.2% | exploration 5%
+700 / 1000 episodes | 15.5 episodes/s | success 64.7% | exploration 5%
+767 / 1000 episodes | 16.3 episodes/s | success 66.5% | exploration 5%
+829 / 1000 episodes | 16.9 episodes/s | success 68.3% | exploration 5%
+902 / 1000 episodes | 17.6 episodes/s | success 70.5% | exploration 5%
+936 / 1000 episodes | 17.6 episodes/s | success 70.2% | exploration 5%
+974 / 1000 episodes | 17.6 episodes/s | success 69.9% | exploration 5%
+1000 / 1000 episodes | 17.8 episodes/s | success 70.7% | exploration 5%
+BENCHMARK {"behavior_sha256":"dfb032797941c3406e079844421b54cc1e7fef90391987f6757700c5fc80da2a","episodes":1000,"episodes_per_second":17.8211822572309,"physics_steps":594108,"seconds":56.113,"steps_per_second":10587.706948479,"updates":99326,"wins":707}
+Finished. Final checkpoint saved; ready to evaluate in the game.

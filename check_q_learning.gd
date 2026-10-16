@@ -95,11 +95,13 @@ func run_check() -> void:
 	check(level.player.show_rays and level.player.visible_ray_indices == QState.RAY_INDICES, "Q-learning displays exactly the six input rays")
 	check(level.get_node("%AgentPanel").visible, "training panel visible")
 	var start_state: Dictionary = level.get_state()
+	var initial_proximity: float = start_state.orb_proximity
 	for tick in 6:
 		await physics_frame
 		level._physics_process(DT)
 		check(learner.updates == (1 if tick == 5 else 0), "learning occurs once per six-frame decision")
 	check(is_equal_approx(learner.values(start_state)[level.get_state().action_id], 0.1 * level.episode_return), "decision reward aggregates the physics-frame rewards")
+	check(is_equal_approx(level.episode_return, 0.1 * (level.get_state().orb_proximity - initial_proximity) - 0.001), "six nonterminal ticks cost exactly 0.001 in addition to unchanged proximity shaping")
 	await physics_frame
 	level._physics_process(DT)
 	level.player.global_position.y = level.death_y + 10.0
@@ -141,11 +143,16 @@ func run_check() -> void:
 		level.episode_limit_seconds = 6.0 * DT
 		level.reset_episode()
 		updates_before = learner.updates
+		initial_proximity = level.get_state().orb_proximity
+		var last_nonterminal_proximity := initial_proximity
 		for tick in 6:
 			await physics_frame
 			level._physics_process(actual_delta)
+			if tick < 5:
+				last_nonterminal_proximity = level.get_state().orb_proximity
 		check(level.done and level.timed_out and level.get_state().tick == 6, "speed preserves timeout in simulated time")
 		check(learner.updates == updates_before + 1, "speed preserves six-tick decisions")
+		check(is_equal_approx(level.episode_return, -1.0 + 0.1 * (last_nonterminal_proximity - initial_proximity) - 0.001 * 5.0 / 6.0), "every speed charges elapsed nonterminal ticks and preserves the terminal penalty")
 	level.queue_free()
 	await process_frame
 	check(Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60 and Engine.max_physics_steps_per_frame == normal_max_steps, "leaving a fast level restores engine timing")

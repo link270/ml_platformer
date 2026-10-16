@@ -9,6 +9,7 @@ const QLearningAgent := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const Action = Agent.Action
 const TICKS_PER_DECISION := Agent.TICKS_PER_DECISION
+const TIME_PENALTY_PER_DECISION := 0.001
 const ACTION_INPUTS := Agent.ACTION_INPUTS
 const TRAINING_SPEEDS := [1, 2, 4, 8]
 
@@ -218,7 +219,9 @@ func _advance_tick(delta: float, action_id: int) -> void:
 	if done:
 		return
 	var proximity := _orb_proximity()
-	reward = 0.1 * (proximity - _previous_proximity)
+	# Spread the time cost across physics ticks, including partial decisions.
+	# Terminal rewards below remain exactly +1 / -1.
+	reward = 0.1 * (proximity - _previous_proximity) - TIME_PENALTY_PER_DECISION / TICKS_PER_DECISION
 	_previous_proximity = proximity
 	if player.position.y > death_y:
 		done = true

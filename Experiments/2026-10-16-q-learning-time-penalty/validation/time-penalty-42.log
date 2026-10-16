@@ -1,0 +1,29 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: res://Level.tscn:3 - ext_resource, invalid UID: uid://brdejdk017ayb - using text path instead: res://Player.tscn
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:5 - ext_resource, invalid UID: uid://2s2fxxpu21as - using text path instead: res://Level.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:6 - ext_resource, invalid UID: uid://ce7u827pg64da - using text path instead: res://AgentPanel.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+TRAIN seed=42 episodes=0 wins=0 rows=0
+TRAIN seed=42 episodes=100 wins=10 rows=109
+TRAIN seed=42 episodes=300 wins=63 rows=124
+TRAIN seed=42 episodes=600 wins=276 rows=129
+TRAIN seed=42 episodes=1000 wins=667 rows=130
+TRAIN seed=42 episodes=2000 wins=1576 rows=132
+TRAIN seed=42 episodes=3000 wins=2366 rows=136
+TRAIN seed=42 episodes=5000 wins=4013 rows=143
+TRAIN seed=42 episodes=10000 wins=8169 rows=147
+seed=42 episode=0 eval wins=0/30 timeout=12 rows=0
+seed=42 episode=100 eval wins=0/30 timeout=30 rows=109
+seed=42 episode=300 eval wins=30/30 timeout=0 rows=124
+seed=42 episode=600 eval wins=30/30 timeout=0 rows=129
+seed=42 episode=1000 eval wins=30/30 timeout=0 rows=130
+seed=42 episode=2000 eval wins=30/30 timeout=0 rows=132
+seed=42 episode=3000 eval wins=30/30 timeout=0 rows=136
+seed=42 episode=5000 eval wins=30/30 timeout=0 rows=143
+seed=42 episode=10000 eval wins=30/30 timeout=0 rows=147
+DONE seed 42 seconds 369.473

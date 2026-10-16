@@ -1,0 +1,30 @@
+{
+  "engine": "Godot 4.7.1.stable",
+  "checks_passed": [
+    "check.gd",
+    "check_q_learning.gd",
+    "check_q_checkpoint.gd",
+    "check_headless_training.gd",
+    "check_training_trace.gd",
+    "check_headless_menu.gd",
+    "check_training_checkins.gd"
+  ],
+  "worker_parity": {
+    "seed": 12345,
+    "episodes": 1000,
+    "exact_json_equality_after_matching_load_save_round_trip": true,
+    "note": "Worker and diagnostics also matched exactly before evaluation re-saved the diagnostic checkpoint. JSON round trip introduces rounding near 1e-16."
+  },
+  "frozen_policy_trajectories_match_baseline": [
+    2026,
+    2027
+  ],
+  "state_aliasing_probe_matches_baseline": true,
+  "diagnostic_scripts_identical_to_baseline": true,
+  "baseline_checksums_verified": true,
+  "live_checkpoint_matches_original_archive": true,
+  "engine_notes": [
+    "Standalone copied-project runs resolve unimported resource UIDs through their unchanged text paths.",
+    "The normalization-only process logged a macOS system-certificate lookup error; its checkpoint loaded and saved correctly and exact comparison passed."
+  ]
+}

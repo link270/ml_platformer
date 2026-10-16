@@ -1,0 +1,164 @@
+{
+  "experiment": "Time penalty only: -0.001 per six-tick decision",
+  "experiment_date": "2026-10-16",
+  "archived_at_utc": "2026-10-16T07:13:13.674001+00:00",
+  "engine": "Godot 4.7.1.stable",
+  "current_source_matches_experiment": true,
+  "learning": {
+    "learning_rate": 0.1,
+    "discount": 0.95,
+    "epsilon": 1.0,
+    "epsilon_decay": 0.995,
+    "minimum_epsilon": 0.05
+  },
+  "learning_notes": {
+    "epsilon": "Initial value for fresh training; each saved Q-table contains its actual epsilon.",
+    "discount": "Per six-frame decision, not per physics tick."
+  },
+  "observation_and_actions": {
+    "action_inputs": [
+      {
+        "jump_pressed": false,
+        "move_axis": 0.0
+      },
+      {
+        "jump_pressed": false,
+        "move_axis": -1.0
+      },
+      {
+        "jump_pressed": false,
+        "move_axis": 1.0
+      },
+      {
+        "jump_pressed": true,
+        "move_axis": 0.0
+      },
+      {
+        "jump_pressed": true,
+        "move_axis": -1.0
+      },
+      {
+        "jump_pressed": true,
+        "move_axis": 1.0
+      }
+    ],
+    "actions": [
+      "Idle",
+      "Left",
+      "Right",
+      "Jump",
+      "Left + jump",
+      "Right + jump"
+    ],
+    "motion": [
+      "grounded",
+      "rising",
+      "falling"
+    ],
+    "near_distance": 1.0,
+    "orb_alignment": 0.5,
+    "rays": [
+      6.0,
+      2.0,
+      0.0,
+      4.0,
+      5.0,
+      3.0
+    ],
+    "ticks_per_decision": 6.0
+  },
+  "physics": {
+    "ticks_per_second": 60,
+    "ticks_per_decision": 6,
+    "decisions_per_second": 10,
+    "pixels_per_unit": 32,
+    "horizontal_speed_units_per_second": 6,
+    "jump_impulse_units_per_second": 12,
+    "gravity_units_per_second_squared": 40,
+    "maximum_fall_speed_units_per_second": 14,
+    "ray_range_units": 2,
+    "episode_limit_seconds": 20,
+    "death_y_pixels": 600,
+    "spawn_pixels": [
+      80,
+      464
+    ],
+    "orb_pixels": [
+      720,
+      456
+    ]
+  },
+  "movement": {
+    "instant_horizontal_stopping_and_reversing": true,
+    "air_steering": true,
+    "double_jump": false,
+    "variable_jump_height": false,
+    "action_held_for_all_six_ticks": true
+  },
+  "rewards": {
+    "nonterminal": "0.1 * (current_orb_proximity - previous_orb_proximity) - 0.001 / 6",
+    "orb_proximity": "clamp(1 - distance(player, orb) / distance(spawn, orb), 0, 1)",
+    "orb_collection": 1,
+    "death": -1,
+    "timeout": -1,
+    "terminal_reward_replaces_shaping_on_terminal_tick": true,
+    "explicit_step_cost": 0.00016666666666666666,
+    "explicit_jump_cost": 0,
+    "time_cost_per_decision": 0.001,
+    "time_cost_per_simulated_second": 0.01,
+    "terminal_reward_replaces_shaping_and_time_cost_on_terminal_tick": true
+  },
+  "experiment_protocol": {
+    "training_seeds": [
+      12345,
+      42,
+      98765
+    ],
+    "training_episodes_per_seed": 10000,
+    "evaluation_checkpoints": [
+      0,
+      100,
+      300,
+      600,
+      1000,
+      2000,
+      3000,
+      5000,
+      10000
+    ],
+    "evaluation_episodes_per_checkpoint": 30,
+    "evaluation_rng_seed": "training seed + 1000000",
+    "evaluation_learning": false,
+    "evaluation_exploration": 0,
+    "saved_table_greedy_probe": {
+      "seed": 2026,
+      "episodes": 30
+    },
+    "saved_table_exploration_probe": {
+      "seed": 2027,
+      "episodes": 100,
+      "epsilon": 0.05,
+      "learning": false
+    },
+    "fixed_level_and_spawn": true
+  },
+  "source_fingerprints": {
+    "Level.tscn": "8aebce20d5cb704f482e9ccee8e3ae556088bc5611beee5ecf2a15c31e54ec8f",
+    "Level.gd": "fe6c3894a901481d7450406a7e10be7f00aa12e1aabaf268a000447bc29e2de2",
+    "Player.gd": "731a2704c2e52ac516f0603ca71397e569432eb557a8867f5c0c6ec246658371",
+    "Agents/Agent.gd": "2966a240cbf890f8911410a5b323773b2aac3cf859dd25a58903412e8f6e51f0",
+    "Agents/QCheckpoint.gd": "130713e2679a2986c9f846d0db1bfcecc2b75baf20f2b6c56d4606ab7276d3d6",
+    "Agents/QLearningAgent.gd": "3d9ac30bb7e8b577302cd9d612be432c7bad379cbbe297ecdcb84c358a09b895",
+    "Agents/QState.gd": "1d9d975e7a218d416588617043695e8bf9668327c9a435a34439a1c2597e9164",
+    "Agents/RandomAgent.gd": "0af775e269b11f398cd69804251e7d27661ff2d4853c195bf786ec7376225e50"
+  },
+  "checkpoint_limits": "Q-table files preserve learning settings, values, and training counters. They do not preserve training RNG state or an in-progress episode, so resuming is not a bit-for-bit continuation.",
+  "baseline": "../2026-10-16-q-learning-baseline",
+  "comparison_notes": [
+    "Only Level.gd reward calculation changed in the environment and agent sources.",
+    "Training is uninterrupted through 10000 episodes; checkpoints are evaluated afterward.",
+    "Saved-table probes use the original baseline checkpoint, without further learning.",
+    "Raw returns cannot be directly compared because the reward definition changed.",
+    "The saved baseline was verified against every entry in its SHA256SUMS.json."
+  ]
+}
