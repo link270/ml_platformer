@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="960" height="580" preserveAspectRatio="xMinYMin meet" viewBox="0 0 960 580" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="960" height="580"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-580)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="960" height="580" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(6%,10%,17%); fill-rule: evenodd;"/>
+			<rect x="0.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="32.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="64.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="96.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="128.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="160.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="192.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="224.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="256.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="288.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="320.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="352.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="384.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="480.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="512.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="544.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="576.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="608.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="640.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="672.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="704.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="736.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="768.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="800.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="832.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="864.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="896.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="928.0" y="28.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="320.0" y="59.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="128.0" y="140.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="160.0" y="140.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="192.0" y="140.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="544.0" y="83.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="351.0" y="91.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="383.0" y="122.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="457.0" y="166.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="489.0" y="197.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="521.0" y="229.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="552.0" y="261.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="624.0" y="287.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="655.0" y="319.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="687.0" y="350.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="576.0" y="83.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<rect x="608.0" y="83.0" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(32%,41%,52%); fill-rule: evenodd;"/>
+			<polyline points="80 76, 99.2 104.5204, 118.4001 123.5697, 118.4001 113.9697, 118.4001 91.5697, 137.6001 94.20932, 156.8001 120.876, 176.0001 118.5907, 195.2001 100.4574, 214.4001 82.47598, 195.2001 113.4093, 214.4001 121.7907, 233.6 107.924, 233.6 81.25735, 252.8 104.5204, 272.0001 126.9204, 291.2002 136.5204, 310.4002 133.3204, 310.4002 117.3204, 291.2002 88.52042, 291.2002 94.20932, 272.0001 120.876, 291.2002 134.7426, 310.4002 135.8093, 310.4002 124.076, 310.4002 113.4749, 329.6003 144.4083, 348.8004 162.5416, 366.9879 167.8749, 366.9252 160.4082, 366.9252 140.1416, 366.9252 167.4456, 347.7247 189.8461, 366.9248 199.4461, 386.1249 196.2461, 386.1249 180.2461, 405.3254 188.2091, 424.5255 214.8757, 443.7255 228.7424, 462.9256 229.8091, 472.9252 218.0757, 472.9252 237.4698, 453.7248 262.0036, 472.9249 273.737, 492.1249 272.6703, 504.9251 258.8036, 504.9251 257.4511, 511.3252 286.2511, 530.5252 302.2511, 511.3251 305.4511, 511.3251 295.8511, 511.3251 277.0261, 492.1251 273.4705, 504.9251 257.4706, 504.9251 263.1335, 514.5251 289.8001, 533.7252 303.6668, 514.5251 304.7334, 514.5251 293.0001, 514.5251 283.475, 533.7252 314.4084, 552.9253 332.5417, 572.1254 337.875, 572.1254 330.4084, 572.1254 310.1417, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749, 552.9253 309.0749" style="stroke: rgb(43%,85%,81%); stroke-linecap: butt; stroke-width: 2; fill: None; fill-rule: evenodd;"/>
+			<circle cx="720" cy="84" r="12" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,80%,40%); fill-rule: evenodd;"/>
+			<circle cx="80" cy="76" r="6" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<rect x="536.92529296875" y="293.074890136719" width="32.0" height="32.0" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(95%,47%,44%); fill-rule: evenodd;"/>
+			<text x="28" y="553" style="font-family: Times-Roman; font-size: 22px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,1106) scale(1,-1)">Saved agent: climbs, then idles until timeout</text>
+			<path d="M 574.925293,309.07489 L 740,330 Z" style="stroke: rgb(95%,47%,44%); stroke-linecap: butt; stroke-width: 1;"/>
+			<text x="720" y="350" style="font-family: Times-Roman; font-size: 15px;fill: rgb(95%,47%,44%); stroke:none;" transform="translate(0,700) scale(1,-1)">13.5 seconds stationary</text>
+			<text x="720" y="331" style="font-family: Times-Roman; font-size: 13px;fill: rgb(100%,100%,100%); stroke:none;" transform="translate(0,662) scale(1,-1)">at x=553, y=231</text>
+			<text x="28" y="18" style="font-family: Times-Roman; font-size: 13px;fill: rgb(80%,85%,91%); stroke:none;" transform="translate(0,36) scale(1,-1)">Teal: recorded path    Coral: final position    Gold: orb    Coordinates are game pixels</text>
+		</g>
+	</g>
+</svg>

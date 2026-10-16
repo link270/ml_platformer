@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="900" height="330" preserveAspectRatio="xMinYMin meet" viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="900" height="330"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-330)" style="clip-path: url(#clip)">
+		<g transform="">
+			<rect x="0" y="0" width="900" height="330" style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(100%,100%,100%); fill-rule: evenodd;"/>
+			<text x="60" y="306" style="font-family: Times-Roman; font-size: 18px;fill: rgb(7%,13%,21%); stroke:none;" transform="translate(0,612) scale(1,-1)">Training success: large early gains, then fluctuations</text>
+			<g transform="">
+				<g transform="">
+					<g transform="">
+						<path d="M 60,55 L 850,55 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<path d="M 60,55 L 60,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 218,55 L 218,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 376,55 L 376,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 534,55 L 534,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 692,55 L 692,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 850,55 L 850,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<g transform=" matrix(1,0,0,1,60,50)">
+							<text x="-2.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">0</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,218,50)">
+							<text x="-10.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">2000</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,376,50)">
+							<text x="-10.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">4000</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,534,50)">
+							<text x="-10.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">6000</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,692,50)">
+							<text x="-10.0" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">8000</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,850,50)">
+							<text x="-12.5" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">10000</text>
+						</g>
+					</g>
+				</g>
+				<g transform="">
+					<g transform="">
+						<path d="M 60,55 L 60,280 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<path d="M 60,55 L 55,55 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 60,100 L 55,100 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 60,145 L 55,145 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 60,190 L 55,190 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 60,235 L 55,235 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 60,280 L 55,280 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<g transform=" matrix(1,0,0,1,55,55)">
+							<text x="-5.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,55,100)">
+							<text x="-10.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">20</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,55,145)">
+							<text x="-10.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">40</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,55,190)">
+							<text x="-10.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">60</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,55,235)">
+							<text x="-10.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">80</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,55,280)">
+							<text x="-15.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">100</text>
+						</g>
+					</g>
+				</g>
+				<g transform="">
+					<polyline points="99.5 149.5, 139 270.55, 178.5 257.5, 218 265.6, 257.5 263.8, 297 263.35, 336.5 253, 376 256.6, 415.5 247.15, 455 263.35, 494.5 245.8, 534 265.15, 573.5 250.3, 613 223.75, 652.5 245.35, 692 237.25, 731.5 263.35, 771 230.95, 810.5 256.15, 850 224.65" style="stroke: rgb(15%,39%,69%); stroke-linecap: round; stroke-width: 2; fill: None; fill-rule: evenodd;"/>
+					<polyline points="99.5 168.4, 139 258.85, 178.5 255.25, 218 257.05, 257.5 226, 297 237.25, 336.5 231.85, 376 265.6, 415.5 267.85, 455 258.85, 494.5 261.55, 534 265.6, 573.5 254.35, 613 257.5, 652.5 242.2, 692 218.8, 731.5 261.1, 771 241.3, 810.5 220.6, 850 230.5" style="stroke: rgb(83%,41%,13%); stroke-linecap: round; stroke-width: 2; fill: None; fill-rule: evenodd;"/>
+					<polyline points="99.5 143.2, 139 227.35, 178.5 216.55, 218 224.65, 257.5 264.7, 297 263.35, 336.5 235.45, 376 231.4, 415.5 248.95, 455 239.05, 494.5 240.4, 534 256.15, 573.5 229.15, 613 238.15, 652.5 260.2, 692 245.35, 731.5 250.75, 771 233.65, 810.5 214.3, 850 241.75" style="stroke: rgb(9%,51%,38%); stroke-linecap: round; stroke-width: 2; fill: None; fill-rule: evenodd;"/>
+				</g>
+			</g>
+			<text x="390" y="12" style="font-family: Times-Roman; font-size: 11px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,24) scale(1,-1)">Training episodes (500-episode windows)</text>
+			<text x="6" y="283" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,566) scale(1,-1)">Win %</text>
+			<text x="570" y="294" style="font-family: Times-Roman; font-size: 10px;fill: rgb(15%,39%,69%); stroke:none;" transform="translate(0,588) scale(1,-1)">Seed 12345</text>
+			<text x="675" y="294" style="font-family: Times-Roman; font-size: 10px;fill: rgb(83%,41%,13%); stroke:none;" transform="translate(0,588) scale(1,-1)">Seed 42</text>
+			<text x="780" y="294" style="font-family: Times-Roman; font-size: 10px;fill: rgb(9%,51%,38%); stroke:none;" transform="translate(0,588) scale(1,-1)">Seed 98765</text>
+		</g>
+	</g>
+</svg>

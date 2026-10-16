@@ -1,0 +1,52 @@
+Q-LEARNING BASELINE — 2026-10-16
+
+This folder preserves the original experiment and current settings before further adjustments.
+Open report.html for the findings, tables, learning curve, and recorded failure path.
+
+CONTENTS
+settings.json              Physics, rewards, state/action definitions, learning settings and test protocol.
+summary.json               Structured experimental summary.
+evaluation-results.csv     Evaluation metrics for video charts (one row per seed/checkpoint).
+training-curve.csv         Training metrics in 500-episode windows for video charts.
+training-curve.svg         Scalable training chart.
+saved-agent-path.svg       Scalable illustration of the saved agent getting stuck.
+raw-data/                  Individual episode results and recorded decision traces.
+checkpoints/               All tested Q-tables, plus a separate current-at-archive snapshot.
+experiment.zip             Frozen Godot project, original diagnostic scripts, data and checkpoints.
+
+USEFUL VIDEO EXAMPLES
+checkpoint-12345-300.json   Left/right oscillation before the first wall.
+checkpoint-12345-1000.json  Idle on the staircase until timeout.
+checkpoint-98765-2000.json  Jumping loop: 34 takeoffs without collecting the orb.
+checkpoint-12345-3000.json  Successful route; a useful comparison with the failed policies.
+existing-checkpoint.json   The original 16,988-episode table tested in the report (idle failure).
+current-at-archive.json    Your live saved table copied when this folder was created, if available.
+
+WATCH AN ARCHIVED POLICY WITHOUT REPLACING YOUR CURRENT SAVE
+1. Extract experiment.zip to a separate folder outside the working game project.
+2. In that extracted project's MainMenu.gd, replace:
+     var checkpoint_path := Checkpoint.DEFAULT_PATH
+   with, for example:
+     var checkpoint_path := "res://checkpoint-12345-3000.json"
+   This change is only for the extracted copy. For the reported saved-agent failure,
+   use "res://existing-checkpoint.json" instead.
+3. Import/open the extracted project.godot in Godot 4.7.1 and run it.
+4. Choose "Q-learning: evaluate saved". Use evaluation for filming; training changes the policy.
+   Work on an extracted copy so the archived originals remain available.
+
+CONTINUE TRAINING AN ARCHIVED POLICY
+From the extracted experiment directory, for example:
+  ./train.sh --episodes 1000 --load ./checkpoint-12345-3000.json --save ./continued-checkpoint.json --save-every 100
+If the extracted shell script is not executable, use: sh ./train.sh ...
+Use a new save filename to preserve the original table.
+Q-table checkpoints preserve values, learning settings and counters, but not RNG state or
+an in-progress episode. They support continued learning, not an exact continuation of the original random sequence.
+See REPRODUCE.txt inside experiment.zip to repeat the original seeded tests.
+
+REPRODUCIBILITY
+Use the frozen level: changing geometry can change how an identical table behaves.
+The three fresh seeds used the same level and spawn. Repeated greedy evaluation episodes
+are often identical, not independent samples of different maps.
+The original tested table's earlier level history is unknown.
+SHA256SUMS.json verifies this archive folder's file contents.
+.gdignore keeps experiment files out of Godot's asset import scan.
