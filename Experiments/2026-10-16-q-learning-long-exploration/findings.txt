@@ -1,0 +1,15 @@
+Longer exploration produced better final routes in these three seeds, but it did not make learning consistently reliable.
+
+At 10,000 episodes, all three conditions won all 90 greedy evaluations. Longer exploration averaged 6.36 seconds per successful episode, compared with 8.18 for the baseline and 8.54 for time penalty alone. Actual takeoffs fell to 10.3 per episode, from 13.3 and 14.0. That is about 26% faster with 26% fewer takeoffs than time penalty alone. Each new seed was faster than its baseline counterpart; two were faster than their time-penalty counterparts and the third had the same duration.
+
+The cost was a slower start. Overall training success was 73.5%, versus 83.1% baseline and 81.7% time penalty alone. In the first 1,000 episodes it was only 20.7%, versus 65.8% and 67.0%. This is partly expected: at episode 1,000 the new agent still selects random actions 36.8% of the time, while the old schedules are already at 5%. Do not interpret training win rate alone as the quality of the greedy policy.
+
+After all schedules reached the same 5% exploration floor, gains were modest. Across episodes 5,001–10,000, training success was 82.6%, between baseline's 83.8% and time penalty's 81.6%. The final 1,000 episodes reached 85.2%, versus 78.4% and 84.9%. This supports a better final route in this sample, not a broad claim of more reliable training.
+
+Intermediate evaluations still regressed. With longer exploration, the first sampled checkpoint where all three seeds won all evaluations was 10,000 episodes (baseline: 3,000; time penalty: 600, followed by a later regression). Seed 12345 won at 600, timed out with 47 takeoffs at 1,000, died in the staircase gap at 2,000, won at 3,000, died again at 5,000, and won at 10,000. Seed 42 won 26/30 at 100 episodes despite no training wins yet, then failed all evaluations at 300, 600 and 1,000. The sparse checkpoint schedule cannot locate the exact first successful policy or a convergence point.
+
+Loops and stops are still visible. Seed 12345 at 300 episodes presses right into the wall near x=304 for 18.23 seconds. Seed 98765 at 300 episodes idles near x=291 for 18.70 seconds. Seed 42 at 300 episodes oscillates near the first wall without jumping. These are useful video contrasts with the successful final routes. The unchanged state-aliasing probe still maps different platform locations to the same key; longer exploration does not give the agent new observations.
+
+Fewer actual jumps does not mean fewer jump commands. The final jump-action share rose slightly to 57.6%, from 55.8% with time penalty and 45.5% baseline. Commands held while airborne often cannot trigger another jump. Final idle share was 5.2%, versus 4.3% and 11.8% respectively.
+
+For the video: this adjustment eventually found faster routes with fewer actual jumps, at the cost of more exploration and a slower, still erratic path to those routes. Only three seeds and one fixed level were tested. We have not tested longer exploration without the time penalty, so this is the effect of adding longer exploration to the penalty condition.

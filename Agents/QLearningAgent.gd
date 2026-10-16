@@ -6,7 +6,7 @@ const State := preload("res://Agents/QState.gd")
 var learning_rate := 0.1
 var discount := 0.95
 var epsilon := 1.0
-var epsilon_decay := 0.995
+var epsilon_decay := 0.999
 var minimum_epsilon := 0.05
 var training := true
 

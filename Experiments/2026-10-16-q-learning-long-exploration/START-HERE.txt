@@ -1,0 +1,62 @@
+LONGER EXPLORATION EXPERIMENT — 2026-10-16
+
+Open report.html for the three-way comparison. This experiment keeps the time penalty
+and changes only fresh-agent epsilon decay from 0.995 to 0.999. Exploration reaches
+its unchanged 5% floor after 2,995 episodes instead of 598.
+
+CONTENTS
+settings.json              Settings, protocol, source hashes and precise comparison.
+summary.json               Metrics for all three conditions.
+findings.txt               Interpretation and examples for the video.
+training-curve.csv         500-episode windows, all seeds and conditions.
+evaluation-results.csv     All checkpoint metrics, including deaths and idle/jump shares.
+exploration-schedule.csv   Old/new exploration probability at each milestone.
+training-comparison.*     Training chart (SVG, PNG and PDF).
+evaluation-comparison.*   Frozen-policy evaluation chart (SVG, PNG and PDF).
+raw-data/                  Individual new episodes and first-three evaluation traces.
+checkpoints/               27 new milestone tables and the original saved-table probes.
+validation/                Regression logs, verification and normal-worker parity files.
+experiment.zip             Frozen Godot project, diagnostics, data and checkpoints.
+analyze.py                 Rebuild charts/report from raw data (ReportLab + pdftoppm).
+SHA256SUMS.json             Checksums for all other archive files.
+
+WATCH A POLICY WITHOUT REPLACING YOUR NORMAL SAVE
+1. Extract experiment.zip outside the working game project.
+2. In the extracted MainMenu.gd, replace
+     var checkpoint_path := Checkpoint.DEFAULT_PATH
+   with the desired checkpoint, for example:
+     var checkpoint_path := "res://checkpoint-12345-10000.json"
+3. Open that extracted project.godot in Godot 4.7.1 and run it.
+4. Choose "Q-learning: evaluate saved". Evaluation keeps the table unchanged.
+Use the earlier archives' frozen projects and tables for their footage.
+
+USEFUL VIDEO EXAMPLES
+checkpoint-12345-300.json    Wall collision and prolonged stationary movement.
+checkpoint-98765-300.json   Idle near the first wall for 18.70 seconds.
+checkpoint-42-300.json      Left/right oscillation without jumping.
+checkpoint-12345-1000.json  47 takeoffs followed by timeout.
+checkpoint-12345-3000.json  Successful route before another regression.
+checkpoint-12345-5000.json  Falls into the staircase gap: 30/30 deaths.
+checkpoint-12345-10000.json Final route: 6.10 seconds and 10 takeoffs.
+checkpoint-42-10000.json    Final route: 6.40 seconds and 10 takeoffs.
+checkpoint-98765-10000.json Final route: 6.57 seconds and 11 takeoffs.
+
+CONTINUE TRAINING
+In the extracted experiment:
+  sh ./train.sh --episodes 1000 --load ./checkpoint-12345-10000.json --save ./continued-checkpoint.json --save-every 100
+Use a new filename to preserve original results. Checkpoints retain their saved
+exploration schedule and counters. Loading an OLD table does not automatically
+change its decay to 0.999 or raise its current exploration probability.
+Checkpoints omit RNG state, so resuming is not an exact seeded continuation.
+
+REPRODUCE
+See REPRODUCE.txt in experiment.zip for exact commands. Each test starts a fresh
+agent and trains continuously for 10,000 episodes before evaluating nine saved
+milestones. The same three seeds and scripts are used as in the first two experiments.
+To rebuild this report, keep all three archive folders together and run analyze.py
+with Python, ReportLab and pdftoppm available. Rebuilding replaces generated report files
+and requires refreshing SHA256SUMS.json; use a copy if preserving archive bytes.
+
+Only three training seeds and one map/spawn were tested. Repeated greedy episodes
+usually repeat the same route; they are not independent evidence of generalization.
+.gdignore prevents Godot from importing experiment files.

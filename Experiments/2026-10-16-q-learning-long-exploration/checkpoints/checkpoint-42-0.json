@@ -1,0 +1,64 @@
+{
+	"discount": 0.95,
+	"epsilon": 1.0,
+	"epsilon_decay": 0.999,
+	"format_version": 1,
+	"learning_rate": 0.1,
+	"minimum_epsilon": 0.05,
+	"q_table": {},
+	"schema": {
+		"action_inputs": [
+			{
+				"jump_pressed": false,
+				"move_axis": 0.0
+			},
+			{
+				"jump_pressed": false,
+				"move_axis": -1.0
+			},
+			{
+				"jump_pressed": false,
+				"move_axis": 1.0
+			},
+			{
+				"jump_pressed": true,
+				"move_axis": 0.0
+			},
+			{
+				"jump_pressed": true,
+				"move_axis": -1.0
+			},
+			{
+				"jump_pressed": true,
+				"move_axis": 1.0
+			}
+		],
+		"actions": [
+			"Idle",
+			"Left",
+			"Right",
+			"Jump",
+			"Left + jump",
+			"Right + jump"
+		],
+		"motion": [
+			"grounded",
+			"rising",
+			"falling"
+		],
+		"near_distance": 1.0,
+		"orb_alignment": 0.5,
+		"rays": [
+			6.0,
+			2.0,
+			0.0,
+			4.0,
+			5.0,
+			3.0
+		],
+		"ticks_per_decision": 6.0
+	},
+	"training_episodes": 0,
+	"training_wins": 0,
+	"updates": 0
+}

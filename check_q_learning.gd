@@ -69,7 +69,7 @@ func run_check() -> void:
 	learner.learn(state, 1, -1.0, next_state)
 	check(is_equal_approx(learner.values(state)[1], 0.116), "terminal update never bootstraps from next state")
 	learner.finish_episode(true)
-	check(learner.training_episodes == 1 and learner.training_wins == 1 and is_equal_approx(learner.epsilon, 0.995), "training outcome and exploration decay")
+	check(learner.training_episodes == 1 and learner.training_wins == 1 and is_equal_approx(learner.epsilon, 0.999), "training outcome and exploration decay")
 	learner.epsilon = 0.05
 	learner.finish_episode(false)
 	check(is_equal_approx(learner.epsilon, 0.05), "exploration has a floor")

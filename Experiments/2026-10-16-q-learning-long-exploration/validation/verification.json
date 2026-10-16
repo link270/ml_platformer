@@ -1,0 +1,24 @@
+{
+  "checks_passed": [
+    "check.gd",
+    "check_q_learning.gd",
+    "check_q_checkpoint.gd",
+    "check_headless_training.gd",
+    "check_training_trace.gd",
+    "check_headless_menu.gd",
+    "check_training_checkins.gd"
+  ],
+  "worker_parity": {
+    "seed": 12345,
+    "episodes": 1000,
+    "exact_checkpoint_match_before_diagnostic_evaluation": true,
+    "exact_checkpoint_match_after_equal_JSON_load_save_round_trip": true
+  },
+  "diagnostic_scripts_unchanged": true,
+  "previous_archives_checksum_verified": true,
+  "frozen_policy_probes_identical_to_time_penalty_experiment": true,
+  "state_alias_probe_unchanged": true,
+  "default_game_save_unchanged": true,
+  "source_change_from_time_penalty": "Agents/QLearningAgent.gd: epsilon_decay 0.995 -> 0.999",
+  "engine_notes": "Standalone extracted projects resolve unimported UIDs through unchanged text paths. A macOS certificate lookup error appeared in the focused check, which passed."
+}

@@ -1,0 +1,10 @@
+{
+	"behavior_sha256": "f62479de568686c103ce28117438829366bc735a728895e19038b20b4e9b2706",
+	"episodes": 1000,
+	"episodes_per_second": 11.5899028766139,
+	"physics_steps": 878498,
+	"seconds": 86.282,
+	"steps_per_second": 10181.7064972996,
+	"updates": 146692,
+	"wins": 203
+}
