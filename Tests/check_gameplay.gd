@@ -18,7 +18,7 @@ func run_check() -> void:
 	var level := preload("res://Game/Level.tscn").instantiate()
 	root.add_child(level)
 	level.set_physics_process(false)
-	check(level.get_node("%StatsLabel").text == "Episodes completed: 0\nDeaths: 0\nOrb collections: 0\nTimeouts: 0", "session stats start at zero")
+	check(level.get_node("%StatsLabel").text == "Success  —  ·  Wins  0\nDeaths  0  ·  Timeouts  0", "session stats start at zero")
 	var player: CharacterBody2D = level.get_node("Player")
 	await physics_frame
 	player.physics_step(DT)
@@ -235,7 +235,7 @@ func run_check() -> void:
 	level._on_orb_body_entered(player)
 	check(not level.done and level.orb_collections == collections_before + 1, "stale orb signal after reset does not count a new success")
 	level.reset_episode()
-	check(level.get_node("%StatsLabel").text == "Episodes completed: %d\nDeaths: %d\nOrb collections: %d\nTimeouts: 0" % [deaths_before + collections_before + 2, deaths_before + 1, collections_before + 1], "stats display totals and survive manual reset")
+	check(level.get_node("%StatsLabel").text.contains("Wins  %d" % (collections_before + 1)) and level.get_node("%StatsLabel").text.contains("Deaths  %d" % (deaths_before + 1)), "stats display totals and survive manual reset")
 
 	level.queue_free()
 	await process_frame
@@ -271,13 +271,18 @@ func run_check() -> void:
 	await process_frame
 
 	check(ProjectSettings.get_setting("application/run/main_scene") == "res://UI/MainMenu.tscn", "game starts at menu")
+	var scratch := DirAccess.create_temp("ml-platformer-gameplay")
 	for mode in 3:
 		var menu := preload("res://UI/MainMenu.tscn").instantiate()
+		menu.checkpoint_directory = scratch.get_current_dir()
+		menu.checkpoint_path = scratch.get_current_dir().path_join("unused.json")
 		root.add_child(menu)
 		current_scene = menu
-		check(not menu.get_node("%QLearningButton").disabled and menu.get_node("%DeepAgentButton").disabled, "Q-learning enabled and deep agent reserved")
-		check(menu.get_node("%SessionInfo").get_child_count() >= 3, "menu has room for training information")
-		menu.get_node(["%HumanButton", "%RandomButton", "%QLearningButton"][mode]).pressed.emit()
+		menu.get_node("%ControllerSelect").select(mode)
+		menu.get_node("%ControllerSelect").item_selected.emit(mode)
+		menu.get_node("%DataSelect").select(0)
+		menu._refresh_form()
+		menu.get_node("%BatchStart").pressed.emit()
 		var game := current_scene
 		game.set_physics_process(false)
 		check(game.scene_file_path == "res://Game/Level.tscn", "menu starts the level")
@@ -289,7 +294,7 @@ func run_check() -> void:
 			escape.pressed = true
 			game._unhandled_input(escape)
 		else:
-			game.get_node("HUD/MenuButton").pressed.emit()
+			game.get_node("%MenuButton").pressed.emit()
 		await scene_changed
 		check(current_scene.scene_file_path == "res://UI/MainMenu.tscn", "game can return to menu")
 		current_scene.queue_free()

@@ -58,3 +58,7 @@ toggle_rays={
 
 2d_physics/layer_1="World"
 2d_physics/layer_2="Player"
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(0.075, 0.09, 0.105, 1)

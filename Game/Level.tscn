@@ -5,19 +5,10 @@
 [ext_resource type="Script" uid="uid://2s2fxxpu21as" path="res://Game/Level.gd" id="3"]
 [ext_resource type="Script" uid="uid://ce7u827pg64da" path="res://UI/AgentPanel.gd" id="4"]
 
+[ext_resource type="Theme" path="res://UI/InterfaceTheme.tres" id="5"]
+
 [sub_resource type="CircleShape2D" id="OrbShape"]
 radius = 12.0
-
-[sub_resource type="StyleBoxFlat" id="StatsPanelStyle"]
-content_margin_left = 16.0
-content_margin_top = 12.0
-content_margin_right = 16.0
-content_margin_bottom = 12.0
-bg_color = Color(0.08, 0.1, 0.14, 0.95)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
 
 [node name="Level" type="Node2D" unique_id=116831945]
 script = ExtResource("3")
@@ -172,126 +163,133 @@ polygon = PackedVector2Array(0, -12, 8, -8, 12, 0, 8, 8, 0, 12, -8, 8, -12, 0, -
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Orb" unique_id=117102797]
 shape = SubResource("OrbShape")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1239502581]
-offset_top = 60.0
-offset_right = 100.0
-offset_bottom = 300.0
+[node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="StateLabel" type="Label" parent="MarginContainer" unique_id=777523075]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 1
-
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1299561810]
-
-[node name="ModeLabel" type="Label" parent="HUD" unique_id=279445077]
-unique_name_in_owner = true
+[node name="TopBar" type="HBoxContainer" parent="HUD"]
 offset_left = 16.0
 offset_top = 12.0
-offset_right = 780.0
-offset_bottom = 40.0
-
-[node name="MenuButton" type="Button" parent="HUD" unique_id=1398531956]
-unique_name_in_owner = true
-offset_left = 816.0
-offset_top = 12.0
 offset_right = 944.0
-offset_bottom = 48.0
+offset_bottom = 46.0
+theme = ExtResource("5")
+theme_override_constants/separation = 16
+
+[node name="ModeLabel" type="Label" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RunLabel" type="Label" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.73, 0.74, 1)
+
+[node name="MenuButton" type="Button" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Menu"
 focus_mode = 0
-text = "Menu (Esc)"
+tooltip_text = "Esc · Return to setup."
 
-[node name="StatsPanel" type="PanelContainer" parent="HUD" unique_id=335697052]
-offset_left = 688.0
-offset_top = 64.0
-offset_right = 944.0
-offset_bottom = 172.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StatsPanelStyle")
-
-[node name="StatsLabel" type="Label" parent="HUD/StatsPanel" unique_id=1259324459]
+[node name="AgentPanel" type="PanelContainer" parent="HUD"]
 unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.96, 1, 1)
-text = "Episodes completed: 0
-Deaths: 0
-Orb collections: 0"
-
-[node name="AgentPanel" type="PanelContainer" parent="HUD" unique_id=973659701]
-unique_name_in_owner = true
-visible = false
 offset_left = 16.0
-offset_top = 64.0
-offset_right = 320.0
-theme_override_styles/panel = SubResource("StatsPanelStyle")
+offset_top = 60.0
+offset_right = 244.0
+theme = ExtResource("5")
 script = ExtResource("4")
 
-[node name="Content" type="VBoxContainer" parent="HUD/AgentPanel" unique_id=1541315904]
+[node name="Content" type="VBoxContainer" parent="HUD/AgentPanel"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AgentHeading" type="Label" parent="HUD/AgentPanel/Content" unique_id=1681195825]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Training"
-
-[node name="AgentLabel" type="Label" parent="HUD/AgentPanel/Content" unique_id=1387606090]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.96, 1, 1)
-theme_override_constants/line_spacing = 4
-theme_override_font_sizes/font_size = 16
-
-[node name="SpeedRow" type="HBoxContainer" parent="HUD/AgentPanel/Content" unique_id=999184527]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="SpeedLabel" type="Label" parent="HUD/AgentPanel/Content/SpeedRow" unique_id=382363590]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Speed"
-
-[node name="SpeedSelect" type="OptionButton" parent="HUD/AgentPanel/Content/SpeedRow" unique_id=361114194]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Run more fixed physics steps per second. Evaluate switches back to 1x."
-focus_mode = 0
-
-[node name="Actions" type="HBoxContainer" parent="HUD/AgentPanel/Content" unique_id=2020152244]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="EvaluationButton" type="Button" parent="HUD/AgentPanel/Content/Actions" unique_id=1503085605]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Restart the episode and freeze learning and exploration. Keep the current Q-table."
-focus_mode = 0
-text = "Evaluate"
-
-[node name="SaveButton" type="Button" parent="HUD/AgentPanel/Content/Actions" unique_id=1358453473]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Save the table, learning settings, and training totals. Replaces the previous checkpoint."
-focus_mode = 0
-text = "Save Q-table"
-
-[node name="CheckpointControls" type="VBoxContainer" parent="HUD/AgentPanel/Content" unique_id=1545262287]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="SaveStatus" type="Label" parent="HUD/AgentPanel/Content/CheckpointControls" unique_id=1234484215]
+[node name="StatsLabel" type="Label" parent="HUD/AgentPanel/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
+
+[node name="SpeedRow" type="HBoxContainer" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpeedLabel" type="Label" parent="HUD/AgentPanel/Content/SpeedRow"]
+layout_mode = 2
+text = "Speed"
+size_flags_horizontal = 3
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+
+[node name="SpeedSelect" type="OptionButton" parent="HUD/AgentPanel/Content/SpeedRow"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+
+[node name="DetailsButton" type="Button" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "More"
+toggle_mode = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="Details" type="VBoxContainer" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 8
+
+[node name="AgentLabel" type="Label" parent="HUD/AgentPanel/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="Actions" type="VBoxContainer" parent="HUD/AgentPanel/Content/Details"]
+layout_mode = 2
+
+[node name="EvaluationButton" type="Button" parent="HUD/AgentPanel/Content/Details/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Evaluate"
+focus_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="SaveButton" type="Button" parent="HUD/AgentPanel/Content/Details/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save now"
+focus_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="CheckpointControls" type="VBoxContainer" parent="HUD/AgentPanel/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SaveStatus" type="Label" parent="HUD/AgentPanel/Content/Details/CheckpointControls"]
+unique_name_in_owner = true
+layout_mode = 2
 autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
+
+[node name="StateLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 260.0
+offset_top = 60.0
+offset_right = 640.0
+theme = ExtResource("5")
+theme_override_font_sizes/font_size = 12
+
+[node name="ControlsHint" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 516.0
+offset_right = 944.0
+theme = ExtResource("5")
+text = "R  restart     V  sensors     Esc  menu"
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.61, 0.63, 1)
 
 [connection signal="body_entered" from="Orb" to="." method="_on_orb_body_entered"]
-[connection signal="pressed" from="HUD/MenuButton" to="." method="_return_to_menu"]
+[connection signal="pressed" from="HUD/TopBar/MenuButton" to="." method="_return_to_menu"]
 [connection signal="item_selected" from="HUD/AgentPanel/Content/SpeedRow/SpeedSelect" to="." method="_set_training_speed"]
-[connection signal="pressed" from="HUD/AgentPanel/Content/Actions/EvaluationButton" to="." method="_toggle_evaluation"]
-[connection signal="pressed" from="HUD/AgentPanel/Content/Actions/SaveButton" to="." method="_save_checkpoint"]
+[connection signal="pressed" from="HUD/AgentPanel/Content/Details/Actions/EvaluationButton" to="." method="_toggle_evaluation"]
+[connection signal="pressed" from="HUD/AgentPanel/Content/Details/Actions/SaveButton" to="." method="_save_checkpoint"]
+[connection signal="toggled" from="HUD/AgentPanel/Content/DetailsButton" to="." method="_show_details"]

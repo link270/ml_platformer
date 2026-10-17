@@ -27,6 +27,10 @@ enum ControlMode { HUMAN, RANDOM, Q_LEARNING }
 
 var headless_training := false
 var check_in_mode := false
+var run_limit := 0
+var session_runs := 0
+var session_finished := false
+var autosave_training := false
 var display_state := false
 var done := false
 var reward := 0.0
@@ -61,26 +65,25 @@ func _ready() -> void:
 		return
 	if control_mode == ControlMode.Q_LEARNING:
 		player.show_rays = true
-		player.z_index = 1
 		player.visible_ray_indices = QLearningAgent.State.RAY_INDICES
-		%AgentPanel.show()
 		for speed in TRAINING_SPEEDS:
 			%SpeedSelect.add_item("%dx" % speed)
 		%SpeedSelect.select(0)
-		%ModeLabel.text = "Q-learning  |  10 decisions/game sec  |  R: restart episode"
-		%MenuButton.tooltip_text = "Save Q-table before leaving to keep your latest training."
-		%CheckpointControls.show()
 		%SaveStatus.text = checkpoint_status
 		%SaveStatus.tooltip_text = ProjectSettings.globalize_path(checkpoint_path)
 		_update_agent_panel()
 	else:
-		%ModeLabel.text = "Human  |  A/D or arrows: move  |  Space: jump  |  R: reset" if control_mode == ControlMode.HUMAN else "Random agent  |  10 decisions/sec  |  R: reset"
+		%SpeedRow.hide()
+		%DetailsButton.hide()
+		%ModeLabel.text = "Human playable" if control_mode == ControlMode.HUMAN else "Random agent · Evaluation"
+	if control_mode == ControlMode.HUMAN:
+		%ControlsHint.text = "A / D  move     Space  jump     R  restart     V  sensors     Esc  menu"
 	if check_in_mode:
 		%EvaluationButton.hide()
 		%SaveButton.hide()
 		%CheckpointControls.hide()
-		%SpeedSelect.get_parent().hide()
-		%MenuButton.text = "Stop (Esc)"
+		%SpeedRow.hide()
+		%MenuButton.text = "Stop check-in"
 		%MenuButton.tooltip_text = "Stop the batch. Training was saved before this check-in."
 	_update_stats()
 
@@ -94,6 +97,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _return_to_menu() -> void:
 	if check_in_mode:
 		check_in_cancelled.emit()
+		return
+	if autosave_training and agent != null and agent.training and not _save_checkpoint():
 		return
 	get_tree().change_scene_to_file("res://UI/MainMenu.tscn")
 
@@ -116,14 +121,34 @@ func _exit_tree() -> void:
 		Engine.time_scale = _normal_time_scale
 
 
-func _save_checkpoint() -> void:
-	if control_mode != ControlMode.Q_LEARNING or check_in_mode:
-		return
+func _save_checkpoint() -> bool:
+	if control_mode != ControlMode.Q_LEARNING or check_in_mode or not agent.training:
+		return false
 	var error := Checkpoint.save_checkpoint(agent, checkpoint_path)
-	%SaveStatus.text = "Saved: %d training episodes, %d updates." % [agent.training_episodes, agent.updates] if error.is_empty() else error
+	%SaveStatus.text = "Saved: %d training runs." % agent.training_episodes if error.is_empty() else error
+	if not error.is_empty():
+		%DetailsButton.button_pressed = true
+		_show_details(true)
+	return error.is_empty()
+
+
+func _show_details(expanded: bool) -> void:
+	%Details.visible = expanded
+	%DetailsButton.text = "Less" if expanded else "More"
+
+
+func _finish_session() -> void:
+	session_finished = true
+	if control_mode == ControlMode.Q_LEARNING:
+		_set_training_speed(0)
+		if autosave_training and agent.training:
+			_save_checkpoint()
+	_update_stats()
 
 
 func _physics_process(delta: float) -> void:
+	if session_finished:
+		return
 	if check_in_mode:
 		if not done:
 			_step_agent(delta)
@@ -135,10 +160,9 @@ func _physics_process(delta: float) -> void:
 		else:
 			_step_agent(delta)
 		return
-	if Input.is_action_just_pressed("toggle_rays") and control_mode != ControlMode.Q_LEARNING:
+	if Input.is_action_just_pressed("toggle_rays"):
 		player.show_rays = not player.show_rays
 		player.queue_redraw()
-		display_state = not display_state
 	if Input.is_action_just_pressed("reset") or done:
 		reset_episode()
 	elif control_mode == ControlMode.HUMAN:
@@ -172,13 +196,28 @@ func _step_agent(delta: float) -> void:
 	if done:
 		agent.finish_episode(orb_collected)
 		last_episode_return = episode_return
+		session_runs += 1
 		episode_completed.emit()
+		if run_limit > 0 and session_runs >= run_limit:
+			_finish_session()
+		elif not headless_training:
+			_update_stats()
 
 
 func _toggle_evaluation() -> void:
 	if control_mode != ControlMode.Q_LEARNING or check_in_mode:
 		return
+	if autosave_training and agent.training and not _save_checkpoint():
+		return
+	session_runs = 0
+	session_finished = false
+	deaths = 0
+	orb_collections = 0
+	timeouts = 0
 	agent.training = not agent.training
+	# A mode change starts another batch using the same selected data.
+	if run_limit > 0:
+		autosave_training = agent.training
 	agent.exploring = false
 	if not agent.training:
 		_set_training_speed(0)
@@ -187,11 +226,15 @@ func _toggle_evaluation() -> void:
 	# Discard the partial episode so one transition never spans training modes.
 	reset_episode()
 	_update_agent_panel()
+	_update_stats()
 
 
 func _update_agent_panel() -> void:
 	if control_mode == ControlMode.Q_LEARNING:
 		%AgentPanel.update_display(agent, last_episode_return)
+		%ModeLabel.text = "Q-learning · " + ("Training" if agent.training else "Evaluation")
+		%SpeedSelect.disabled = not agent.training or session_finished
+		%SaveButton.disabled = not agent.training
 
 
 func _decision_required() -> bool:
@@ -293,4 +336,11 @@ func _on_orb_body_entered(body: Node2D) -> void:
 func _update_stats() -> void:
 	if headless_training:
 		return
-	%StatsLabel.text = "Episodes completed: %d\nDeaths: %d\nOrb collections: %d\nTimeouts: %d" % [deaths + orb_collections + timeouts, deaths, orb_collections, timeouts]
+	var total := deaths + orb_collections + timeouts
+	var success := "—" if total == 0 else "%.0f%%" % (100.0 * orb_collections / total)
+	%StatsLabel.text = "Success  %s  ·  Wins  %d\nDeaths  %d  ·  Timeouts  %d" % [success, orb_collections, deaths, timeouts]
+	if control_mode == ControlMode.HUMAN:
+		%RunLabel.text = "Free play"
+	else:
+		var count := "%d / %d" % [session_runs, run_limit] if run_limit > 0 else str(total)
+		%RunLabel.text = ("Finished · " if session_finished else "Runs  ") + count

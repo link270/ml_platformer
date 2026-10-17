@@ -47,7 +47,9 @@ func run_check() -> void:
 		menu.checkpoint_path = args[0]
 		root.add_child(menu)
 		current_scene = menu
-		menu.get_node("%LoadEvaluationButton").pressed.emit()
+		menu.get_node("%ModeSelect").select(1)
+		menu._refresh_form()
+		menu.get_node("%BatchStart").pressed.emit()
 		check(current_scene != menu, "game menu loads headless checkpoint")
 		if current_scene != menu:
 			var level := current_scene
