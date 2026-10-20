@@ -1,0 +1,59 @@
+{
+  "previous_archives": {
+    "2026-10-16-q-learning-long-exploration": {
+      "files_verified": 72
+    },
+    "2026-10-16-q-learning-baseline": {
+      "files_verified": 49
+    },
+    "2026-10-16-q-learning-time-penalty": {
+      "files_verified": 67
+    }
+  },
+  "variants": {
+    "discount_099": {
+      "source_changes": [
+        "Agents/QLearningAgent.gd"
+      ],
+      "fresh_training_episodes": 30000,
+      "frozen_evaluations": 810,
+      "checks": [
+        "variant settings/boundaries/schedule/checkpoint roundtrip",
+        "checkpoint regression",
+        "visible/headless full physics and learning trace parity (3 seeds, 50 episodes each)"
+      ],
+      "diagnostic_unchanged": true
+    },
+    "horizontal_bins": {
+      "source_changes": [
+        "Agents/QCheckpoint.gd",
+        "Agents/QState.gd"
+      ],
+      "fresh_training_episodes": 30000,
+      "frozen_evaluations": 810,
+      "checks": [
+        "variant settings/boundaries/schedule/checkpoint roundtrip",
+        "checkpoint regression",
+        "visible/headless full physics and learning trace parity (3 seeds, 50 episodes each)"
+      ],
+      "diagnostic_unchanged": true
+    },
+    "late_learning_rate": {
+      "source_changes": [
+        "Agents/QCheckpoint.gd",
+        "Agents/QLearningAgent.gd"
+      ],
+      "fresh_training_episodes": 30000,
+      "frozen_evaluations": 810,
+      "checks": [
+        "variant settings/boundaries/schedule/checkpoint roundtrip",
+        "checkpoint regression",
+        "visible/headless full physics and learning trace parity (3 seeds, 50 episodes each)"
+      ],
+      "diagnostic_unchanged": true
+    }
+  },
+  "main_game_core_sources_unchanged": true,
+  "late_learning_rate_matches_reference_through_3000_episodes_all_seeds": true,
+  "startup_note": "Godot prints a macOS CA certificate lookup error in this sandbox; scripts complete and checks pass. No networking is used."
+}

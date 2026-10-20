@@ -1,0 +1,22 @@
+--- current/Agents/QCheckpoint.gd
++++ late_learning_rate/Agents/QCheckpoint.gd
+@@ -10,7 +10,7 @@
+ 
+ 
+ static func _schema() -> Dictionary:
+-	var schema := {"rays": State.RAY_INDICES, "near_distance": State.NEAR_DISTANCE,
++	var schema := {"learning_schedule": "alpha_0.1_through_3000_linear_to_0.02_at_10000", "rays": State.RAY_INDICES, "near_distance": State.NEAR_DISTANCE,
+ 		"orb_alignment": State.ALIGN_TOLERANCE, "motion": ["grounded", "rising", "falling"],
+ 		"actions": Agent.ACTION_NAMES, "action_inputs": Agent.ACTION_INPUTS,
+ 		"ticks_per_decision": Agent.TICKS_PER_DECISION}
+--- current/Agents/QLearningAgent.gd
++++ late_learning_rate/Agents/QLearningAgent.gd
+@@ -58,6 +58,8 @@
+ func finish_episode(success: bool) -> void:
+ 	if training:
+ 		training_episodes += 1
++		# Keep early learning unchanged; taper alpha after exploration reaches its floor.
++		learning_rate = maxf(0.02, 0.1 - 0.08 * maxf(0.0, training_episodes - 3000.0) / 7000.0)
+ 		training_wins += int(success)
+ 		epsilon = maxf(minimum_epsilon, epsilon * epsilon_decay)
+ 	else:

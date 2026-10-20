@@ -1,0 +1,31 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: res://Level.tscn:3 - ext_resource, invalid UID: uid://brdejdk017ayb - using text path instead: res://Player.tscn
+     at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Player.gd
+     at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:5 - ext_resource, invalid UID: uid://2s2fxxpu21as - using text path instead: res://Level.gd
+     at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:6 - ext_resource, invalid UID: uid://ce7u827pg64da - using text path instead: res://AgentPanel.gd
+     at: load (scene/resources/resource_format_text.cpp:501)
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+TRAIN seed=98765 episodes=0 wins=0 rows=0
+TRAIN seed=98765 episodes=100 wins=1 rows=78
+TRAIN seed=98765 episodes=300 wins=13 rows=114
+TRAIN seed=98765 episodes=600 wins=52 rows=126
+TRAIN seed=98765 episodes=1000 wins=221 rows=134
+TRAIN seed=98765 episodes=2000 wins=833 rows=135
+TRAIN seed=98765 episodes=3000 wins=1561 rows=137
+TRAIN seed=98765 episodes=5000 wins=3165 rows=141
+TRAIN seed=98765 episodes=10000 wins=7299 rows=141
+seed=98765 episode=0 eval wins=0/30 timeout=12 rows=0
+seed=98765 episode=100 eval wins=0/30 timeout=0 rows=78
+seed=98765 episode=300 eval wins=0/30 timeout=30 rows=114
+seed=98765 episode=600 eval wins=0/30 timeout=30 rows=126
+seed=98765 episode=1000 eval wins=30/30 timeout=0 rows=134
+seed=98765 episode=2000 eval wins=30/30 timeout=0 rows=135
+seed=98765 episode=3000 eval wins=30/30 timeout=0 rows=137
+seed=98765 episode=5000 eval wins=30/30 timeout=0 rows=141
+seed=98765 episode=10000 eval wins=30/30 timeout=0 rows=141
+DONE seed 98765 seconds 362.596

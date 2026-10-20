@@ -1,0 +1,41 @@
+--- current/Agents/QCheckpoint.gd
++++ horizontal_bins/Agents/QCheckpoint.gd
+@@ -10,7 +10,7 @@
+ 
+ 
+ static func _schema() -> Dictionary:
+-	var schema := {"rays": State.RAY_INDICES, "near_distance": State.NEAR_DISTANCE,
++	var schema := {"horizontal_bins": ["no_hit", "near_0_to_1", "far_1_to_2"], "rays": State.RAY_INDICES, "near_distance": State.NEAR_DISTANCE,
+ 		"orb_alignment": State.ALIGN_TOLERANCE, "motion": ["grounded", "rising", "falling"],
+ 		"actions": Agent.ACTION_NAMES, "action_inputs": Agent.ACTION_INPUTS,
+ 		"ticks_per_decision": Agent.TICKS_PER_DECISION}
+@@ -92,7 +92,7 @@
+ 	if not table is Dictionary or table.size() > State.MAX_STATES:
+ 		return "Invalid Q-table."
+ 	var key_pattern := RegEx.new()
+-	key_pattern.compile("^[01]{6}\\|(-1|0|1)\\|(-1|0|1)\\|[012]\\z")
++	key_pattern.compile("^[012]{2}[01]{4}\\|(-1|0|1)\\|(-1|0|1)\\|[012]\\z")
+ 	for key in table:
+ 		if not key is String or key_pattern.search(key) == null:
+ 			return "Invalid Q-table state key."
+--- current/Agents/QState.gd
++++ horizontal_bins/Agents/QState.gd
+@@ -5,13 +5,16 @@
+ const RAY_NAMES := ["L", "R", "U", "D", "DL", "DR"]
+ const NEAR_DISTANCE := 1.0
+ const ALIGN_TOLERANCE := 0.5
+-const MAX_STATES := 1728 # 2^6 rays * 3 horizontal * 3 vertical * 3 motion.
++const MAX_STATES := 3888 # 3^2 horizontal rays * 2^4 other rays * 3^3 direction/motion.
+ 
+ 
+ static func ray_bits(state: Dictionary) -> String:
+ 	var bits := ""
+ 	for index in RAY_INDICES:
+-		bits += "1" if state.ray_hits[index] and state.ray_clearances[index] <= NEAR_DISTANCE else "0"
++		if index in [6, 2] and state.ray_hits[index] and state.ray_clearances[index] > NEAR_DISTANCE:
++			bits += "2" # Far hit: beyond one unit, within the existing two-unit ray.
++		else:
++			bits += "1" if state.ray_hits[index] and state.ray_clearances[index] <= NEAR_DISTANCE else "0"
+ 	return bits
+ 
+ 

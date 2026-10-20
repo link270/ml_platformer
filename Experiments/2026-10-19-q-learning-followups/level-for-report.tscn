@@ -1,0 +1,297 @@
+[gd_scene format=3 uid="uid://cdklykyumwt7i"]
+
+[ext_resource type="PackedScene" uid="uid://brdejdk017ayb" path="res://Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://Block.tscn" id="2"]
+[ext_resource type="Script" uid="uid://2s2fxxpu21as" path="res://Level.gd" id="3"]
+[ext_resource type="Script" uid="uid://ce7u827pg64da" path="res://AgentPanel.gd" id="4"]
+
+[sub_resource type="CircleShape2D" id="OrbShape"]
+radius = 12.0
+
+[sub_resource type="StyleBoxFlat" id="StatsPanelStyle"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.08, 0.1, 0.14, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="Level" type="Node2D" unique_id=116831945]
+script = ExtResource("3")
+
+[node name="Spawn" type="Marker2D" parent="." unique_id=76136653]
+position = Vector2(80, 464)
+
+[node name="Player" parent="." unique_id=730347531 instance=ExtResource("1")]
+position = Vector2(80, 464)
+
+[node name="FloorLeft16" parent="." unique_id=406739767 instance=ExtResource("2")]
+position = Vector2(16, 496)
+
+[node name="FloorLeft48" parent="." unique_id=1714344473 instance=ExtResource("2")]
+position = Vector2(48, 496)
+
+[node name="FloorLeft80" parent="." unique_id=929096292 instance=ExtResource("2")]
+position = Vector2(80, 496)
+
+[node name="FloorLeft112" parent="." unique_id=748110962 instance=ExtResource("2")]
+position = Vector2(112, 496)
+
+[node name="FloorLeft144" parent="." unique_id=1910787596 instance=ExtResource("2")]
+position = Vector2(144, 496)
+
+[node name="FloorLeft176" parent="." unique_id=557711846 instance=ExtResource("2")]
+position = Vector2(176, 496)
+
+[node name="FloorLeft208" parent="." unique_id=1875583422 instance=ExtResource("2")]
+position = Vector2(208, 496)
+
+[node name="FloorLeft240" parent="." unique_id=228735146 instance=ExtResource("2")]
+position = Vector2(240, 496)
+
+[node name="FloorLeft272" parent="." unique_id=1100296520 instance=ExtResource("2")]
+position = Vector2(272, 496)
+
+[node name="FloorLeft304" parent="." unique_id=1364623440 instance=ExtResource("2")]
+position = Vector2(304, 496)
+
+[node name="FloorLeft336" parent="." unique_id=1309696235 instance=ExtResource("2")]
+position = Vector2(336, 496)
+
+[node name="FloorLeft368" parent="." unique_id=1905174843 instance=ExtResource("2")]
+position = Vector2(368, 496)
+
+[node name="FloorLeft400" parent="." unique_id=1599128805 instance=ExtResource("2")]
+position = Vector2(400, 496)
+
+[node name="FloorRight496" parent="." unique_id=2079763579 instance=ExtResource("2")]
+position = Vector2(496, 496)
+
+[node name="FloorRight528" parent="." unique_id=540252450 instance=ExtResource("2")]
+position = Vector2(528, 496)
+
+[node name="FloorRight560" parent="." unique_id=2061789370 instance=ExtResource("2")]
+position = Vector2(560, 496)
+
+[node name="FloorRight592" parent="." unique_id=2050531099 instance=ExtResource("2")]
+position = Vector2(592, 496)
+
+[node name="FloorRight624" parent="." unique_id=771902472 instance=ExtResource("2")]
+position = Vector2(624, 496)
+
+[node name="FloorRight656" parent="." unique_id=392997778 instance=ExtResource("2")]
+position = Vector2(656, 496)
+
+[node name="FloorRight688" parent="." unique_id=462356575 instance=ExtResource("2")]
+position = Vector2(688, 496)
+
+[node name="FloorRight720" parent="." unique_id=1392461022 instance=ExtResource("2")]
+position = Vector2(720, 496)
+
+[node name="FloorRight752" parent="." unique_id=1743080098 instance=ExtResource("2")]
+position = Vector2(752, 496)
+
+[node name="FloorRight784" parent="." unique_id=2002925472 instance=ExtResource("2")]
+position = Vector2(784, 496)
+
+[node name="FloorRight816" parent="." unique_id=1413140299 instance=ExtResource("2")]
+position = Vector2(816, 496)
+
+[node name="FloorRight848" parent="." unique_id=1038901317 instance=ExtResource("2")]
+position = Vector2(848, 496)
+
+[node name="FloorRight880" parent="." unique_id=1078063432 instance=ExtResource("2")]
+position = Vector2(880, 496)
+
+[node name="FloorRight912" parent="." unique_id=834617058 instance=ExtResource("2")]
+position = Vector2(912, 496)
+
+[node name="FloorRight944" parent="." unique_id=1181549687 instance=ExtResource("2")]
+position = Vector2(944, 496)
+
+[node name="Wall" parent="." unique_id=1765854434 instance=ExtResource("2")]
+position = Vector2(336, 465)
+
+[node name="Ceiling144" parent="." unique_id=1020011646 instance=ExtResource("2")]
+position = Vector2(144, 384)
+
+[node name="Ceiling176" parent="." unique_id=2038864641 instance=ExtResource("2")]
+position = Vector2(176, 384)
+
+[node name="Ceiling208" parent="." unique_id=1478767645 instance=ExtResource("2")]
+position = Vector2(208, 384)
+
+[node name="Platform560" parent="." unique_id=1108028442 instance=ExtResource("2")]
+position = Vector2(560, 441)
+
+[node name="Platform561" parent="." unique_id=679466324 instance=ExtResource("2")]
+position = Vector2(367, 433)
+
+[node name="Platform562" parent="." unique_id=2102065255 instance=ExtResource("2")]
+position = Vector2(399, 402)
+
+[node name="Platform563" parent="." unique_id=368292193 instance=ExtResource("2")]
+position = Vector2(473, 358)
+
+[node name="Platform564" parent="." unique_id=718430068 instance=ExtResource("2")]
+position = Vector2(505, 327)
+
+[node name="Wall3" parent="." unique_id=680083313 instance=ExtResource("2")]
+position = Vector2(537, 295)
+
+[node name="Platform565" parent="." unique_id=184688382 instance=ExtResource("2")]
+position = Vector2(568, 263)
+
+[node name="Wall4" parent="." unique_id=212195456 instance=ExtResource("2")]
+position = Vector2(640, 237)
+
+[node name="Platform567" parent="." unique_id=34560137 instance=ExtResource("2")]
+position = Vector2(671, 205)
+
+[node name="Platform568" parent="." unique_id=1251804718 instance=ExtResource("2")]
+position = Vector2(703, 174)
+
+[node name="Platform592" parent="." unique_id=1544190197 instance=ExtResource("2")]
+position = Vector2(592, 441)
+
+[node name="Platform624" parent="." unique_id=1853384235 instance=ExtResource("2")]
+position = Vector2(624, 441)
+
+[node name="Orb" type="Area2D" parent="." unique_id=1561122874]
+position = Vector2(720, 456)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Visual" type="Polygon2D" parent="Orb" unique_id=709292251]
+color = Color(1, 0.9, 0.2, 1)
+polygon = PackedVector2Array(0, -12, 8, -8, 12, 0, 8, 8, 0, 12, -8, 8, -12, 0, -8, -8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Orb" unique_id=117102797]
+shape = SubResource("OrbShape")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1239502581]
+offset_top = 60.0
+offset_right = 100.0
+offset_bottom = 300.0
+
+[node name="StateLabel" type="Label" parent="MarginContainer" unique_id=777523075]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1299561810]
+
+[node name="ModeLabel" type="Label" parent="HUD" unique_id=279445077]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 780.0
+offset_bottom = 40.0
+
+[node name="MenuButton" type="Button" parent="HUD" unique_id=1398531956]
+unique_name_in_owner = true
+offset_left = 816.0
+offset_top = 12.0
+offset_right = 944.0
+offset_bottom = 48.0
+focus_mode = 0
+text = "Menu (Esc)"
+
+[node name="StatsPanel" type="PanelContainer" parent="HUD" unique_id=335697052]
+offset_left = 688.0
+offset_top = 64.0
+offset_right = 944.0
+offset_bottom = 172.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StatsPanelStyle")
+
+[node name="StatsLabel" type="Label" parent="HUD/StatsPanel" unique_id=1259324459]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.96, 1, 1)
+text = "Episodes completed: 0
+Deaths: 0
+Orb collections: 0"
+
+[node name="AgentPanel" type="PanelContainer" parent="HUD" unique_id=973659701]
+unique_name_in_owner = true
+visible = false
+offset_left = 16.0
+offset_top = 64.0
+offset_right = 320.0
+theme_override_styles/panel = SubResource("StatsPanelStyle")
+script = ExtResource("4")
+
+[node name="Content" type="VBoxContainer" parent="HUD/AgentPanel" unique_id=1541315904]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AgentHeading" type="Label" parent="HUD/AgentPanel/Content" unique_id=1681195825]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Training"
+
+[node name="AgentLabel" type="Label" parent="HUD/AgentPanel/Content" unique_id=1387606090]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.96, 1, 1)
+theme_override_constants/line_spacing = 4
+theme_override_font_sizes/font_size = 16
+
+[node name="SpeedRow" type="HBoxContainer" parent="HUD/AgentPanel/Content" unique_id=999184527]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SpeedLabel" type="Label" parent="HUD/AgentPanel/Content/SpeedRow" unique_id=382363590]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Speed"
+
+[node name="SpeedSelect" type="OptionButton" parent="HUD/AgentPanel/Content/SpeedRow" unique_id=361114194]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Run more fixed physics steps per second. Evaluate switches back to 1x."
+focus_mode = 0
+
+[node name="Actions" type="HBoxContainer" parent="HUD/AgentPanel/Content" unique_id=2020152244]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EvaluationButton" type="Button" parent="HUD/AgentPanel/Content/Actions" unique_id=1503085605]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Restart the episode and freeze learning and exploration. Keep the current Q-table."
+focus_mode = 0
+text = "Evaluate"
+
+[node name="SaveButton" type="Button" parent="HUD/AgentPanel/Content/Actions" unique_id=1358453473]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Save the table, learning settings, and training totals. Replaces the previous checkpoint."
+focus_mode = 0
+text = "Save Q-table"
+
+[node name="CheckpointControls" type="VBoxContainer" parent="HUD/AgentPanel/Content" unique_id=1545262287]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SaveStatus" type="Label" parent="HUD/AgentPanel/Content/CheckpointControls" unique_id=1234484215]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[connection signal="body_entered" from="Orb" to="." method="_on_orb_body_entered"]
+[connection signal="pressed" from="HUD/MenuButton" to="." method="_return_to_menu"]
+[connection signal="item_selected" from="HUD/AgentPanel/Content/SpeedRow/SpeedSelect" to="." method="_set_training_speed"]
+[connection signal="pressed" from="HUD/AgentPanel/Content/Actions/EvaluationButton" to="." method="_toggle_evaluation"]
+[connection signal="pressed" from="HUD/AgentPanel/Content/Actions/SaveButton" to="." method="_save_checkpoint"]

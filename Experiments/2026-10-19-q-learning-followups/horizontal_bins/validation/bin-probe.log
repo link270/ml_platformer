@@ -1,0 +1,13 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: res://Level.tscn:3 - ext_resource, invalid UID: uid://brdejdk017ayb - using text path instead: res://Player.tscn
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:5 - ext_resource, invalid UID: uid://2s2fxxpu21as - using text path instead: res://Level.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:6 - ext_resource, invalid UID: uid://ce7u827pg64da - using text path instead: res://AgentPanel.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+[{"binary_key":"000101|1|1|0","horizontal_bin_key":"000101|1|1|0","x":129.0,"y":351.989990234375},{"binary_key":"000101|1|1|0","horizontal_bin_key":"000101|1|1|0","x":144.0,"y":351.989990234375},{"binary_key":"000101|1|1|0","horizontal_bin_key":"000101|1|1|0","x":545.0,"y":408.989990234375},{"binary_key":"000101|1|1|0","horizontal_bin_key":"000101|1|1|0","x":560.0,"y":408.989990234375},{"binary_key":"000101|1|1|0","horizontal_bin_key":"020101|1|1|0","x":384.0,"y":369.989990234375},{"binary_key":"000101|1|1|0","horizontal_bin_key":"020101|1|1|0","x":553.0,"y":230.990005493164},{"binary_key":"000101|1|1|0","horizontal_bin_key":"000101|1|1|0","x":688.0,"y":141.990005493164}]

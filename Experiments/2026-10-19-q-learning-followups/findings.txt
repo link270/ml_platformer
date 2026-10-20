@@ -1,0 +1,44 @@
+Three useful experiments, with tradeoffs rather than one universal winner.
+
+All changes were tested separately against the current time-penalty + longer-exploration version. Each used three fresh training seeds, 10,000 uninterrupted episodes per seed, and 30 frozen evaluations at each of nine checkpoints. That is 90,000 new training episodes and 2,430 evaluations. The earlier conditions are reused from verified archives. The playable game and its defaults were not changed.
+
+HIGHER DISCOUNT: BETTER TRAINING SUCCESS, SLOWER FINAL ROUTES
+Changing gamma from 0.95 to 0.99 raised success during the last 5,000 training episodes from 82.6% to 91.9% (+9.2 percentage points). Each new seed exceeded 90% in that window. All conditions use the same 5% exploration floor by this point.
+
+All 90 final greedy evaluations succeeded, but the average route took 7.58 seconds versus the current 6.36 seconds, about 19% slower. Actual takeoffs increased from 10.3 to 13.3. Every seed's final route was slower than its current-version counterpart. Eight of nine sampled late policies (3,000/5,000/10,000 episodes across three seeds) won all 30 evaluations, versus seven of nine currently.
+
+This is a meaningful training-success improvement in this sample, not a clean efficiency improvement. Training outcomes include both random actions and ongoing learning; they do not by themselves prove a frozen policy is more robust to disturbances.
+
+Video examples:
+- Seed 98765, episode 100: 30/30 wins, 5.48 seconds, seven takeoffs. By episode 300 it presses into the first wall and times out; at 1,000 it barely leaves the spawn area. By 10,000 it wins again, but takes 7.93 seconds and fourteen takeoffs.
+- Seed 42, episode 5,000: after a successful 3,000-episode policy, it repeatedly reverses left/right on a platform and times out. Its first evaluation makes 89 left and 98 right action choices.
+- Seed 12345, episode 300: no takeoffs, stationary at spawn for the full 20-second timeout.
+
+HORIZONTAL DISTANCE BINS: MORE INFORMATION, STILL AMBIGUOUS
+The left/right rays now distinguish no hit, a hit within one unit, and a hit farther than one unit within the existing two-unit range. The other four rays and all physics stay unchanged. The theoretical maximum state count grows from 1,728 to 3,888.
+
+Late training success rose to 86.4%, but final greedy success fell to 60/90. Seed 12345 learned a winning route at 3,000 and 5,000 episodes, then died in the staircase gap in all 30 final evaluations. The two successful final agents averaged 7.20 seconds; that excludes the failing agent, so it must not be read as an overall speed comparison.
+
+There are good intermediate policies. Seed 98765 at 3,000 episodes wins all evaluations in 5.17 seconds with nine takeoffs. At 10,000 it still wins, but needs 8.23 seconds and thirteen takeoffs. This makes an effective "more training is not always better" example.
+
+The geometry probe adds an explanation: seven positions that shared one binary state now split into two states, with five positions still in the same group. These bins distinguish some situations, but do not remove ambiguity between different platforms. Shared observations alone do not establish the optimal action at each position.
+
+LOWER LATE LEARNING RATE: A MODEST, CONSISTENT FINAL SPEED GAIN
+Alpha remains 0.1 through episode 3,000, then declines linearly to 0.02 by episode 10,000. Every seed exactly reproduces the current version's episode outcomes and visited-row counts through 3,000, before the schedule changes.
+
+All 90 final evaluations succeed. Mean completion time improves from 6.36 to 6.00 seconds (about 5.6%), and actual takeoffs fall from 10.3 to 10.0. All three seeds improve in final completion time:
+  12345: 6.10 -> 5.80 seconds
+     42: 6.40 -> 6.07 seconds
+  98765: 6.57 -> 6.13 seconds
+
+Late training success rises from 82.6% to 86.4%. However, sampled late-policy consistency remains seven fully successful checkpoints out of nine. Seed 42 still fails at 5,000 episodes before recovering at 10,000. The data support a modest final improvement, not a claim that the schedule eliminates regressions.
+
+WHAT TO KEEP AND WHAT TO SHOW
+The alpha schedule is the strongest small candidate to keep if faster final routes are the priority. Gamma 0.99 is worth keeping as a contrasting experiment: it wins more often during training but ends with slower routes and more jumping. The horizontal-bin experiment is useful evidence that adding some information can help intermediate behavior without solving the observation problem.
+
+Best-checkpoints.json preserves references to the best sampled policy for each condition and seed, while keeping every latest checkpoint and failure. Selection is retrospective: most wins, then fastest successful duration, then earliest episode. It uses the same evaluation data and is not independent validation.
+
+These archives can support the later video mode switch: original baseline, time penalty, longer exploration, then each individual follow-up. No mode switch, combined experiment, or automatic best-checkpoint feature has been added in this task.
+
+LIMITS
+Only three seeds, one map and one spawn were tested. Repeated greedy evaluations often repeat one deterministic route, so 90/90 is not evidence of success on 90 different situations. Checkpoints are sparse, and the exact moment a policy improves or regresses is unknown. No combinations were tested. More seeds or held-out starts would be needed before claiming a generally better algorithm.

@@ -1,0 +1,14 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+WARNING: res://Level.tscn:3 - ext_resource, invalid UID: uid://brdejdk017ayb - using text path instead: res://Player.tscn
+     at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Player.gd
+     at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:5 - ext_resource, invalid UID: uid://2s2fxxpu21as - using text path instead: res://Level.gd
+     at: load (scene/resources/resource_format_text.cpp:501)
+WARNING: res://Level.tscn:6 - ext_resource, invalid UID: uid://ce7u827pg64da - using text path instead: res://AgentPanel.gd
+     at: load (scene/resources/resource_format_text.cpp:501)
+ERROR: Condition "ret != noErr" is true. Returning: ""
+   at: get_system_ca_certificates (platform/macos/os_macos.mm:1035)
+[{"deaths":29,"learning":"246139fef789cde8dc56441e36b2427fcfb309c0dabfab5a73c128cd3224704e","physics":"3e771a8f978b0e728563b420bf7a88606cec158aa8b6814ae3ae6ab10e2902b2","seed":12345,"steps":35720,"table":"d03b1ea65e747ef5f4ac8b4ba1b327af563c9c44f53c692a2847360954529e2f","timeouts":21,"updates":5969,"wins":0},{"deaths":24,"learning":"19d7352ebfb6565695d328723a6a68d8d6899f78ceaa3865e918463aa7b881db","physics":"03a9d65ec575f0236b7bf6b899a46830e269d78f590fee72dc7e49141a398b4c","seed":42,"steps":43010,"table":"76ba769f7c7b7529257547c2e162e559772aaeabc454976dccafcbbe89d70bcc","timeouts":26,"updates":7180,"wins":0},{"deaths":33,"learning":"6ef0bd798de2f1c9c992914b38c2114bccaf71473553f9336dd4c3fafeb98d0b","physics":"b0d0b9798b6766a15f3599f00532d298176302438f0605f167b60a3365c8caf8","seed":98765,"steps":40447,"table":"1fc739a8cfe01a346cccae834af497ba2488511efc987b83edaa6942136d28af","timeouts":17,"updates":6757,"wins":0}]
+Training trace check passed

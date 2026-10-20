@@ -1,0 +1,85 @@
+Q-LEARNING FOLLOW-UP EXPERIMENTS — OCTOBER 19, 2026
+
+Open report.html for the comparison, per-seed results and footage candidates.
+The playable project has NOT been changed. These are isolated experiments.
+
+THREE INDIVIDUAL CHANGES
+discount_099:          Discount 0.99 instead of 0.95.
+horizontal_bins:       Left/right rays use no hit / near / farther away.
+                       Near is <=1 block, farther is >1 to 2 blocks.
+                       Other four rays, ray lengths and physics are unchanged.
+late_learning_rate:    Alpha stays 0.1 through episode 3,000, then decreases
+                       linearly to 0.02 by episode 10,000.
+
+Each starts from the current longer-exploration + time-penalty condition.
+Each uses the original three seeds and 10,000 training episodes per seed.
+The tests do not combine these changes.
+
+CONTENTS
+report.html                   Readable comparison, charts, paths and examples.
+findings.txt                  Conclusions and limitations for the video.
+settings.json                 Exact conditions, protocol and source fingerprints.
+summary.json                  All conditions and every evaluated checkpoint.
+best-checkpoints.json         Retrospectively selected checkpoint per seed.
+video-candidates.json         Successful routes and interesting failure examples.
+verification.json             Source/archive checks and validation performed.
+training-comparison.*         SVG, PNG and PDF training chart.
+evaluation-comparison.*       SVG, PNG and PDF greedy evaluation chart.
+VARIANT/raw-data/             Episode outcomes and first-three evaluation traces.
+VARIANT/checkpoints/          All nine checkpoints for all three seeds.
+VARIANT/validation/           Training and check logs.
+VARIANT/changes.patch         Small source diff against the current reference.
+VARIANT/experiment.zip        Runnable frozen project with matching checkpoints.
+SHA256SUMS.json               Checksums of all other archive files.
+
+WATCH A SAVED POLICY
+1. Choose a candidate in the report or video-candidates.json.
+2. Extract that VARIANT's experiment.zip into a NEW folder outside the game project.
+3. In the extracted MainMenu.gd, change:
+     var checkpoint_path := Checkpoint.DEFAULT_PATH
+   to your chosen table, for example:
+     var checkpoint_path := "res://checkpoint-12345-10000.json"
+4. Open the extracted project.godot with Godot 4.7.1 and run it.
+5. Choose "Q-learning: evaluate saved". This runs at normal speed with rays visible.
+
+Use each table with its matching frozen project. Horizontal bins have a different
+state format, and late-learning-rate checkpoints require that schedule when resumed.
+The original game rejects these incompatible schemas rather than silently
+misinterpreting them. The discount-only tables retain the normal state format.
+
+The diagnostic uses evaluation RNG seed = training seed + 1,000,000.
+The normal menu does not force this seed, so tied-action policies may vary.
+For exact first-evaluation tie-breaking during filming, add this line to
+QLearningAgent.gd's _init() in the EXTRACTED COPY:
+    rng.seed = 1012345
+Use 1000042 for seed 42 or 1098765 for seed 98765.
+This is optional; most learned greedy policies do not rely on ties.
+
+Best-checkpoint references are selections using the same evaluation data.
+They are useful for replay, not independent evidence of generalization.
+Latest checkpoints and raw failures are preserved alongside them.
+No mode switch or live best-checkpoint selection feature has been added yet.
+
+REPRODUCE A RUN
+Extract a separate copy of the variant's experiment.zip.
+In the extracted experiment directory, for each SEED (12345, 42, 98765):
+  godot --headless --path . --fixed-fps 60 --disable-render-loop --log-file /tmp/followup-SEED.log --script res://diagnose.gd -- SEED
+
+Replace godot with your executable path. This overwrites generated checkpoints
+and results in the extracted copy. It never uses the normal game's save.
+The unchanged diagnostic trains uninterrupted, then evaluates saved checkpoints.
+Resuming a checkpoint does not reproduce uninterrupted training exactly because
+checkpoint files do not store RNG state.
+
+REBUILD ALL EXPERIMENTS FROM THE PREVIOUS ARCHIVE
+Keep the three October 16 archive folders beside this folder.
+  python3 prepare.py /tmp/fresh-platformer-followups
+  python3 run_tests.py /tmp/fresh-platformer-followups /path/to/godot
+
+prepare.py refuses existing variant directories, preserving completed runs.
+collect.py archives a completed batch into this folder; use a copy of this archive
+if rebuilding. analyze.py rebuilds summaries/charts/report, requiring ReportLab
+and pdftoppm. Regenerate checksums after any rebuild.
+
+All conclusions are limited to three seeds on one fixed map and spawn.
+Thirty greedy runs can repeat one deterministic route thirty times.
