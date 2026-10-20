@@ -1,10 +1,10 @@
 # Q-learning experiment modes
 
-Choose an experiment in the first menu dropdown. Its description shows what
-changed. Choose **My saved session** or an **Archive · seed … · … episodes**
-in the second dropdown, then **Q-learning: evaluate selected table** to film it.
-The mode name stays visible in the level, and the loaded archive's seed and
-milestone appear in the agent panel. Esc returns to the same selection.
+Select **Q-learning**, then choose an **Experiment**. Its description shows what
+changed. Choose **Evaluation** and an **Archive · seed … · … episodes** under
+**Training data**, then **Start evaluation** to film it. Leave **Run headless**
+off to watch the viewport. The mode name stays visible in the level; **More**
+shows the loaded archive's seed and milestone. Esc returns to the same selection.
 
 | Mode | Change |
 | --- | --- |
@@ -22,24 +22,26 @@ binary. All modes share the same physics, six actions, and decision timing.
 
 Each mode offers three training seeds (12345, 42, 98765) at nine milestones
 (0, 100, 300, 600, 1,000, 2,000, 3,000, 5,000, 10,000 episodes).
-Archived evaluation starts with the diagnostic tie-break seed, so reopening the
+Viewport evaluation of an archive starts with the diagnostic tie-break seed, so reopening the
 same archive repeats its recorded first evaluation. Subsequent episodes advance
 the random stream normally. To repeat a clip, return to the menu and reload;
 R only restarts the episode.
 
 ## Training and saves
 
-- **New training** starts an empty table with the chosen mode's settings.
-- **Train selected table** continues the selected checkpoint in the viewport.
-- Headless training uses the same mode. Check **Continue selected Q-table** to
-  resume it, or uncheck to start fresh. Check-ins use that mode too.
-- Saving writes to a separate personal session file for each mode. Continuing an
-  archive never writes back into `Experiments/`. Fresh headless training replaces
-  that mode's personal save; viewport training saves only when you click Save.
-- After a headless batch, the selector switches to **My saved session**.
-- The existing `user://q_learning_checkpoint.json` remains mode 3's save.
-  Other modes use `user://q_learning_<mode ID>.json`. Hover over the checkpoint
-  status for the full load and save paths.
+- Choose **Training** and **New training data** to start an empty table.
+- Choose a saved file to continue training, or **Evaluation** to watch it.
+- **Run headless** uses the same mode and selected data. **Watch every** adds
+  evaluation check-ins during training.
+- Fresh training and continued archives get timestamped files in
+  `user://checkpoints/`. Continuing a personal save updates that file.
+  Training saves automatically at completion and on return to the menu.
+- Archived files under `Experiments/` stay unchanged, even if you switch a
+  viewport evaluation back to training. Evaluation never saves training data.
+- After a headless training batch, the selector switches to the new session save.
+- Earlier `user://q_learning_checkpoint.json` and per-mode saves remain available.
+  Hover over **Training data** for the full selected path; **Folder** opens
+  the personal checkpoint directory.
 
 New saves include their mode ID and reject loading into a different mode. Older
 archives have no mode ID; their catalog folder supplies the matching mode.
@@ -47,7 +49,7 @@ Keep the archived JSON files in `Experiments/` available when running the projec
 
 The small catalog and fresh-agent settings live in `Agents/QPresets.gd`.
 The shared agent, state encoder, and reward calculation still live in
-`Agents/QLearningAgent.gd`, `Agents/QState.gd`, and `Level.gd`.
+`Agents/QLearningAgent.gd`, `Agents/QState.gd`, and `Game/Level.gd`.
 The terminal worker also accepts `--preset <mode ID>`; its default save follows
 the preset unless `--save` is explicitly supplied.
 
@@ -62,6 +64,6 @@ the preset unless `--save` is explicitly supplied.
 | Richer horizontal rays | 12345 | 10000 | Dies despite earlier successful checkpoints |
 | Lower late learning rate | 42 | 5000 | Successful route during the learning-rate taper |
 
-`check_q_presets.gd` checks all 162 archived loads, replays the 18 final
+`Tests/check_q_presets.gd` checks all 162 archived loads, replays the 18 final
 checkpoints and 12 report candidates against their recorded results, and resumes
 each mode through a headless worker and visible check-in using temporary saves.

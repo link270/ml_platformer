@@ -4,7 +4,8 @@ const QLearning := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const DT := 1.0 / 60.0
 var failed := false
-var path := "/tmp/ml-platformer-checkpoint-%d.json" % OS.get_process_id()
+var scratch: DirAccess
+var path := ""
 
 
 func check(condition: bool, message: String) -> void:
@@ -24,6 +25,12 @@ func _initialize() -> void:
 
 
 func run_check() -> void:
+	scratch = DirAccess.create_temp("ml-platformer-checkpoint")
+	if scratch == null:
+		push_error("Cannot create test scratch directory: %s" % error_string(DirAccess.get_open_error()))
+		quit(1)
+		return
+	path = scratch.get_current_dir().path_join("table.json")
 	var source := QLearning.new()
 	source.q_table = {"010101|1|-1|0": [0.123456789012345, -0.4, 0.0, 0.8, 0.2, -1.0]}
 	source.epsilon = 0.6
@@ -71,16 +78,19 @@ func run_check() -> void:
 	source.updates = 84
 	check(Checkpoint.save_checkpoint(source, path).is_empty(), "save replaces an existing checkpoint")
 	check(Checkpoint.load_checkpoint(restored, path).is_empty() and restored.updates == 84 and restored.q_table == source.q_table, "replacement checkpoint is complete")
-	check(not Checkpoint.save_checkpoint(source, "/tmp/nonexistent-checkpoint-directory-%d/save.json" % OS.get_process_id()).is_empty(), "unwritable destination reports failure")
+	check(not Checkpoint.save_checkpoint(source, scratch.get_current_dir().path_join("missing/save.json")).is_empty(), "unwritable destination reports failure")
 	check(not Checkpoint.load_checkpoint(restored, path + ".missing").is_empty(), "missing checkpoint reports failure")
 
 	for evaluate in [false, true]:
-		var menu := preload("res://MainMenu.tscn").instantiate()
+		var menu := preload("res://UI/MainMenu.tscn").instantiate()
 		menu.checkpoint_path = path
+		menu.checkpoint_directory = scratch.get_current_dir()
 		root.add_child(menu)
 		current_scene = menu
-		check(not menu.get_node("%ResumeButton").disabled and not menu.get_node("%LoadEvaluationButton").disabled, "saved menu choices enabled")
-		menu.get_node("%LoadEvaluationButton" if evaluate else "%ResumeButton").pressed.emit()
+		check(menu.get_node("%DataSelect").get_selected_metadata() == path, "saved data selected")
+		menu.get_node("%ModeSelect").select(1 if evaluate else 0)
+		menu._refresh_form()
+		menu.get_node("%BatchStart").pressed.emit()
 		var level := current_scene
 		if level == menu:
 			check(false, "saved menu launch failed: " + menu.get_node("%CheckpointInfo").text)
@@ -98,8 +108,12 @@ func run_check() -> void:
 			check(level.agent.q_table == table_before and level.agent.updates == updates_before, "loaded evaluation freezes the table")
 		else:
 			check(level.agent.updates == updates_before + 1 and level.agent.epsilon == 0.6, "resumed training continues updates without restarting exploration")
+		var disk_before := FileAccess.get_file_as_string(path)
 		level.get_node("%SaveButton").pressed.emit()
-		check(level.get_node("%SaveStatus").text.begins_with("Saved:"), "save button reports success")
+		if evaluate:
+			check(FileAccess.get_file_as_string(path) == disk_before, "evaluation cannot overwrite training data")
+		else:
+			check(level.get_node("%SaveStatus").text.begins_with("Saved:"), "save button reports success")
 		var saved := QLearning.new()
 		check(Checkpoint.load_checkpoint(saved, path).is_empty(), "save button writes a loadable checkpoint")
 		check(saved.q_table.size() == level.agent.q_table.size(), "save button persists every table row")
@@ -113,15 +127,21 @@ func run_check() -> void:
 		level.queue_free()
 		await process_frame
 
-	var menu := preload("res://MainMenu.tscn").instantiate()
+	var menu := preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = path
+	menu.checkpoint_directory = scratch.get_current_dir()
 	root.add_child(menu)
 	current_scene = menu
 	write_text("broken")
-	menu.get_node("%LoadEvaluationButton").pressed.emit()
+	menu.get_node("%ModeSelect").select(1)
+	menu._refresh_form()
+	menu.get_node("%BatchStart").pressed.emit()
 	check(current_scene == menu and menu.get_node("%CheckpointInfo").text.contains("JSON"), "load error stays in the menu with feedback")
 	var old_file := FileAccess.get_file_as_string(path)
-	menu.get_node("%QLearningButton").pressed.emit()
+	menu.get_node("%ModeSelect").select(0)
+	menu.get_node("%DataSelect").select(0)
+	menu._refresh_form()
+	menu.get_node("%BatchStart").pressed.emit()
 	var fresh := current_scene
 	fresh.set_physics_process(false)
 	check(fresh.agent.q_table.is_empty() and fresh.agent.epsilon == 1.0, "new training starts clean")
@@ -129,12 +149,16 @@ func run_check() -> void:
 	fresh.queue_free()
 	await process_frame
 	DirAccess.remove_absolute(path)
-	menu = preload("res://MainMenu.tscn").instantiate()
+	menu = preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = path
+	menu.checkpoint_directory = scratch.get_current_dir()
 	root.add_child(menu)
-	check(menu.get_node("%ResumeButton").disabled and menu.get_node("%LoadEvaluationButton").disabled, "load choices disabled without a checkpoint")
+	menu.get_node("%ModeSelect").select(1)
+	menu._refresh_form()
+	check(menu.get_node("%BatchStart").disabled, "evaluation disabled without saved data")
 	menu.queue_free()
 	await process_frame
+	scratch = null
 	if not failed:
 		print("Q-checkpoint check passed")
 	quit(1 if failed else 0)

@@ -3,9 +3,10 @@ extends SceneTree
 const Presets := preload("res://Agents/QPresets.gd")
 const QLearning := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
-const Menu := preload("res://MainMenu.tscn")
+const Menu := preload("res://UI/MainMenu.tscn")
 var failed := false
-var directory := "/tmp/platformer-presets-%d" % OS.get_process_id()
+var scratch: DirAccess
+var directory := ""
 
 
 func _initialize() -> void:
@@ -20,25 +21,27 @@ func check(condition: bool, message: String) -> void:
 
 func make_menu(id: String, source: String = "") -> Control:
 	var menu := Menu.instantiate()
+	menu.checkpoint_directory = directory
+	menu.checkpoint_path = directory.path_join(id + ".json")
 	root.add_child(menu)
 	current_scene = menu
 	var index: int = Presets.IDS.find(id)
 	menu.get_node("%ExperimentSelect").select(index)
 	menu._select_experiment(index)
-	# All writes from this check stay in /tmp.
-	menu.checkpoint_path = directory.path_join(id + ".json")
-	menu._populate_checkpoints(0)
-	var selector: OptionButton = menu.get_node("%CheckpointSelect")
+	menu._refresh_data(source)
+	var selector: OptionButton = menu.get_node("%DataSelect")
 	for i in selector.item_count:
-		if selector.get_item_metadata(i).path == source:
+		if selector.get_item_metadata(i) == source:
 			selector.select(i)
-			menu._select_checkpoint(i)
+	menu._refresh_form()
 	return menu
 
 
 func replay(id: String, seed_value: int, episode: int, expected: Dictionary) -> void:
 	var menu := make_menu(id, Presets.archive_path(id, seed_value, episode))
-	menu.get_node("%LoadEvaluationButton").pressed.emit()
+	menu.get_node("%ModeSelect").select(1)
+	menu._refresh_form()
+	menu.get_node("%BatchStart").pressed.emit()
 	var level := current_scene
 	if level == menu:
 		check(false, "could not load %s / %d / %d" % [id, seed_value, episode])
@@ -72,7 +75,11 @@ func replay(id: String, seed_value: int, episode: int, expected: Dictionary) -> 
 
 
 func run_check() -> void:
-	DirAccess.make_dir_absolute(directory)
+	scratch = DirAccess.create_temp("ml-platformer-presets")
+	if scratch == null:
+		quit(1)
+		return
+	directory = scratch.get_current_dir()
 	var saves := {}
 	var loaded := 0
 	for id in Presets.IDS:
@@ -96,10 +103,11 @@ func run_check() -> void:
 		var menu := make_menu(id, source)
 		var panel := menu.get_node("%SessionInfo")
 		panel.session_directory = directory
+		menu.get_node("%HeadlessToggle").button_pressed = true
 		menu.get_node("%BatchEpisodes").value = 1
 		menu.get_node("%BatchCheckEvery").value = 1
 		menu.get_node("%BatchStart").pressed.emit()
-		check(menu.get_node("%ExperimentSelect").disabled and menu.get_node("%CheckpointSelect").disabled, "mode and table locked during batch")
+		check(menu.get_node("%ExperimentSelect").disabled and menu.get_node("%DataSelect").disabled, "mode and table locked during batch")
 		var deadline := Time.get_ticks_msec() + 15000
 		while panel.process_id > 0 and Time.get_ticks_msec() < deadline:
 			await create_timer(0.05).timeout
@@ -115,13 +123,29 @@ func run_check() -> void:
 				check(is_equal_approx(preview.agent.learning_rate, 0.1 - 0.08 * 2001.0 / 7000.0), "learning schedule continues after load")
 			preview.get_node("%MenuButton").pressed.emit()
 		check(FileAccess.get_file_as_bytes(source) == archive_before, "training preserves source archive")
-		check(menu.get_node("%CheckpointSelect").selected == 0, "completed batch selects new session save")
+		check(menu.get_node("%DataSelect").get_selected_metadata() == menu.checkpoint_path, "completed batch selects new session save")
 		var wrong_agent := QLearning.new()
 		Presets.configure(wrong_agent, "baseline" if id != "baseline" else Presets.DEFAULT_ID)
 		check(not Checkpoint.load_checkpoint(wrong_agent, menu.checkpoint_path).is_empty(), "new save rejects wrong experiment")
 		check(wrong_agent.q_table.is_empty(), "rejected load is atomic")
 		menu.queue_free()
 		await process_frame
+
+	# Switching an archived evaluation to training must save a personal copy.
+	var source := Presets.archive_path("baseline", 12345, 10000)
+	var archive_before := FileAccess.get_file_as_bytes(source)
+	var menu := make_menu("baseline", source)
+	menu.get_node("%ModeSelect").select(1)
+	menu._refresh_form()
+	menu.get_node("%BatchStart").pressed.emit()
+	var level := current_scene
+	level.set_physics_process(false)
+	level._toggle_evaluation()
+	check(level.agent.training and level.checkpoint_path.begins_with(directory), "evaluation-to-training uses a personal destination")
+	check(level._save_checkpoint(), "archive evaluation can save a training copy")
+	check(FileAccess.get_file_as_bytes(source) == archive_before, "viewport training preserves archive")
+	level.queue_free()
+	await process_frame
 
 	# Include interesting early failures and recoveries used in the video report.
 	var candidates: Array = JSON.parse_string(FileAccess.get_file_as_string("res://Experiments/2026-10-19-q-learning-followups/video-candidates.json"))
@@ -137,9 +161,7 @@ func run_check() -> void:
 	agent.training_episodes = 10000
 	agent.finish_episode(false)
 	check(agent.learning_rate == 0.02, "late learning rate floor holds")
-	for name in DirAccess.get_files_at(directory):
-		DirAccess.remove_absolute(directory.path_join(name))
-	DirAccess.remove_absolute(directory)
+	scratch = null
 	if not failed:
 		print("Q-presets check passed: %d archives loaded; 18 final + %d video replays; 6 worker/check-in round trips." % [loaded, candidates.size()])
 	quit(1 if failed else 0)

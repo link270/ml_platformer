@@ -1,8 +1,9 @@
 extends SceneTree
 
 var failed := false
-var directory := "/tmp/platformer-checkins-%d" % OS.get_process_id()
-var checkpoint := directory + "/table.json"
+var scratch: DirAccess
+var directory := ""
+var checkpoint := ""
 
 
 func _initialize() -> void:
@@ -37,7 +38,7 @@ func finish_preview(menu: Control, outcome: String) -> void:
 	level.set_physics_process(false)
 	var panel := menu.get_node("%SessionInfo")
 	check(panel.process_id == -1 and panel.active, "worker stopped while batch remains active")
-	check(not menu.visible and menu.get_node("%HumanButton").disabled, "menu stays locked during check-in")
+	check(not menu.visible and menu.get_node("%ControllerSelect").disabled, "menu stays locked during check-in")
 	check(not level.agent.training and Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60, "check-in evaluates at normal speed")
 	check(level.player.show_rays and level.player.visible_ray_indices.size() == 6, "six observation rays remain visible")
 	check(not level.get_node("%CheckpointControls").visible and not level.get_node("%SpeedSelect").is_visible_in_tree(), "training controls hidden during check-in")
@@ -69,16 +70,25 @@ func finish_preview(menu: Control, outcome: String) -> void:
 
 
 func run_check() -> void:
-	DirAccess.make_dir_absolute(directory)
-	var menu := preload("res://MainMenu.tscn").instantiate()
+	scratch = DirAccess.create_temp("ml-platformer-checkins")
+	if scratch == null:
+		push_error("Cannot create test scratch directory: %s" % error_string(DirAccess.get_open_error()))
+		quit(1)
+		return
+	directory = scratch.get_current_dir()
+	checkpoint = directory.path_join("table.json")
+	var menu := preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = checkpoint
+	menu.checkpoint_directory = directory
 	root.add_child(menu)
 	current_scene = menu
 	var panel := menu.get_node("%SessionInfo")
 	panel.session_directory = directory
+	menu.get_node("%HeadlessToggle").button_pressed = true
 	menu.get_node("%BatchEpisodes").value = 5
 	menu.get_node("%BatchCheckEvery").value = 2
 	menu.get_node("%BatchStart").pressed.emit()
+	checkpoint = menu.checkpoint_path
 	await wait_for_pause(panel)
 	check(saved_episodes() == 2 and panel.completed_episodes == 2, "first pause after two saved training episodes")
 	await finish_preview(menu, "death")
@@ -109,7 +119,7 @@ func run_check() -> void:
 	await process_frame
 	check(not panel.active and panel.process_id == -1 and menu.visible, "Stop cancels batch during evaluation")
 	check(FileAccess.get_file_as_string(checkpoint) == saved, "Stop keeps pre-evaluation checkpoint")
-	check(not menu.get_node("%LoadEvaluationButton").disabled, "saved evaluation available after stop")
+	check(not menu.get_node("%BatchStart").disabled and menu.get_node("%DataSelect").get_selected_metadata() == checkpoint, "saved data available after stop")
 
 	menu.get_node("%BatchEpisodes").value = 1
 	menu.get_node("%BatchCheckEvery").value = 1
@@ -120,9 +130,7 @@ func run_check() -> void:
 	await process_frame
 	await process_frame
 	check(not is_instance_valid(preview), "closing menu removes visible check-in")
-	for name in DirAccess.get_files_at(directory):
-		DirAccess.remove_absolute(directory.path_join(name))
-	DirAccess.remove_absolute(directory)
+	scratch = null
 	if not failed:
 		print("Training check-ins check passed")
 	quit(1 if failed else 0)
