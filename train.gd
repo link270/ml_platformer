@@ -3,6 +3,7 @@ extends SceneTree
 const LevelScene := preload("res://Level.tscn")
 const QLearning := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
+const Presets := preload("res://Agents/QPresets.gd")
 
 var episodes := 10_000
 var save_every := 100
@@ -14,6 +15,7 @@ var starting_episodes := 0
 var starting_wins := 0
 var started_at := 0
 var last_report_at := 0
+var preset_id := Presets.DEFAULT_ID
 
 
 func _initialize() -> void:
@@ -24,6 +26,7 @@ func start_training() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.has("--help"):
 		print("Usage: ./train.sh [--episodes 10000] [--load PATH] [--save PATH] [--save-every 100]")
+		print("Optional --preset: ", ", ".join(Presets.IDS))
 		print("Episodes are additional episodes this run. Paths accept user:// or absolute paths.")
 		print("Default save: ", ProjectSettings.globalize_path(save_path))
 		quit()
@@ -32,6 +35,9 @@ func start_training() -> void:
 	if not error.is_empty():
 		fail(error)
 		return
+	Presets.configure(agent, preset_id)
+	if not args.has("--save"):
+		save_path = Presets.save_path(preset_id)
 	if not load_path.is_empty():
 		error = Checkpoint.load_checkpoint(agent, load_path)
 		if not error.is_empty():
@@ -60,6 +66,10 @@ func parse_options(args: PackedStringArray) -> String:
 		var option := args[i]
 		var value := args[i + 1]
 		match option:
+			"--preset":
+				if not Presets.PRESETS.has(value):
+					return "Unknown experiment preset: " + value
+				preset_id = value
 			"--episodes", "--save-every":
 				if not value.is_valid_int() or value.to_int() <= 0:
 					return option + " must be a positive integer."

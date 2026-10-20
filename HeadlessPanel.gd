@@ -4,6 +4,8 @@ signal busy_changed(busy: bool)
 signal check_in_requested(completed: int, total: int)
 
 var checkpoint_path := ""
+var load_path := ""
+var preset_id := "long_exploration"
 var session_directory := OS.get_user_data_dir()
 var process_id := -1
 var status_path := ""
@@ -21,9 +23,11 @@ func _ready() -> void:
 	%BatchPoll.timeout.connect(_poll)
 
 
-func setup(path: String) -> void:
+func setup(path: String, experiment: String = "long_exploration", source: String = "") -> void:
 	checkpoint_path = ProjectSettings.globalize_path(path)
-	%BatchResume.disabled = not FileAccess.file_exists(checkpoint_path)
+	preset_id = experiment
+	load_path = ProjectSettings.globalize_path(source) if not source.is_empty() else checkpoint_path
+	%BatchResume.disabled = not FileAccess.file_exists(load_path)
 	%BatchResume.button_pressed = not %BatchResume.disabled
 
 
@@ -57,9 +61,10 @@ func _launch_worker(resume: bool) -> void:
 		"--fixed-fps", "60", "--disable-render-loop", "--log-file", status_path + ".log",
 		"--script", "res://train.gd", "--", "--episodes", str(count),
 		"--save", checkpoint_path, "--status", status_path,
+		"--preset", preset_id,
 	])
 	if resume:
-		args.append_array(["--load", checkpoint_path])
+		args.append_array(["--load", load_path if completed_episodes == 0 else checkpoint_path])
 	process_id = OS.create_process(OS.get_executable_path(), args)
 	if process_id <= 0:
 		_finish("Could not start training.")
@@ -132,7 +137,7 @@ func _finish(message: String) -> void:
 	%BatchEpisodes.editable = true
 	%BatchCheckEvery.editable = true
 	%BatchStop.disabled = true
-	setup(checkpoint_path)
+	setup(checkpoint_path, preset_id)
 	busy_changed.emit(false)
 
 

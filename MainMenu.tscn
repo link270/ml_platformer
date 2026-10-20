@@ -45,7 +45,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="PanelContainer" parent="Center" unique_id=574045702]
-custom_minimum_size = Vector2(760, 0)
+custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("PanelStyle")
 
@@ -58,17 +58,17 @@ theme_override_constants/margin_bottom = 16
 
 [node name="Content" type="VBoxContainer" parent="Center/Panel/Margin" unique_id=569110779]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Center/Panel/Margin/Content" unique_id=1925014813]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.35, 0.88, 0.92, 1)
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 26
 text = "Minimal Platformer"
 
 [node name="Subtitle" type="Label" parent="Center/Panel/Margin/Content" unique_id=637375789]
 layout_mode = 2
-text = "Choose how to play."
+text = "Choose a Q-learning experiment and table, then train or evaluate."
 
 [node name="Columns" type="HBoxContainer" parent="Center/Panel/Margin/Content" unique_id=1903491356]
 layout_mode = 2
@@ -77,41 +77,58 @@ theme_override_constants/separation = 24
 [node name="Modes" type="VBoxContainer" parent="Center/Panel/Margin/Content/Columns" unique_id=985160538]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
+
+[node name="ExperimentSelect" type="OptionButton" parent="Center/Panel/Margin/Content/Columns/Modes"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Changes the reward, exploration, state encoding and learning settings together."
+
+[node name="ExperimentDescription" type="Label" parent="Center/Panel/Margin/Content/Columns/Modes"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(410, 42)
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[node name="CheckpointSelect" type="OptionButton" parent="Center/Panel/Margin/Content/Columns/Modes"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Archived tables are read-only sources. Evaluation starts with the recorded diagnostic seed."
 
 [node name="HumanButton" type="Button" parent="Center/Panel/Margin/Content/Columns/Modes" unique_id=855760057]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 44)
+custom_minimum_size = Vector2(410, 30)
 layout_mode = 2
 text = "Human playable"
 
 [node name="RandomButton" type="Button" parent="Center/Panel/Margin/Content/Columns/Modes" unique_id=1830318832]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 44)
+custom_minimum_size = Vector2(410, 30)
 layout_mode = 2
 text = "Random agent"
 
 [node name="QLearningButton" type="Button" parent="Center/Panel/Margin/Content/Columns/Modes" unique_id=638362798]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 44)
+custom_minimum_size = Vector2(410, 32)
 layout_mode = 2
 text = "Q-learning: new training"
 
 [node name="ResumeButton" type="Button" parent="Center/Panel/Margin/Content/Columns/Modes" unique_id=1016010972]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 36)
+custom_minimum_size = Vector2(410, 32)
 layout_mode = 2
-text = "Q-learning: resume saved"
+text = "Q-learning: train selected table"
 
 [node name="LoadEvaluationButton" type="Button" parent="Center/Panel/Margin/Content/Columns/Modes" unique_id=2143464372]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 36)
+custom_minimum_size = Vector2(410, 32)
 layout_mode = 2
-text = "Q-learning: evaluate saved"
+text = "Q-learning: evaluate selected table"
 
 [node name="DeepAgentButton" type="Button" parent="Center/Panel/Margin/Content/Columns/Modes" unique_id=1987315127]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 44)
+custom_minimum_size = Vector2(410, 30)
 layout_mode = 2
 disabled = true
 text = "DQN / PPO agent (reserved)"
@@ -177,13 +194,13 @@ tooltip_text = "Show one evaluation episode after this many training episodes. 0
 [node name="BatchResume" type="CheckBox" parent="Center/Panel/Margin/Content/Columns/InfoPanel/Margin/SessionInfo"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Continue saved Q-table"
+text = "Continue selected Q-table"
 
 [node name="SaveHint" type="Label" parent="Center/Panel/Margin/Content/Columns/InfoPanel/Margin/SessionInfo"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "0 = no check-ins. Saves at each pause.
-Fresh training replaces the old save."
+Replaces this mode’s session save."
 
 [node name="Buttons" type="HBoxContainer" parent="Center/Panel/Margin/Content/Columns/InfoPanel/Margin/SessionInfo"]
 layout_mode = 2

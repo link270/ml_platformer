@@ -38,6 +38,7 @@ var timed_out := false
 var agent: RefCounted
 var checkpoint_path := Checkpoint.DEFAULT_PATH
 var checkpoint_status := "Save before leaving to keep this training."
+var time_penalty_per_decision := TIME_PENALTY_PER_DECISION
 var episode_return := 0.0
 var last_episode_return := 0.0
 var _decision_state: Dictionary = {}
@@ -54,6 +55,8 @@ func _ready() -> void:
 	_previous_proximity = _orb_proximity()
 	if control_mode != ControlMode.HUMAN and agent == null:
 		agent = QLearningAgent.new() if control_mode == ControlMode.Q_LEARNING else RandomAgent.new()
+	if control_mode == ControlMode.Q_LEARNING:
+		time_penalty_per_decision = QLearningAgent.Presets.time_penalty(agent.preset_id)
 	if headless_training:
 		hide()
 		$HUD.hide()
@@ -67,7 +70,8 @@ func _ready() -> void:
 		for speed in TRAINING_SPEEDS:
 			%SpeedSelect.add_item("%dx" % speed)
 		%SpeedSelect.select(0)
-		%ModeLabel.text = "Q-learning  |  10 decisions/game sec  |  R: restart episode"
+		%ModeLabel.text = QLearningAgent.Presets.PRESETS[agent.preset_id].label + "  |  Q-learning"
+		%ModeLabel.tooltip_text = QLearningAgent.Presets.PRESETS[agent.preset_id].description
 		%MenuButton.tooltip_text = "Save Q-table before leaving to keep your latest training."
 		%CheckpointControls.show()
 		%SaveStatus.text = checkpoint_status
@@ -221,7 +225,7 @@ func _advance_tick(delta: float, action_id: int) -> void:
 	var proximity := _orb_proximity()
 	# Spread the time cost across physics ticks, including partial decisions.
 	# Terminal rewards below remain exactly +1 / -1.
-	reward = 0.1 * (proximity - _previous_proximity) - TIME_PENALTY_PER_DECISION / TICKS_PER_DECISION
+	reward = 0.1 * (proximity - _previous_proximity) - time_penalty_per_decision / TICKS_PER_DECISION
 	_previous_proximity = proximity
 	if player.position.y > death_y:
 		done = true

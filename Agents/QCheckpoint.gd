@@ -2,6 +2,7 @@ extends RefCounted
 
 const Agent := preload("res://Agents/Agent.gd")
 const State := preload("res://Agents/QState.gd")
+const Presets := preload("res://Agents/QPresets.gd")
 const DEFAULT_PATH := "user://q_learning_checkpoint.json"
 # Bump this if the encoding or checkpoint structure changes incompatibly.
 const FORMAT_VERSION := 1
@@ -9,21 +10,26 @@ const SETTINGS := ["learning_rate", "discount", "epsilon", "epsilon_decay", "min
 const COUNTERS := ["updates", "training_episodes", "training_wins"]
 
 
-static func _schema() -> Dictionary:
+static func _schema(preset_id: String = Presets.DEFAULT_ID) -> Dictionary:
 	var schema := {"rays": State.RAY_INDICES, "near_distance": State.NEAR_DISTANCE,
 		"orb_alignment": State.ALIGN_TOLERANCE, "motion": ["grounded", "rising", "falling"],
 		"actions": Agent.ACTION_NAMES, "action_inputs": Agent.ACTION_INPUTS,
 		"ticks_per_decision": Agent.TICKS_PER_DECISION}
+	if preset_id == "horizontal_bins":
+		schema.horizontal_bins = ["no_hit", "near_0_to_1", "far_1_to_2"]
+	if preset_id == "late_learning_rate":
+		schema.learning_schedule = "alpha_0.1_through_3000_linear_to_0.02_at_10000"
 	# JSON reads all numbers as floats, including numbers inside arrays.
 	return JSON.parse_string(JSON.stringify(schema))
 
 
 # Empty string means success; otherwise return a message suitable for the UI.
 static func save_checkpoint(agent: RefCounted, path: String = DEFAULT_PATH) -> String:
-	var data := {"format_version": FORMAT_VERSION, "schema": _schema(), "q_table": agent.q_table}
+	var data := {"format_version": FORMAT_VERSION, "preset_id": agent.preset_id,
+		"schema": _schema(agent.preset_id), "q_table": agent.q_table}
 	for field in SETTINGS + COUNTERS:
 		data[field] = agent.get(field)
-	var error := _validate(data)
+	var error := _validate(data, agent.preset_id)
 	if not error.is_empty():
 		return "Cannot save: " + error
 	# Write beside the destination, then replace it only after a complete write.
@@ -52,7 +58,7 @@ static func load_checkpoint(agent: RefCounted, path: String = DEFAULT_PATH) -> S
 	var json := JSON.new()
 	if json.parse(file.get_as_text()) != OK:
 		return "Checkpoint is not valid JSON."
-	var error := _validate(json.data)
+	var error := _validate(json.data, agent.preset_id)
 	if not error.is_empty():
 		return error
 	# Apply only after every row and setting has passed validation.
@@ -71,10 +77,13 @@ static func _number(value: Variant) -> bool:
 	return (value is float or value is int) and is_finite(float(value))
 
 
-static func _validate(data: Variant) -> String:
+static func _validate(data: Variant, preset_id: String = Presets.DEFAULT_ID) -> String:
 	if not data is Dictionary:
 		return "Checkpoint must contain an object."
-	if data.get("format_version") != FORMAT_VERSION or data.get("schema") != _schema():
+	# Archived v1 tables predate preset IDs; their menu folder supplies the mode.
+	if not Presets.PRESETS.has(preset_id) or data.get("preset_id", preset_id) != preset_id:
+		return "Checkpoint belongs to a different experiment mode."
+	if data.get("format_version") != FORMAT_VERSION or data.get("schema") != _schema(preset_id):
 		return "Checkpoint uses a different state/action format."
 	for field in SETTINGS:
 		var value: Variant = data.get(field)
@@ -89,10 +98,12 @@ static func _validate(data: Variant) -> String:
 	if data.training_wins > data.training_episodes:
 		return "Training wins exceed completed episodes."
 	var table: Variant = data.get("q_table")
-	if not table is Dictionary or table.size() > State.MAX_STATES:
+	var max_states := 3888 if preset_id == "horizontal_bins" else State.MAX_STATES
+	if not table is Dictionary or table.size() > max_states:
 		return "Invalid Q-table."
 	var key_pattern := RegEx.new()
-	key_pattern.compile("^[01]{6}\\|(-1|0|1)\\|(-1|0|1)\\|[012]\\z")
+	var rays := "[012]{2}[01]{4}" if preset_id == "horizontal_bins" else "[01]{6}"
+	key_pattern.compile("^" + rays + "\\|(-1|0|1)\\|(-1|0|1)\\|[012]\\z")
 	for key in table:
 		if not key is String or key_pattern.search(key) == null:
 			return "Invalid Q-table state key."

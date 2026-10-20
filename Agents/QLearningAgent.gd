@@ -1,7 +1,9 @@
 extends "res://Agents/Agent.gd"
 
 const State := preload("res://Agents/QState.gd")
+const Presets := preload("res://Agents/QPresets.gd")
 
+var preset_id := Presets.DEFAULT_ID
 # Starting experiment settings. Gamma discounts one six-frame decision.
 var learning_rate := 0.1
 var discount := 0.95
@@ -26,7 +28,7 @@ func _init() -> void:
 
 func values(state: Dictionary) -> Array:
 	# Reading unseen states during evaluation must not grow the table.
-	return q_table.get(State.encode(state), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	return q_table.get(State.encode(state, preset_id == "horizontal_bins"), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 
 
 func choose_action(state: Dictionary) -> int:
@@ -51,13 +53,15 @@ func learn(state: Dictionary, action: int, reward: float, next_state: Dictionary
 	if not next_state.done:
 		target += discount * float(values(next_state).max())
 	scores[action] += learning_rate * (target - scores[action])
-	q_table[State.encode(state)] = scores
+	q_table[State.encode(state, preset_id == "horizontal_bins")] = scores
 	updates += 1
 
 
 func finish_episode(success: bool) -> void:
 	if training:
 		training_episodes += 1
+		if preset_id == "late_learning_rate":
+			learning_rate = maxf(0.02, 0.1 - 0.08 * maxf(0.0, training_episodes - 3000.0) / 7000.0)
 		training_wins += int(success)
 		epsilon = maxf(minimum_epsilon, epsilon * epsilon_decay)
 	else:

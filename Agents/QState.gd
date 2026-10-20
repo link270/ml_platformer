@@ -8,10 +8,13 @@ const ALIGN_TOLERANCE := 0.5
 const MAX_STATES := 1728 # 2^6 rays * 3 horizontal * 3 vertical * 3 motion.
 
 
-static func ray_bits(state: Dictionary) -> String:
+static func ray_bits(state: Dictionary, horizontal_bins: bool = false) -> String:
 	var bits := ""
 	for index in RAY_INDICES:
-		bits += "1" if state.ray_hits[index] and state.ray_clearances[index] <= NEAR_DISTANCE else "0"
+		if horizontal_bins and index in [6, 2] and state.ray_hits[index] and state.ray_clearances[index] > NEAR_DISTANCE:
+			bits += "2" # Far hit within the existing two-block ray.
+		else:
+			bits += "1" if state.ray_hits[index] and state.ray_clearances[index] <= NEAR_DISTANCE else "0"
 	return bits
 
 
@@ -27,8 +30,8 @@ static func motion(state: Dictionary) -> int:
 	return 1 if state.velocity.y < 0.0 else 2
 
 
-static func encode(state: Dictionary) -> String:
-	return "%s|%d|%d|%d" % [ray_bits(state), direction(state.orb_offset.x), direction(state.orb_offset.y), motion(state)]
+static func encode(state: Dictionary, horizontal_bins: bool = false) -> String:
+	return "%s|%d|%d|%d" % [ray_bits(state, horizontal_bins), direction(state.orb_offset.x), direction(state.orb_offset.y), motion(state)]
 
 
 static func describe(state: Dictionary) -> String:
