@@ -22,6 +22,18 @@ Ghosts interpolate recorded positions using each file's physics tick rate. Playb
 
 The course is drawn from the current level's visuals. If its saved fingerprint differs, the viewer warns that paths may no longer align with the current course. Complete episodes preceding an interrupted final write remain playable with a warning. Invalid formats, lengths, metadata, or non-finite samples produce a visible error rather than rendering invalid data. Older version 1 recordings are supported unchanged.
 
+## Heat map
+
+Enable **Show heat map** in the live level's HUD or the playback viewer. The overlay defaults off but keeps collecting while hidden, so enabling it includes the session's earlier attempts. It works independently of path trails and disk recording. Headless training does not allocate or update a heat map.
+
+The grid measures **the percentage of episodes visiting each 16-pixel cell**, using the character's center at each physics sample. Each episode counts at most once per cell: standing still, repeated jumps in one place, and revisiting a cell add no extra heat. Blue/cyan marks less common areas, yellow/red more common areas. The legend always spans 0–100%, and unvisited cells remain transparent. Active attempts contribute the path visited so far; the denominator is completed episodes plus active episodes, shown below the legend.
+
+Live heat covers all observed episodes in the current level, regardless of the recording interval. Restarting an unfinished attempt removes that attempt's cells while preserving completed heat. Switching training/evaluation or starting a new level clears the population. The aggregate does not fade or stop at the trail history's 50-episode limit.
+
+Playback heat covers only the selected episodes, as they play; it does not preview future paths. **Show every** therefore limits which episodes contribute. All recorded physics samples are consumed even at high playback speed. Sequential and simultaneous playback produce the same completed grid for the same selection. Pause adds no heat; restart, changing mode, changing group size, changing the interval, or loading files clears it before playback begins again.
+
+Storage is one count per visited on-screen cell plus one small visited-cell set per active episode. Completed episode paths are not retained by the heat map, and offscreen positions do not grow its grid. Heat data is derived from the existing position samples, so the recording file format and disk usage are unchanged.
+
 ## Command line
 
 ```sh

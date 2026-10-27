@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://ce7u827pg64da" path="res://UI/AgentPanel.gd" id="4"]
 
 [ext_resource type="Theme" path="res://UI/InterfaceTheme.tres" id="5"]
+[ext_resource type="PackedScene" path="res://UI/HeatMapControls.tscn" id="6"]
 
 [sub_resource type="CircleShape2D" id="OrbShape"]
 radius = 12.0
@@ -213,6 +214,10 @@ visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.55, 0.8, 0.82, 1)
+
+[node name="HeatMapControls" parent="HUD/AgentPanel/Content" instance=ExtResource("6")]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="SpeedRow" type="HBoxContainer" parent="HUD/AgentPanel/Content"]
 unique_name_in_owner = true

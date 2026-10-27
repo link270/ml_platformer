@@ -3,6 +3,7 @@ extends Node2D
 const Recording := preload("res://Training/EpisodeRecording.gd")
 const Recorder := preload("res://Training/EpisodeRecorder.gd")
 const Trails := preload("res://Game/PathTrails.gd")
+const HeatMap := preload("res://Game/PathHeatMap.gd")
 const LevelScene := preload("res://Game/Level.tscn")
 const SPEEDS := [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
 
@@ -20,10 +21,15 @@ var _group_time := 0.0
 var _group_duration := 0.0
 var _polygon := PackedVector2Array()
 var history: Node2D
+var heat_map: Node2D
 
 
 func _ready() -> void:
 	_build_course()
+	heat_map = HeatMap.new()
+	heat_map.bounds = get_viewport_rect()
+	$HeatMapLayer.add_child(heat_map)
+	%HeatMapControls.bind_heat_map(heat_map)
 	history = Trails.new()
 	$CompletedTrails.add_child(history)
 	%PlaybackMode.add_item("Sequential")
@@ -115,6 +121,7 @@ func load_recordings(paths: PackedStringArray) -> bool:
 func _restart() -> void:
 	_clear_active()
 	history.clear()
+	heat_map.clear()
 	playlist.clear()
 	completed = 0
 	_next = 0
@@ -149,6 +156,7 @@ func _spawn_group() -> void:
 			_clear_active()
 			return
 		var metadata: Dictionary = recording.episodes[item.index].metadata
+		heat_map.begin_episode(_next, points[0])
 		var color := Trails.ACTIVE_COLOR if count == 1 else Color.from_hsv(fmod(_next * 0.618034, 1.0), 0.55, 1.0, 0.8)
 		var trail := Trails.new()
 		trail.active_color = color
@@ -168,7 +176,7 @@ func _spawn_group() -> void:
 		var hz := float(recording.header.physics_hz)
 		var duration := (points.size() - 1) / hz
 		_group_duration = maxf(_group_duration, duration)
-		active.append({"points": points, "hz": hz, "duration": duration, "tick": 0,
+		active.append({"points": points, "hz": hz, "duration": duration, "tick": 0, "heat_id": _next,
 			"metadata": metadata, "trail": trail, "visual": visual})
 		_next += 1
 
@@ -193,9 +201,11 @@ func advance(delta: float) -> void:
 			var whole := mini(int(floor(tick + 0.000001)), points.size() - 1)
 			for sample in range(ghost.tick + 1, whole + 1):
 				ghost.trail.sample(points[sample], sample == points.size() - 1)
+				heat_map.sample(ghost.heat_id, points[sample])
 			ghost.tick = whole
 			ghost.visual.position = points[whole].lerp(points[mini(whole + 1, points.size() - 1)], clampf(tick - whole, 0.0, 1.0))
 			if complete:
+				heat_map.finish_episode(ghost.heat_id)
 				history.remember(ghost.trail.current, ghost.metadata.outcome)
 				ghost.trail.free()
 				ghost.visual.free()
@@ -211,6 +221,7 @@ func advance(delta: float) -> void:
 
 func _clear_active() -> void:
 	for ghost in active:
+		heat_map.abort_episode(ghost.heat_id)
 		ghost.trail.free()
 		ghost.visual.free()
 	active.clear()

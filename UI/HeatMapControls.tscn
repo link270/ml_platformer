@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://UI/HeatMapControls.gd" id="1"]
+
+[node name="HeatMapControls" type="VBoxContainer"]
+visible = false
+theme_override_constants/separation = 4
+script = ExtResource("1")
+
+[node name="ShowHeatMap" type="CheckBox" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Show heat map"
+tooltip_text = "Percentage of episodes visiting each 16-pixel cell. One visit per episode, including active attempts. Stationary bots do not add extra heat. Independent of path trails and recording."
+
+[node name="HeatLegend" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="HeatScale" type="TextureRect" parent="HeatLegend"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Labels" type="HBoxContainer" parent="HeatLegend"]
+layout_mode = 2
+
+[node name="Low" type="Label" parent="HeatLegend/Labels"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "0%"
+
+[node name="Metric" type="Label" parent="HeatLegend/Labels"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Episode visits"
+horizontal_alignment = 1
+
+[node name="High" type="Label" parent="HeatLegend/Labels"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "100%"
+
+[node name="HeatCounts" type="Label" parent="HeatLegend"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 12

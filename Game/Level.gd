@@ -9,6 +9,7 @@ const QLearningAgent := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const EpisodeRecorder := preload("res://Training/EpisodeRecorder.gd")
 const PathTrails := preload("res://Game/PathTrails.gd")
+const PathHeatMap := preload("res://Game/PathHeatMap.gd")
 const Action = Agent.Action
 const TICKS_PER_DECISION := Agent.TICKS_PER_DECISION
 const TIME_PENALTY_PER_DECISION := 0.001
@@ -57,6 +58,7 @@ var recording_error := ""
 var episode_recorder: RefCounted
 var show_path_trails := false
 var path_trails: Node2D
+var heat_map: Node2D
 var _record_this_episode := false
 
 var _held_action_id := Action.DO_NOTHING
@@ -210,6 +212,8 @@ func _step_agent(delta: float) -> void:
 		episode_recorder.sample(player.position, action_id, agent.exploring if control_mode == ControlMode.Q_LEARNING else false, reward)
 	if path_trails != null:
 		path_trails.sample(player.position, done)
+	if heat_map != null:
+		heat_map.sample(0, player.position)
 	if done or _decision_required():
 		var next_state := get_state(agent.observation_rays)
 		agent.learn(_decision_state, next_state.action_id, _decision_reward, next_state)
@@ -240,6 +244,8 @@ func _toggle_evaluation() -> void:
 	agent.training = not agent.training
 	if path_trails != null:
 		path_trails.clear()
+	if heat_map != null:
+		heat_map.clear()
 	# A mode change starts another batch using the same selected data.
 	if run_limit > 0:
 		autosave_training = agent.training
@@ -323,6 +329,11 @@ func reset_episode() -> Dictionary:
 func _setup_capture() -> void:
 	if control_mode == ControlMode.HUMAN:
 		return
+	if not headless_training:
+		heat_map = PathHeatMap.new()
+		heat_map.bounds = get_viewport_rect()
+		add_child(heat_map)
+		%HeatMapControls.bind_heat_map(heat_map)
 	if show_path_trails and not headless_training:
 		path_trails = PathTrails.new()
 		path_trails.z_index = 1
@@ -349,6 +360,8 @@ func _setup_capture() -> void:
 
 func _begin_capture() -> void:
 	_record_this_episode = false
+	if heat_map != null:
+		heat_map.begin_episode(0, player.position)
 	if path_trails != null:
 		path_trails.begin_episode(player.position)
 	var ordinal := recording_episode_offset + session_runs + 1
@@ -371,6 +384,8 @@ func _finish_capture() -> void:
 		_record_this_episode = false
 	if path_trails != null:
 		path_trails.finish_episode(outcome)
+	if heat_map != null:
+		heat_map.finish_episode(0)
 	_update_recording_status()
 
 
