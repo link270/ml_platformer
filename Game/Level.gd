@@ -7,6 +7,8 @@ const Agent := preload("res://Agents/Agent.gd")
 const RandomAgent := preload("res://Agents/RandomAgent.gd")
 const QLearningAgent := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
+const EpisodeRecorder := preload("res://Training/EpisodeRecorder.gd")
+const PathTrails := preload("res://Game/PathTrails.gd")
 const Action = Agent.Action
 const TICKS_PER_DECISION := Agent.TICKS_PER_DECISION
 const TIME_PENALTY_PER_DECISION := 0.001
@@ -48,6 +50,14 @@ var last_episode_return := 0.0
 var _decision_state: Dictionary = {}
 var _decision_reward := 0.0
 var _previous_proximity := 0.0
+var record_every := 0
+var recording_path := ""
+var recording_episode_offset := 0
+var recording_error := ""
+var episode_recorder: RefCounted
+var show_path_trails := false
+var path_trails: Node2D
+var _record_this_episode := false
 
 var _held_action_id := Action.DO_NOTHING
 var _normal_tick_rate := Engine.physics_ticks_per_second
@@ -61,6 +71,7 @@ func _ready() -> void:
 		agent = QLearningAgent.new() if control_mode == ControlMode.Q_LEARNING else RandomAgent.new()
 	if control_mode == ControlMode.Q_LEARNING:
 		time_penalty_per_decision = QLearningAgent.Presets.time_penalty(agent.preset_id)
+	_setup_capture()
 	if headless_training:
 		hide()
 		$HUD.hide()
@@ -119,6 +130,8 @@ func _set_training_speed(index: int) -> void:
 
 
 func _exit_tree() -> void:
+	if episode_recorder != null:
+		episode_recorder.close()
 	if control_mode == ControlMode.Q_LEARNING:
 		Engine.physics_ticks_per_second = _normal_tick_rate
 		Engine.max_physics_steps_per_frame = _normal_max_steps
@@ -193,16 +206,21 @@ func _step_agent(delta: float) -> void:
 	_advance_tick(delta, action_id)
 	_decision_reward += reward
 	episode_return += reward
+	if _record_this_episode:
+		episode_recorder.sample(player.position, action_id, agent.exploring if control_mode == ControlMode.Q_LEARNING else false, reward)
+	if path_trails != null:
+		path_trails.sample(player.position, done)
 	if done or _decision_required():
 		var next_state := get_state(agent.observation_rays)
 		agent.learn(_decision_state, next_state.action_id, _decision_reward, next_state)
 		_decision_state = {}
 	if done:
+		_finish_capture()
 		agent.finish_episode(orb_collected)
 		last_episode_return = episode_return
 		session_runs += 1
 		episode_completed.emit()
-		if run_limit > 0 and session_runs >= run_limit:
+		if not recording_error.is_empty() or (run_limit > 0 and session_runs >= run_limit):
 			_finish_session()
 		elif not headless_training:
 			_update_stats()
@@ -213,12 +231,15 @@ func _toggle_evaluation() -> void:
 		return
 	if autosave_training and agent.training and not _save_checkpoint():
 		return
+	recording_episode_offset += session_runs
 	session_runs = 0
 	session_finished = false
 	deaths = 0
 	orb_collections = 0
 	timeouts = 0
 	agent.training = not agent.training
+	if path_trails != null:
+		path_trails.clear()
 	# A mode change starts another batch using the same selected data.
 	if run_limit > 0:
 		autosave_training = agent.training
@@ -295,7 +316,73 @@ func reset_episode() -> Dictionary:
 	_decision_reward = 0.0
 	_held_action_id = Action.DO_NOTHING
 	_previous_proximity = _orb_proximity()
+	_begin_capture()
 	return get_state()
+
+
+func _setup_capture() -> void:
+	if control_mode == ControlMode.HUMAN:
+		return
+	if show_path_trails and not headless_training:
+		path_trails = PathTrails.new()
+		path_trails.z_index = 1
+		add_child(path_trails)
+	if record_every > 0:
+		episode_recorder = EpisodeRecorder.new()
+		if recording_path.is_empty():
+			recording_path = EpisodeRecorder.new_path()
+		var fingerprints := {}
+		for source in ["res://Game/Level.tscn", "res://Game/Level.gd", "res://Game/Player.gd", "res://Agents/QLearningAgent.gd", "res://Agents/QState.gd", "res://Agents/QPresets.gd"]:
+			fingerprints[source] = FileAccess.get_sha256(source)
+		var metadata := {"physics_hz": _normal_tick_rate, "ticks_per_decision": TICKS_PER_DECISION,
+			"record_every": record_every, "episode_offset": recording_episode_offset,
+			"controller": ControlMode.keys()[control_mode], "engine": Engine.get_version_info().string,
+			"source_sha256": fingerprints, "checkpoint": checkpoint_path}
+		if control_mode == ControlMode.Q_LEARNING:
+			metadata.preset_id = agent.preset_id
+			metadata.starting_training_episodes = agent.training_episodes
+		if not episode_recorder.open(recording_path, metadata):
+			recording_error = episode_recorder.error
+			session_finished = true
+	_begin_capture()
+
+
+func _begin_capture() -> void:
+	_record_this_episode = false
+	if path_trails != null:
+		path_trails.begin_episode(player.position)
+	var ordinal := recording_episode_offset + session_runs + 1
+	if record_every > 0 and recording_error.is_empty() and ordinal % record_every == 0:
+		var metadata := {"episode": ordinal, "training": control_mode == ControlMode.Q_LEARNING and agent.training}
+		if control_mode == ControlMode.Q_LEARNING:
+			metadata.training_episodes_before = agent.training_episodes
+			metadata.epsilon = agent.epsilon
+			metadata.rng_state_before = str(agent.rng.state)
+		episode_recorder.begin_episode(metadata, player.position, roundi(episode_limit_seconds * _normal_tick_rate))
+		_record_this_episode = true
+	_update_recording_status()
+
+
+func _finish_capture() -> void:
+	var outcome := "success" if orb_collected else ("timeout" if timed_out else "death")
+	if _record_this_episode:
+		if not episode_recorder.finish_episode(outcome, episode_return):
+			recording_error = episode_recorder.error
+		_record_this_episode = false
+	if path_trails != null:
+		path_trails.finish_episode(outcome)
+	_update_recording_status()
+
+
+func _update_recording_status() -> void:
+	if headless_training:
+		return
+	%RecordingStatus.visible = record_every > 0 or path_trails != null
+	var text := "Trails · last 50 attempts" if path_trails != null else ""
+	if record_every > 0:
+		text += ("\n" if not text.is_empty() else "") + ("Recording error: " + recording_error if not recording_error.is_empty() else "Recording every %d · %d saved" % [record_every, episode_recorder.recorded_episodes])
+	%RecordingStatus.text = text
+	%RecordingStatus.tooltip_text = ProjectSettings.globalize_path(recording_path) if record_every > 0 else "Green: success · Red: death · Amber: timeout. Older paths fade each episode."
 
 
 func get_state(ray_indices: Array = [0, 1, 2, 3, 4, 5, 6, 7]) -> Dictionary:

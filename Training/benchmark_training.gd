@@ -30,6 +30,14 @@ func report_progress(status: String = "running", message: String = "") -> void:
 		"updates": agent.updates, "wins": agent.training_wins,
 		"behavior_sha256": var_to_bytes([episode_results, agent.q_table, agent.epsilon, agent.rng.state, agent.updates]).hex_encode().sha256_text(),
 	}
+	if current_scene.episode_recorder != null:
+		result.recorded_episodes = current_scene.episode_recorder.recorded_episodes
+		result.recorded_samples = current_scene.episode_recorder.recorded_samples
+		result.recording_bytes = current_scene.episode_recorder.bytes_written
+	else:
+		result.recorded_episodes = 0
+		result.recorded_samples = 0
+		result.recording_bytes = 0
 	var file := FileAccess.open(save_path + ".benchmark.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(result, "\t"))
 	print("BENCHMARK ", JSON.stringify(result))

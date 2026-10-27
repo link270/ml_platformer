@@ -20,6 +20,9 @@ var starting_wins := 0
 var started_at := 0
 var last_report_at := 0
 var preset_id := Presets.DEFAULT_ID
+var record_every := 0
+var recording_path := ""
+var recording_episode_offset := 0
 
 
 func _initialize() -> void:
@@ -33,6 +36,8 @@ func start_training() -> void:
 		print("Optional --preset: ", ", ".join(Presets.IDS))
 		print("Episodes are additional episodes this run. Paths accept user:// or absolute paths.")
 		print("Options: --agent q-learning|random --mode training|evaluation")
+		print("Recording: --record-every 0 (off), 1 (all), or X; optional --record-to PATH.mlpaths")
+		print("--record-offset N preserves session-relative sampling across worker chunks.")
 		print("Default save: ", ProjectSettings.globalize_path(save_path))
 		quit()
 		return
@@ -59,11 +64,20 @@ func start_training() -> void:
 	level.control_mode = level.ControlMode.RANDOM if agent_name == "random" else level.ControlMode.Q_LEARNING
 	level.headless_training = true
 	level.agent = agent
+	level.record_every = record_every
+	level.recording_path = recording_path
+	level.recording_episode_offset = recording_episode_offset
+	level.checkpoint_path = save_path
 	level.episode_completed.connect(on_episode_completed)
 	started_at = Time.get_ticks_msec()
 	last_report_at = started_at
 	root.add_child(level)
 	current_scene = level
+	if not level.recording_error.is_empty():
+		fail(level.recording_error)
+		return
+	if record_every > 0:
+		print("Recording every %d episodes: %s" % [record_every, ProjectSettings.globalize_path(level.recording_path)])
 	print("%s: %d runs with %s." % [run_mode.capitalize(), episodes, agent_name])
 	if _saves_training():
 		print("Checkpoint every %d runs and at completion: %s" % [save_every, ProjectSettings.globalize_path(save_path)])
@@ -77,6 +91,17 @@ func parse_options(args: PackedStringArray) -> String:
 		var option := args[i]
 		var value := args[i + 1]
 		match option:
+			"--record-every", "--record-offset":
+				if not value.is_valid_int() or value.to_int() < 0:
+					return option + " must be a non-negative integer."
+				if option == "--record-every":
+					record_every = value.to_int()
+				else:
+					recording_episode_offset = value.to_int()
+			"--record-to":
+				if value.is_empty():
+					return option + " needs a file path."
+				recording_path = value
 			"--preset":
 				if not Presets.PRESETS.has(value):
 					return "Unknown experiment preset: " + value
@@ -111,6 +136,8 @@ func parse_options(args: PackedStringArray) -> String:
 		return "Random agents support evaluation without training data."
 	if run_mode == "evaluation" and agent_name == "q-learning" and load_path.is_empty():
 		return "Choose saved data for Q-learning evaluation."
+	if not recording_path.is_empty() and record_every == 0:
+		return "--record-to requires --record-every greater than zero."
 	return ""
 
 
@@ -119,6 +146,9 @@ func _saves_training() -> bool:
 
 
 func on_episode_completed() -> void:
+	if not current_scene.recording_error.is_empty():
+		fail(current_scene.recording_error)
+		return
 	completed_runs += 1
 	successful_runs += int(current_scene.orb_collected)
 	var completed := completed_runs
@@ -129,6 +159,8 @@ func on_episode_completed() -> void:
 			fail(error)
 			return
 	if completed == episodes or stop_requested:
+		if current_scene.episode_recorder != null:
+			current_scene.episode_recorder.close()
 		report_progress("completed" if completed == episodes else "stopped")
 		print("Finished. Checkpoint saved." if _saves_training() else "Finished evaluation. Saved data unchanged.")
 		quit()
@@ -146,6 +178,10 @@ func report_progress(status: String = "running", message: String = "") -> void:
 		return
 	var data := {"status": status, "message": message, "completed": completed, "target": episodes,
 		"episodes_per_second": completed / elapsed, "success": success, "wins": successful_runs}
+	if is_instance_valid(current_scene) and current_scene.get("episode_recorder") != null:
+		data.recording_path = current_scene.recording_path
+		data.recorded_episodes = current_scene.episode_recorder.recorded_episodes
+		data.recording_bytes = current_scene.episode_recorder.bytes_written
 	# Replace a complete snapshot so the menu never reads half-written JSON.
 	var file := FileAccess.open(status_path + ".tmp", FileAccess.WRITE)
 	if file == null:

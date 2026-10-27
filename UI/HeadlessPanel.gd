@@ -19,6 +19,8 @@ var stopping := false
 var controller := 2
 var evaluating := false
 var _exit_polls := 0
+var record_every := 0
+var recording_directory := ""
 
 
 func _ready() -> void:
@@ -40,6 +42,8 @@ func start_run(selected_controller: int, evaluation: bool, path: String, resume:
 	completed_wins = 0
 	total_episodes = int(%BatchEpisodes.value)
 	check_in_every = int(%BatchCheckEvery.value) if controller == 2 and not evaluating else 0
+	record_every = int(%RecordEvery.value)
+	recording_directory = get_parent().recording_directory
 	%BatchProgress.max_value = total_episodes
 	%BatchProgress.value = 0
 	%BatchStop.disabled = false
@@ -64,6 +68,10 @@ func _launch_worker(resume: bool) -> void:
 		args.append_array(["--save", checkpoint_path, "--preset", preset_id])
 		if resume:
 			args.append_array(["--load", load_path if completed_episodes == 0 else checkpoint_path])
+	if record_every > 0:
+		var recording_path := preload("res://Training/EpisodeRecorder.gd").new_path(recording_directory)
+		args.append_array(["--record-every", str(record_every), "--record-to", ProjectSettings.globalize_path(recording_path), "--record-offset", str(completed_episodes)])
+		%BatchStatus.tooltip_text = "Recordings: " + ProjectSettings.globalize_path(recording_directory)
 	process_id = OS.create_process(OS.get_executable_path(), args)
 	if process_id <= 0:
 		_finish("Could not start the worker.")

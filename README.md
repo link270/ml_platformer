@@ -32,11 +32,17 @@ Q-learning's **Training data** dropdown reads `.json` checkpoints from `user://c
 
 The game shows a small outcome panel and run progress. **More** expands learning details and save/mode controls. **V** toggles sensors, **R** restarts an unfinished episode, and **Esc** returns to setup. Completing a batch leaves its final result on screen.
 
+**Record every** defaults to `0` (off). Set `1` to record every episode or `X` to save episodes X, 2X, 3X within the new session. **Folder** beside it opens `user://recordings/`. **Show live path trails** draws the current attempt brightly and keeps the last 50 completed paths, fading older paths. Green endpoints mark successes, red deaths, and amber timeouts. Trails work independently of disk recording; headless runs skip drawing.
+
+Recording works for visible and headless agent sessions, including evaluation. Headless check-in chunks create separate recording files and preserve the session's sampling interval; the evaluation check-ins themselves are excluded. Recordings contain complete episodes only; restarting or leaving an unfinished attempt discards that partial recording. See [episode recording](Docs/episode-recording.md) for the file format and benchmark.
+
 For headless training from the project root:
 
 ```sh
 godot --headless --path . --fixed-fps 60 --disable-render-loop --script res://Training/train.gd -- --episodes 1000
 ```
+
+Add `--record-every 10` to save every tenth episode. Optional `--record-to /absolute/path/session.mlpaths` selects a new recording file; an existing file is never overwritten.
 
 On macOS/Linux, `sh ./train.sh --episodes 1000` provides the same launcher. Set `GODOT_BIN` if Godot is not on your PATH. Use `--help` for training options.
 
@@ -48,7 +54,7 @@ Run a check from the project root, replacing the script name as needed:
 godot --headless --path . --fixed-fps 60 --disable-render-loop --script res://Tests/check_gameplay.gd
 ```
 
-Other checks are `check_q_learning.gd`, `check_q_checkpoint.gd`, `check_headless_training.gd`, `check_headless_menu.gd`, `check_training_checkins.gd`, `check_training_trace.gd`, and `check_run_setup.gd`, all in `Tests/`. Checks that write files create unique directories in the operating system's temporary location and clean them up afterward. The same commands work on Windows, macOS, and Linux without scratch-path changes.
+Other checks are `check_q_learning.gd`, `check_q_checkpoint.gd`, `check_headless_training.gd`, `check_headless_menu.gd`, `check_training_checkins.gd`, `check_training_trace.gd`, `check_episode_recording.gd`, and `check_run_setup.gd`, all in `Tests/`. Checks that write files create unique directories in the operating system's temporary location and clean them up afterward. The same commands work on Windows, macOS, and Linux without scratch-path changes.
 
 See [the project design and training guide](Docs/godot-platformer-plan.md) for controls, agent behavior, checkpoint details, and benchmarking. Experiment folders preserve historical snapshots and their original paths.
 

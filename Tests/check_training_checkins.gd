@@ -80,6 +80,7 @@ func run_check() -> void:
 	var menu := preload("res://UI/MainMenu.tscn").instantiate()
 	menu.checkpoint_path = checkpoint
 	menu.checkpoint_directory = directory
+	menu.recording_directory = directory.path_join("recordings")
 	root.add_child(menu)
 	current_scene = menu
 	var panel := menu.get_node("%SessionInfo")
@@ -87,6 +88,7 @@ func run_check() -> void:
 	menu.get_node("%HeadlessToggle").button_pressed = true
 	menu.get_node("%BatchEpisodes").value = 5
 	menu.get_node("%BatchCheckEvery").value = 2
+	menu.get_node("%RecordEvery").value = 3
 	menu.get_node("%BatchStart").pressed.emit()
 	checkpoint = menu.checkpoint_path
 	await wait_for_pause(panel)
@@ -100,6 +102,19 @@ func run_check() -> void:
 	await wait_for_pause(panel)
 	check(not panel.active and menu._check_in_level == null and saved_episodes() == 5, "partial final chunk finishes at target without extra evaluation")
 	check(menu.get_node("%BatchProgress").value == 5, "progress reaches requested total")
+	var recorded_ordinals: Array = []
+	for filename in DirAccess.get_files_at(menu.recording_directory):
+		var recording := FileAccess.open(menu.recording_directory.path_join(filename), FileAccess.READ)
+		recording.get_buffer(8)
+		recording.get_buffer(recording.get_32())
+		while recording.get_position() < recording.get_length():
+			var json_length := recording.get_32()
+			var count := recording.get_32()
+			var metadata: Dictionary = JSON.parse_string(recording.get_buffer(json_length).get_string_from_utf8())
+			recorded_ordinals.append(int(metadata.episode))
+			recording.seek(recording.get_position() + count * 13)
+		recording.close()
+	check(recorded_ordinals == [3], "recording samples across worker boundaries and excludes evaluation check-ins")
 
 	menu.get_node("%BatchEpisodes").value = 2
 	menu.get_node("%BatchStart").pressed.emit()

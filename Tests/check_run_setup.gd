@@ -23,6 +23,7 @@ func make_menu() -> Control:
 	var menu := Menu.instantiate()
 	menu.checkpoint_directory = directory.path_join("checkpoints")
 	menu.checkpoint_path = directory.path_join("original.json")
+	menu.recording_directory = directory.path_join("recordings")
 	root.add_child(menu)
 	current_scene = menu
 	return menu
@@ -75,6 +76,7 @@ func run_check() -> void:
 	file.store_string("Not training data")
 	file.close()
 	var menu := make_menu()
+	check(menu.get_node("%RecordEvery").value == 0, "recording defaults to off")
 	check(menu.get_node("%DataSelect").item_count == 31, "dropdown lists personal saves and 27 matching archives, excluding other files")
 	choose(menu, 2, true)
 	check(menu.get_node("%BatchStart").disabled, "evaluation requires saved data")
@@ -90,6 +92,7 @@ func run_check() -> void:
 	menu = make_menu()
 	choose(menu, 2, false)
 	menu.get_node("%BatchEpisodes").value = 3
+	menu.get_node("%RecordEvery").value = 2
 	menu.get_node("%BatchStart").pressed.emit()
 	level = current_scene
 	var fresh_path: String = level.checkpoint_path
@@ -99,6 +102,7 @@ func run_check() -> void:
 	check(level.get_node("%Details").visible, "details can be expanded")
 	level.get_node("%DetailsButton").button_pressed = false
 	await run_batch(level)
+	check(level.episode_recorder.recorded_episodes == 1 and level.path_trails.history.size() == 3, "menu starts sampled recording and independent live trails")
 	var trained := QLearning.new()
 	check(Checkpoint.load_checkpoint(trained, fresh_path).is_empty() and trained.training_episodes == 3, "visible training saves at its run limit")
 	check(level.get_node("%SaveStatus").text.begins_with("Saved:"), "automatic save reports success")

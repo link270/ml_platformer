@@ -38,7 +38,7 @@ layout_mode = 2
 
 [node name="Content" type="VBoxContainer" parent="Center/Panel" unique_id=799443210]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 2
 
 [node name="Header" type="HBoxContainer" parent="Center/Panel/Content" unique_id=881035527]
 layout_mode = 2
@@ -166,7 +166,52 @@ max_value = 10000000.0
 value = 100.0
 rounded = true
 
-[node name="HeadlessToggle" type="CheckBox" parent="Center/Panel/Content" unique_id=1060257269]
+[node name="RecordingRow" type="HBoxContainer" parent="Center/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RecordingLabel" type="Label" parent="Center/Panel/Content/RecordingRow"]
+custom_minimum_size = Vector2(134, 36)
+layout_mode = 2
+text = "Record every"
+vertical_alignment = 1
+
+[node name="RecordEvery" type="SpinBox" parent="Center/Panel/Content/RecordingRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Save actual episode paths. 0 = off; 1 = all; X = episodes X, 2X, 3X within this session."
+max_value = 10000000.0
+rounded = true
+suffix = "episodes"
+
+[node name="RecordingHint" type="Label" parent="Center/Panel/Content/RecordingRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "0 = off"
+vertical_alignment = 1
+
+[node name="OpenRecordings" type="Button" parent="Center/Panel/Content/RecordingRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Folder"
+tooltip_text = "Open saved episode recordings. These are separate from training checkpoints."
+
+[node name="DisplayRow" type="HBoxContainer" parent="Center/Panel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TrailsToggle" type="CheckBox" parent="Center/Panel/Content/DisplayRow"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show live path trails"
+tooltip_text = "Bright current path and the last 50 completed attempts, fading with age. Works with recording off."
+
+[node name="HeadlessToggle" type="CheckBox" parent="Center/Panel/Content/DisplayRow" unique_id=1060257269]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Run without drawing the level. Progress stays here."

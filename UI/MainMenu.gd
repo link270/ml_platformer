@@ -11,6 +11,7 @@ const CHECKPOINT_DIRECTORY := "user://checkpoints"
 # These can be overridden by tests without touching the player's saved data.
 var checkpoint_directory := CHECKPOINT_DIRECTORY
 var checkpoint_path := Checkpoint.DEFAULT_PATH
+var recording_directory := Level.EpisodeRecorder.DIRECTORY
 var _check_in_level: Node2D
 var _busy := false
 
@@ -35,6 +36,7 @@ func _ready() -> void:
 	%HeadlessToggle.toggled.connect(_refresh_form.unbind(1))
 	%RefreshData.pressed.connect(_refresh_data)
 	%OpenFolder.pressed.connect(_open_data_folder)
+	%OpenRecordings.pressed.connect(_open_recordings_folder)
 	%BatchStart.pressed.connect(_start_selected)
 	%SessionInfo.busy_changed.connect(_set_training_busy)
 	%SessionInfo.check_in_requested.connect(_show_check_in)
@@ -129,6 +131,11 @@ func _refresh_form() -> void:
 	%HeadlessToggle.disabled = _busy
 	%CheckInRow.visible = not human and learning and not evaluating and %HeadlessToggle.button_pressed
 	%BatchCheckEvery.editable = not _busy
+	%RecordingRow.visible = not human
+	%RecordEvery.editable = not _busy
+	%TrailsToggle.visible = not human
+	%DisplayRow.visible = not human
+	%TrailsToggle.disabled = _busy or %HeadlessToggle.button_pressed
 	%BatchStart.disabled = _busy or (learning and evaluating and selected_path.is_empty())
 	%BatchStart.text = "Play" if human else ("Start evaluation" if evaluating else "Start training")
 	%BatchStop.visible = _busy
@@ -175,6 +182,14 @@ func _new_checkpoint_path() -> String:
 	return path
 
 
+func _open_recordings_folder() -> void:
+	var error := DirAccess.make_dir_recursive_absolute(recording_directory)
+	if error != OK:
+		%BatchStatus.text = "Cannot create recordings folder: " + error_string(error)
+		return
+	OS.shell_open(ProjectSettings.globalize_path(recording_directory))
+
+
 func _start_selected() -> void:
 	if _busy or %BatchStart.disabled:
 		return
@@ -210,6 +225,10 @@ func _start_selected() -> void:
 		return
 	var level := LEVEL_SCENE.instantiate()
 	level.control_mode = controller
+	level.show_path_trails = controller != Level.ControlMode.HUMAN and %TrailsToggle.button_pressed
+	level.record_every = 0 if controller == Level.ControlMode.HUMAN else int(%RecordEvery.value)
+	if level.record_every > 0:
+		level.recording_path = Level.EpisodeRecorder.new_path(recording_directory)
 	level.agent = saved_agent
 	level.checkpoint_path = checkpoint_path
 	level.run_limit = 0 if controller == Level.ControlMode.HUMAN else int(%BatchEpisodes.value)
