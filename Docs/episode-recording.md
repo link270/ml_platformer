@@ -1,12 +1,26 @@
 # Episode recording and live paths
 
-In setup, **Record every** is `0` by default. `1` records all episodes; `X` records episodes X, 2X, 3X relative to this session, including when continuing an existing policy. Both training and evaluation can be recorded. **Folder** opens `user://recordings/`; each session gets a unique `.mlpaths` file separate from policy checkpoints. Recordings currently supply data for future playback; no replay viewer is included yet.
+In setup, **Record every** is `0` by default. `1` records all episodes; `X` records episodes X, 2X, 3X relative to this session, including when continuing an existing policy. Both training and evaluation can be recorded. **Folder** opens `user://recordings/`; each session gets a unique `.mlpaths` file separate from policy checkpoints. Use **Playback recordings** to view these files.
 
 **Show live path trails** is enabled by default in visible agent sessions and works with recording off. The current path is bright cyan. The previous 50 complete paths are muted and fade by episode age. Endpoint colors indicate success (green), death (red), or timeout (amber). Straight trail segments are simplified for drawing; disk recordings retain every physics tick. Headless training skips trail allocation and drawing. Historical trails are not retained after leaving the level or switching between training and evaluation.
 
 Sampling spans headless training chunks: for example, recording every 3 episodes and watching every 2 records episode 3 in the second worker, rather than restarting the sampling interval. Each worker chunk creates a separate file. Evaluation check-ins are excluded from that training recording. A chunk with no sampled episodes contains only its header.
 
 Only completed episodes are written. Manual restarts, switching modes, and leaving midway through an episode discard the partial recording. Completed episodes flush at their boundaries. A recording write error stops the session and is reported in the HUD or headless status. Existing destinations are refused, never appended to or overwritten. For visible mode switches, recording ordinals continue increasing within the file and each episode identifies whether it was training or evaluation.
+
+## Playback
+
+Choose **Playback recordings** from setup, then **Open recordings…**. Select one or more `.mlpaths` files; multi-selection lets you include all chunks from a headless session. The picker starts in the recording folder. Files play in creation order, with episode offsets ordering chunks created in the same second.
+
+- **Sequential** plays one recorded episode at a time, keeping its completed path as the next ghost starts.
+- **Simultaneous groups** starts up to the selected **Bots** count together (default 20, maximum 100). Each ghost disappears at its own recorded endpoint. Its path and outcome marker persist while the remaining ghosts continue. The next group starts when the longest episode finishes; the final group can contain fewer bots.
+- **Show every** further samples the saved episodes: `1` shows all, `X` shows saved entries X, 2X, 3X across the chosen files. For example, if a recording contains original episodes 10, 20, 30, 40, setting this to `2` plays original episodes 20 and 40. Ghost labels retain original episode numbers.
+- **Speed** ranges from 0.25× to 8×. **Pause** / Space freezes recorded time. **Restart** / R rewinds the selected playlist and clears its trails. Changing mode, interval, or group size also restarts. **Menu** / Esc returns to setup.
+- **Show persistent paths** toggles paths without hiding ghosts. Active ghosts have colored paths; one shared history retains the last 50 completed paths with the same fading and outcome colors as live training.
+
+Ghosts interpolate recorded positions using each file's physics tick rate. Playback never instantiates physics bodies, agent policies, sensors, or learning updates into the running scene, and never writes to recordings or checkpoints. File indexing retains episode metadata and byte offsets; only the active group's position arrays are decoded, then released as its ghosts finish. Trail geometry is simplified separately from the recorded samples.
+
+The course is drawn from the current level's visuals. If its saved fingerprint differs, the viewer warns that paths may no longer align with the current course. Complete episodes preceding an interrupted final write remain playable with a warning. Invalid formats, lengths, metadata, or non-finite samples produce a visible error rather than rendering invalid data. Older version 1 recordings are supported unchanged.
 
 ## Command line
 
@@ -34,7 +48,7 @@ Each complete episode follows with:
 
 Each sample is float32 X, float32 Y, float32 tick reward, then one flags byte. Coordinates are level-local pixels. Flags bits 0–2 hold action IDs from `Agents/Agent.gd`; bit 3 marks a randomly exploratory action. The initial spawn sample has reward/action/flags zero; remaining samples occur after each physics step, including the terminal step. Sample time is its zero-based index divided by the recorded physics tick rate. Rewards use float32 in samples; episode return is retained in JSON.
 
-This preserves paths without requiring physics resimulation. It is not a snapshot of the changing Q-table at each decision. Checkpoints remain the way to save learned policies. A future reader must check the magic/version, validate lengths against the remaining file, and ignore an incomplete final record after an unexpected interruption.
+This preserves paths without requiring physics resimulation. It is not a snapshot of the changing Q-table at each decision. Checkpoints remain the way to save learned policies. `Training/EpisodeRecording.gd` checks the magic/version, validates lengths against the remaining file, and ignores an incomplete final record after an unexpected interruption.
 
 ## Repeatable performance benchmark
 

@@ -1,0 +1,144 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://UI/ReplayViewer.gd" id="1"]
+[ext_resource type="Theme" path="res://UI/InterfaceTheme.tres" id="2"]
+
+[node name="ReplayViewer" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Course" type="Node2D" parent="."]
+
+[node name="CompletedTrails" type="Node2D" parent="."]
+
+[node name="ActiveTrails" type="Node2D" parent="."]
+
+[node name="Ghosts" type="Node2D" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Controls" type="VBoxContainer" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 944.0
+theme = ExtResource("2")
+theme_override_constants/separation = 4
+
+[node name="Top" type="HBoxContainer" parent="HUD/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="OpenRecordings" type="Button" parent="HUD/Controls/Top"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Open recordings…"
+tooltip_text = "Choose one or more .mlpaths files, including chunks from a headless session."
+
+[node name="SourceName" type="Label" parent="HUD/Controls/Top"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+text = "Recorded episode playback"
+
+[node name="MenuButton" type="Button" parent="HUD/Controls/Top"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Menu"
+
+[node name="Options" type="HBoxContainer" parent="HUD/Controls"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlaybackMode" type="OptionButton" parent="HUD/Controls/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Play one episode at a time, or start a group together and advance after the longest episode finishes."
+
+[node name="EveryLabel" type="Label" parent="HUD/Controls/Options"]
+layout_mode = 2
+text = "Show every"
+
+[node name="ShowEvery" type="SpinBox" parent="HUD/Controls/Options"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 10000000.0
+value = 1.0
+rounded = true
+tooltip_text = "Every Xth saved episode across these files: X, 2X, 3X. 1 shows all. Further samples already-recorded episodes."
+
+[node name="BotsLabel" type="Label" parent="HUD/Controls/Options"]
+layout_mode = 2
+text = "Bots"
+
+[node name="BotCount" type="SpinBox" parent="HUD/Controls/Options"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(86, 0)
+layout_mode = 2
+editable = false
+min_value = 1.0
+max_value = 100.0
+value = 20.0
+rounded = true
+tooltip_text = "Maximum ghosts per simultaneous group. Only this group's positions are loaded."
+
+[node name="PlaybackSpeed" type="OptionButton" parent="HUD/Controls/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PausePlayback" type="CheckButton" parent="HUD/Controls/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pause"
+
+[node name="RestartPlayback" type="Button" parent="HUD/Controls/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Restart"
+
+[node name="Info" type="PanelContainer" parent="HUD"]
+offset_left = 16.0
+offset_top = 106.0
+offset_right = 326.0
+theme = ExtResource("2")
+
+[node name="Content" type="VBoxContainer" parent="HUD/Info"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PlaybackStatus" type="Label" parent="HUD/Info/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[node name="PlaybackTrails" type="CheckBox" parent="HUD/Info/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show persistent paths"
+tooltip_text = "Current paths plus the last 50 completed paths. Green: success; red: death; amber: timeout. Older paths fade."
+
+[node name="PlaybackWarning" type="Label" parent="HUD/Info/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(1, 0.77, 0.4, 1)
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 514.0
+offset_right = 944.0
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.61, 0.63, 1)
+text = "Space  pause / resume     R  restart playlist     Esc  menu"
+
+[node name="RecordingFiles" type="FileDialog" parent="HUD"]
+unique_name_in_owner = true
+title = "Open episode recordings"
+file_mode = 1
+access = 2
+filters = PackedStringArray("*.mlpaths ; Episode recordings")
+use_native_dialog = true

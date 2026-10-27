@@ -36,6 +36,8 @@ The game shows a small outcome panel and run progress. **More** expands learning
 
 Recording works for visible and headless agent sessions, including evaluation. Headless check-in chunks create separate recording files and preserve the session's sampling interval; the evaluation check-ins themselves are excluded. Recordings contain complete episodes only; restarting or leaving an unfinished attempt discards that partial recording. See [episode recording](Docs/episode-recording.md) for the file format and benchmark.
 
+Choose **Playback recordings → Open recordings…** to select one or more saved `.mlpaths` files. Play sequentially or in simultaneous groups of up to 100 ghosts, with the same persistent trails. **Show every** selects every Xth saved episode (`1` = all). Pause, restart, and playback speeds from 0.25× to 8× are available. Playback uses interpolated positions without physics or training; only the active group's positions are loaded.
+
 For headless training from the project root:
 
 ```sh
@@ -54,7 +56,7 @@ Run a check from the project root, replacing the script name as needed:
 godot --headless --path . --fixed-fps 60 --disable-render-loop --script res://Tests/check_gameplay.gd
 ```
 
-Other checks are `check_q_learning.gd`, `check_q_checkpoint.gd`, `check_headless_training.gd`, `check_headless_menu.gd`, `check_training_checkins.gd`, `check_training_trace.gd`, `check_episode_recording.gd`, and `check_run_setup.gd`, all in `Tests/`. Checks that write files create unique directories in the operating system's temporary location and clean them up afterward. The same commands work on Windows, macOS, and Linux without scratch-path changes.
+Other checks are `check_q_learning.gd`, `check_q_checkpoint.gd`, `check_headless_training.gd`, `check_headless_menu.gd`, `check_training_checkins.gd`, `check_training_trace.gd`, `check_episode_recording.gd`, `check_episode_playback.gd`, and `check_run_setup.gd`, all in `Tests/`. Checks that write files create unique directories in the operating system's temporary location and clean them up afterward. The same commands work on Windows, macOS, and Linux without scratch-path changes.
 
 See [the project design and training guide](Docs/godot-platformer-plan.md) for controls, agent behavior, checkpoint details, and benchmarking. Experiment folders preserve historical snapshots and their original paths.
 

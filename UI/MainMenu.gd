@@ -37,6 +37,7 @@ func _ready() -> void:
 	%RefreshData.pressed.connect(_refresh_data)
 	%OpenFolder.pressed.connect(_open_data_folder)
 	%OpenRecordings.pressed.connect(_open_recordings_folder)
+	%PlaybackButton.pressed.connect(_open_playback)
 	%BatchStart.pressed.connect(_start_selected)
 	%SessionInfo.busy_changed.connect(_set_training_busy)
 	%SessionInfo.check_in_requested.connect(_show_check_in)
@@ -137,6 +138,7 @@ func _refresh_form() -> void:
 	%DisplayRow.visible = not human
 	%TrailsToggle.disabled = _busy or %HeadlessToggle.button_pressed
 	%BatchStart.disabled = _busy or (learning and evaluating and selected_path.is_empty())
+	%PlaybackButton.disabled = _busy
 	%BatchStart.text = "Play" if human else ("Start evaluation" if evaluating else "Start training")
 	%BatchStop.visible = _busy
 	%BatchProgress.visible = _busy or %BatchProgress.value > 0
@@ -188,6 +190,16 @@ func _open_recordings_folder() -> void:
 		%BatchStatus.text = "Cannot create recordings folder: " + error_string(error)
 		return
 	OS.shell_open(ProjectSettings.globalize_path(recording_directory))
+
+
+func _open_playback() -> void:
+	if _busy:
+		return
+	var viewer := preload("res://UI/ReplayViewer.tscn").instantiate()
+	viewer.recording_directory = recording_directory
+	get_tree().root.add_child(viewer)
+	get_tree().current_scene = viewer
+	queue_free()
 
 
 func _start_selected() -> void:

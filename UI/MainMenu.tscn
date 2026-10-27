@@ -269,6 +269,11 @@ layout_mode = 2
 disabled = true
 text = "Stop & save"
 
+[node name="PlaybackButton" type="Button" parent="Center/Panel/Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Playback recordings"
+
 [node name="BatchProgress" type="ProgressBar" parent="Center/Panel/Content" unique_id=1833328956]
 unique_name_in_owner = true
 visible = false

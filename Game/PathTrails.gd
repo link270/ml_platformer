@@ -5,6 +5,7 @@ const ACTIVE_COLOR := Color(0.3, 0.95, 1.0, 0.95)
 var history: Array[Dictionary] = []
 var current := PackedVector2Array()
 var _dirty := false
+var active_color := ACTIVE_COLOR
 
 
 func begin_episode(position: Vector2) -> void:
@@ -33,10 +34,14 @@ func sample(position: Vector2, terminal: bool = false) -> void:
 
 
 func finish_episode(outcome: String) -> void:
-	history.append({"points": current, "outcome": outcome})
+	remember(current, outcome)
+	current = PackedVector2Array()
+
+
+func remember(points: PackedVector2Array, outcome: String) -> void:
+	history.append({"points": points, "outcome": outcome})
 	if history.size() > HISTORY_LIMIT:
 		history.pop_front()
-	current = PackedVector2Array()
 	_dirty = true
 
 
@@ -65,4 +70,4 @@ func _draw() -> void:
 			color.a = alpha + 0.15
 			draw_circle(points[-1], 3.0, color)
 	if current.size() > 1:
-		draw_polyline(current, ACTIVE_COLOR, 2.0, true)
+		draw_polyline(current, active_color, 2.0, true)
