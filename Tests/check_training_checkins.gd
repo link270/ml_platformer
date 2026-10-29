@@ -40,8 +40,14 @@ func finish_preview(menu: Control, outcome: String) -> void:
 	check(panel.process_id == -1 and panel.active, "worker stopped while batch remains active")
 	check(not menu.visible and menu.get_node("%ControllerSelect").disabled, "menu stays locked during check-in")
 	check(not level.agent.training and Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60, "check-in evaluates at normal speed")
+	check(level.stuck_detection_enabled and panel.latest_status.get("stuck_detection", false), "worker and check-in preserve the stuck-detection option")
 	check(level.player.show_rays and level.player.visible_ray_indices.size() == 6, "six observation rays remain visible")
-	check(not level.get_node("%CheckpointControls").visible and not level.get_node("%SpeedSelect").is_visible_in_tree(), "training controls hidden during check-in")
+	check(not level.get_node("%CheckpointControls").visible and level.get_node("%SpeedSelect").is_visible_in_tree() and not level.get_node("%SpeedSelect").disabled, "check-in hides save controls and exposes viewing speed")
+	level.get_node("%SpeedSelect").item_selected.emit(0)
+	await physics_frame
+	await physics_frame
+	check(Engine.time_scale == 0.5 and is_equal_approx(root.get_physics_process_delta_time(), 1.0 / 60.0), "check-in supports half speed with unchanged simulation steps")
+	level.get_node("%SpeedSelect").item_selected.emit(level.NORMAL_SPEED_INDEX)
 	var agent: RefCounted = level.agent
 	var table: Dictionary = agent.q_table.duplicate(true)
 	var episodes: int = agent.training_episodes
@@ -86,6 +92,7 @@ func run_check() -> void:
 	var panel := menu.get_node("%SessionInfo")
 	panel.session_directory = directory
 	menu.get_node("%HeadlessToggle").button_pressed = true
+	menu.get_node("%StuckToggle").button_pressed = true
 	menu.get_node("%BatchEpisodes").value = 5
 	menu.get_node("%BatchCheckEvery").value = 2
 	menu.get_node("%RecordEvery").value = 3

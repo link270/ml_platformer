@@ -67,6 +67,8 @@ func _draw() -> void:
 			var color := Color(0.3, 1.0, 0.5) if history[i].outcome == "success" else Color(1.0, 0.4, 0.3)
 			if history[i].outcome == "timeout":
 				color = Color(1.0, 0.75, 0.25)
+			elif history[i].outcome == "stuck":
+				color = Color(0.7, 0.5, 1.0)
 			color.a = alpha + 0.15
 			draw_circle(points[-1], 3.0, color)
 	if current.size() > 1:

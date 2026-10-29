@@ -15,7 +15,7 @@ func on_episode_completed() -> void:
 	var level := current_scene
 	var ticks: int = level.player.get_state().tick
 	physics_steps += ticks
-	episode_results.append([ticks, level.last_episode_return, level.orb_collected, level.timed_out])
+	episode_results.append([ticks, level.last_episode_return, level.orb_collected, level.timed_out, level.stuck])
 	super.on_episode_completed()
 
 
@@ -28,6 +28,7 @@ func report_progress(status: String = "running", message: String = "") -> void:
 		"episodes": episodes, "physics_steps": physics_steps, "seconds": elapsed,
 		"steps_per_second": physics_steps / elapsed, "episodes_per_second": episodes / elapsed,
 		"updates": agent.updates, "wins": agent.training_wins,
+		"deaths": current_scene.deaths, "timeouts": current_scene.timeouts, "stuck": current_scene.stuck_count,
 		"behavior_sha256": var_to_bytes([episode_results, agent.q_table, agent.epsilon, agent.rng.state, agent.updates]).hex_encode().sha256_text(),
 	}
 	if current_scene.episode_recorder != null:

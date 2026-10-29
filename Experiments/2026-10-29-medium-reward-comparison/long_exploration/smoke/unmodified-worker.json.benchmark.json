@@ -1,0 +1,16 @@
+{
+	"behavior_sha256": "ab84f4f840389a60acdc49ec0ac91ec303cb38a4e788b8bc7e53f3c949e317de",
+	"deaths": 0,
+	"episodes": 1,
+	"episodes_per_second": 40.0,
+	"physics_steps": 952,
+	"recorded_episodes": 0,
+	"recorded_samples": 0,
+	"recording_bytes": 0,
+	"seconds": 0.025,
+	"steps_per_second": 38080.0,
+	"stuck": 1,
+	"timeouts": 0,
+	"updates": 159,
+	"wins": 0
+}

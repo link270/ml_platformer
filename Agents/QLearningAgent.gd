@@ -28,7 +28,10 @@ func _init() -> void:
 
 func values(state: Dictionary) -> Array:
 	# Reading unseen states during evaluation must not grow the table.
-	return q_table.get(State.encode(state, preset_id == "horizontal_bins"), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+	var key := State.encode(state, preset_id == "horizontal_bins")
+	if q_table.has(key):
+		return q_table[key]
+	return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
 func choose_action(state: Dictionary) -> int:
@@ -48,12 +51,13 @@ func choose_action(state: Dictionary) -> int:
 func learn(state: Dictionary, action: int, reward: float, next_state: Dictionary) -> void:
 	if not training:
 		return
-	var scores := values(state)
+	var key := State.encode(state, preset_id == "horizontal_bins")
+	var scores: Array = q_table[key] if q_table.has(key) else [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	var target := reward
 	if not next_state.done:
 		target += discount * float(values(next_state).max())
 	scores[action] += learning_rate * (target - scores[action])
-	q_table[State.encode(state, preset_id == "horizontal_bins")] = scores
+	q_table[key] = scores
 	updates += 1
 
 

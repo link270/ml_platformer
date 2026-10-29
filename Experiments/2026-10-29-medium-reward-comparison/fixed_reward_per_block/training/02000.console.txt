@@ -1,0 +1,32 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Recording every 100 episodes: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\fixed_reward_per_block\training\02000.mlpaths
+Training: 1000 runs with q-learning.
+Checkpoint every 100 runs and at completion: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\fixed_reward_per_block\checkpoints\checkpoint-12345-2000.json
+0 / 1000 runs | 0.0 runs/s | success 0.0% | stuck 0
+58 / 1000 runs | 28.0 runs/s | success 8.6% | stuck 0
+107 / 1000 runs | 26.2 runs/s | success 9.3% | stuck 1
+147 / 1000 runs | 24.0 runs/s | success 10.2% | stuck 2
+194 / 1000 runs | 23.8 runs/s | success 10.3% | stuck 2
+240 / 1000 runs | 23.6 runs/s | success 9.6% | stuck 2
+281 / 1000 runs | 23.0 runs/s | success 10.7% | stuck 2
+326 / 1000 runs | 23.0 runs/s | success 10.7% | stuck 2
+370 / 1000 runs | 22.8 runs/s | success 10.8% | stuck 3
+414 / 1000 runs | 22.7 runs/s | success 10.1% | stuck 3
+462 / 1000 runs | 22.8 runs/s | success 11.3% | stuck 3
+511 / 1000 runs | 23.0 runs/s | success 12.5% | stuck 3
+566 / 1000 runs | 23.3 runs/s | success 14.7% | stuck 3
+613 / 1000 runs | 23.3 runs/s | success 14.8% | stuck 7
+663 / 1000 runs | 23.4 runs/s | success 14.6% | stuck 7
+711 / 1000 runs | 23.4 runs/s | success 14.8% | stuck 8
+758 / 1000 runs | 23.4 runs/s | success 15.2% | stuck 8
+805 / 1000 runs | 23.4 runs/s | success 16.0% | stuck 9
+856 / 1000 runs | 23.5 runs/s | success 16.6% | stuck 13
+909 / 1000 runs | 23.7 runs/s | success 17.5% | stuck 14
+962 / 1000 runs | 23.8 runs/s | success 18.3% | stuck 16
+1000 / 1000 runs | 23.9 runs/s | success 18.5% | stuck 16
+Finished. Checkpoint saved.
+WARNING: res://Game/Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Game/Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+   GDScript backtrace (most recent call first):
+       [0] start_training (res://Training/train.gd:72)

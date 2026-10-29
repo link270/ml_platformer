@@ -1,6 +1,9 @@
 extends Control
 
-const LEVEL_SCENE := preload("res://Game/Level.tscn")
+const Levels := preload("res://Game/Levels/LevelCatalog.gd")
+static var last_level := "original"
+static var last_stuck_detection := false
+var level_id := "original"
 const Level := preload("res://Game/Level.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const Presets := preload("res://Agents/QPresets.gd")
@@ -17,6 +20,15 @@ var _busy := false
 
 
 func _ready() -> void:
+	if checkpoint_directory == CHECKPOINT_DIRECTORY:
+		%StuckToggle.button_pressed = last_stuck_detection
+	%StuckToggle.toggled.connect(func(enabled: bool): last_stuck_detection = enabled)
+	for label in Levels.LABELS:
+		%LevelSelect.add_item(label)
+	if checkpoint_directory == CHECKPOINT_DIRECTORY:
+		level_id = last_level
+	%LevelSelect.select(Levels.IDS.find(level_id))
+	%LevelSelect.item_selected.connect(_select_level)
 	for id in Presets.IDS:
 		%ExperimentSelect.add_item(Presets.PRESETS[id].label)
 	if checkpoint_directory == CHECKPOINT_DIRECTORY:
@@ -43,6 +55,14 @@ func _ready() -> void:
 	%SessionInfo.check_in_requested.connect(_show_check_in)
 	_refresh_data(last_checkpoint if checkpoint_directory == CHECKPOINT_DIRECTORY and not last_checkpoint.is_empty() else checkpoint_path)
 	%ControllerSelect.grab_focus()
+
+
+func _select_level(index: int) -> void:
+	level_id = Levels.IDS[index]
+	last_level = level_id
+	# New courses start fresh rather than updating an original-course checkpoint.
+	%DataSelect.select(0)
+	_select_data(0)
 
 
 func _select_experiment(index: int) -> void:
@@ -92,7 +112,7 @@ func _refresh_data(preferred: String = "") -> void:
 	for seed_value in Presets.SEEDS:
 		for episodes in Presets.MILESTONES:
 			var path := Presets.archive_path(preset_id, seed_value, episodes)
-			if not FileAccess.file_exists(path):
+			if path.is_empty() or not FileAccess.file_exists(path):
 				continue
 			%DataSelect.add_item("Archive · seed %d · %d episodes" % [seed_value, episodes])
 			var index: int = %DataSelect.item_count - 1
@@ -117,6 +137,7 @@ func _refresh_form() -> void:
 	var evaluating: bool = %ModeSelect.selected == 1
 	var selected_path := str(%DataSelect.get_selected_metadata())
 	%ControllerSelect.disabled = _busy
+	%LevelSelect.disabled = _busy
 	%ModeRow.visible = not human
 	%ModeSelect.disabled = _busy or not learning
 	%ExperimentRow.visible = learning
@@ -130,6 +151,7 @@ func _refresh_form() -> void:
 	%BatchEpisodes.editable = not _busy
 	%HeadlessToggle.visible = not human
 	%HeadlessToggle.disabled = _busy
+	%StuckToggle.disabled = _busy
 	%CheckInRow.visible = not human and learning and not evaluating and %HeadlessToggle.button_pressed
 	%BatchCheckEvery.editable = not _busy
 	%RecordingRow.visible = not human
@@ -175,7 +197,8 @@ func _open_data_folder() -> void:
 
 func _new_checkpoint_path() -> String:
 	var stamp := Time.get_datetime_string_from_system().replace(":", "-").replace("T", "_")
-	var base := checkpoint_directory.path_join("q-learning_" + preset_id + "_" + stamp)
+	var condition := "_stuck" if %StuckToggle.button_pressed else ""
+	var base := checkpoint_directory.path_join("q-learning_" + level_id + "_" + preset_id + condition + "_" + stamp)
 	var path := base + ".json"
 	var suffix := 2
 	while FileAccess.file_exists(path):
@@ -235,8 +258,9 @@ func _start_selected() -> void:
 	if controller != Level.ControlMode.HUMAN and %HeadlessToggle.button_pressed:
 		%SessionInfo.start_run(controller, evaluating, selected_path, FileAccess.file_exists(source_path), preset_id, source_path)
 		return
-	var level := LEVEL_SCENE.instantiate()
+	var level := (load(Levels.scene_path(level_id)) as PackedScene).instantiate()
 	level.control_mode = controller
+	level.stuck_detection_enabled = controller != Level.ControlMode.HUMAN and %StuckToggle.button_pressed
 	level.show_path_trails = controller != Level.ControlMode.HUMAN and %TrailsToggle.button_pressed
 	level.record_every = 0 if controller == Level.ControlMode.HUMAN else int(%RecordEvery.value)
 	if level.record_every > 0:
@@ -259,10 +283,11 @@ func _show_check_in(completed: int, total: int) -> void:
 		%SessionInfo.complete_check_in(false, error)
 		return
 	saved_agent.training = false
-	_check_in_level = LEVEL_SCENE.instantiate()
+	_check_in_level = (load(Levels.scene_path(level_id)) as PackedScene).instantiate()
 	_check_in_level.control_mode = Level.ControlMode.Q_LEARNING
 	_check_in_level.agent = saved_agent
 	_check_in_level.check_in_mode = true
+	_check_in_level.stuck_detection_enabled = %SessionInfo.stuck_detection_enabled
 	_check_in_level.episode_completed.connect(_finish_check_in.bind(false))
 	_check_in_level.check_in_cancelled.connect(_finish_check_in.bind(true))
 	get_tree().root.add_child(_check_in_level)

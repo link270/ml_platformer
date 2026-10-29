@@ -1,0 +1,29 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Recording every 100 episodes: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\fixed_reward_per_block\training\03000.mlpaths
+Training: 1000 runs with q-learning.
+Checkpoint every 100 runs and at completion: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\fixed_reward_per_block\checkpoints\checkpoint-12345-3000.json
+0 / 1000 runs | 0.0 runs/s | success 0.0% | stuck 0
+52 / 1000 runs | 25.3 runs/s | success 38.5% | stuck 0
+108 / 1000 runs | 26.6 runs/s | success 34.3% | stuck 0
+168 / 1000 runs | 27.7 runs/s | success 33.3% | stuck 0
+232 / 1000 runs | 28.7 runs/s | success 34.9% | stuck 3
+285 / 1000 runs | 28.2 runs/s | success 35.4% | stuck 5
+337 / 1000 runs | 27.8 runs/s | success 35.6% | stuck 6
+385 / 1000 runs | 27.2 runs/s | success 35.6% | stuck 6
+440 / 1000 runs | 27.3 runs/s | success 37.0% | stuck 6
+504 / 1000 runs | 27.8 runs/s | success 37.3% | stuck 6
+567 / 1000 runs | 28.1 runs/s | success 37.7% | stuck 6
+608 / 1000 runs | 27.4 runs/s | success 36.5% | stuck 7
+667 / 1000 runs | 27.5 runs/s | success 37.2% | stuck 8
+729 / 1000 runs | 27.8 runs/s | success 38.4% | stuck 8
+786 / 1000 runs | 27.8 runs/s | success 38.5% | stuck 9
+841 / 1000 runs | 27.7 runs/s | success 38.6% | stuck 9
+903 / 1000 runs | 27.9 runs/s | success 40.4% | stuck 9
+958 / 1000 runs | 27.9 runs/s | success 41.2% | stuck 14
+1000 / 1000 runs | 28.1 runs/s | success 41.8% | stuck 15
+Finished. Checkpoint saved.
+WARNING: res://Game/Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Game/Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+   GDScript backtrace (most recent call first):
+       [0] start_training (res://Training/train.gd:72)

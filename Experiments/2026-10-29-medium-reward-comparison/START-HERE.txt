@@ -1,0 +1,79 @@
+MEDIUM LEVEL — MATCHED REWARD COMPARISON — OCTOBER 29, 2026
+
+Open report.html for the results, learning curves, and checkpoint check-ins.
+summary.json contains the computed metrics; settings.json records the protocol.
+
+CONDITIONS
+Longer exploration: current normalized progress rewards.
+Fixed reward per block: 0.005 per 32 pixels closer to the orb.
+
+Both start fresh and receive exactly 10,000 training episodes on the same
+frozen Medium level. Stuck detection is on: 8 simulation seconds without
+another block of best progress. The overall limit remains 60 seconds.
+Learning rate, discount, exploration schedule, observations, movement,
+terminal rewards, and time penalties match. Only progress rewards differ.
+
+MATCHING AND CHECK-INS
+Base seed: 12345. Ten 1,000-episode chunks use seeds 12345 through 12354
+in the same order for both methods. Each resumes its preceding checkpoint.
+One frozen-policy check-in follows each milestone, using matching evaluation
+seeds 1012345 through 1012354. Final checkpoints receive 30 evaluations using
+matching per-episode seeds 2012345 through 2012374. Evaluations never train,
+advance the training RNG, or overwrite checkpoints. Method order alternates
+between milestones. This is one paired training replicate, not ten independent
+training seeds. Identical seeds do not force identical actions after learning
+and trajectories diverge.
+
+FILES
+report.html                  Human-readable comparison and plots.
+summary.json                 Aggregated metrics and limitations.
+settings.json                Exact controls and frozen source hashes.
+source.zip                   Runnable frozen Godot project plus instrumented worker.
+worker.gd                    Telemetry wrapper around the existing worker/agent.
+run_comparison.py            Serial matched-run controller; completed stages reused.
+analyze.py                   Validates data and rebuilds summary/plots/report.
+progress.json                All executed commands and completed stage summaries.
+instrumentation-validation.json
+                             Seeded smoke checks against the unmodified worker.
+METHOD/checkpoints/          Every 1,000-episode checkpoint, including the final one.
+METHOD/training/             Per-episode JSONL metrics, logs, results, and sampled paths.
+METHOD/check_in/             One frozen episode and recording per milestone.
+METHOD/final_evaluation/     Thirty frozen episodes and recordings per final policy.
+METHOD/diagnostic_evaluation/
+                             Matched 30-episode check of the 9,000 checkpoint pair.
+METHOD/smoke/                One-episode instrumentation tests; excluded from results.
+SHA256SUMS.json              Checksums of the completed archive's files.
+
+POST-HOC DIAGNOSTIC
+Both final 10,000-episode policies failed their 30 frozen evaluations. Fixed
+reward had passed the scheduled check-ins from 4,000 through 9,000, so both
+9,000-episode checkpoints received an additional 30 evaluations using the same
+seed list as the final evaluations. This check was selected after observing
+the final failures; it adds no training and does not change the original
+check-in schedule. diagnostic-progress.json records those extra commands.
+
+Every training episode has summary telemetry. Every 100th training path is
+recorded; all check-in and final evaluation paths are recorded. Best progress
+is measured at decision boundaries and terminal transitions, so a brief
+between-decision peak may be missed. Returns use different reward scales;
+compare wins, progress, outcomes, and durations rather than raw return.
+
+WATCH THE SAVED POLICIES
+The .mlpaths files open in the project's Playback recordings viewer. All files
+identify the same Medium course; evaluation recordings identify training=false.
+To evaluate a saved checkpoint live, copy it under a NEW name into the personal
+training-data folder opened by Folder in setup. Select Medium, the matching
+experiment (3 or 7), Stuck detection on, Evaluation, and the copied data file.
+Leave these archived checkpoints unchanged.
+
+REPRODUCE WITHOUT REPLACING THESE RESULTS
+Copy settings.json, source.zip, worker.gd, run_comparison.py, and analyze.py to
+a NEW experiment folder. Extract source.zip into a NEW Godot project directory.
+Update frozen_project, runtime_directory, and godot paths in the copied settings.
+Run run_comparison.py with Python. Existing completed stages are reused; partial
+stage files are never silently overwritten. The optional --smoke mode runs two
+one-episode validation fixtures outside the main training totals.
+analyze.py requires ReportLab and uses Inkscape to export chart PNGs.
+
+Previous personal training saves are not used or modified by this comparison.
+No broad generalization claim should be made from one map, spawn, and paired run.

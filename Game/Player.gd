@@ -23,10 +23,12 @@ var _applied_jump := false
 var _sampled_rays := 0
 var _ray_hits: Array[bool] = []
 var _ray_clearances: Array[float] = []
+var _ray_boundaries: Array[float] = []
 @onready var _rays := $Rays.get_children()
 
 
 func _ready() -> void:
+	_ray_boundaries.resize(DIRECTIONS.size())
 	_ray_hits.resize(DIRECTIONS.size())
 	_ray_clearances.resize(DIRECTIONS.size())
 	_ray_clearances.fill(ray_range_units)
@@ -35,6 +37,7 @@ func _ready() -> void:
 		_rays[i].enabled = false
 		var direction: Vector2 = DIRECTIONS[i].normalized()
 		var boundary := 0.5 / maxf(absf(direction.x), absf(direction.y))
+		_ray_boundaries[i] = boundary
 		_rays[i].target_position = direction * (boundary + ray_range_units) * UNIT
 	# Preserve the spawn observation before the first physics step.
 	_sample_rays([0, 1, 2, 3, 4, 5, 6, 7])
@@ -94,16 +97,17 @@ func reset_to(spawn_position: Vector2) -> void:
 
 func get_state(ray_indices: Array = [0, 1, 2, 3, 4, 5, 6, 7]) -> Dictionary:
 	_sample_rays(ray_indices)
+	var grounded := _grounded_ready and is_on_floor()
 	# Fresh snapshots keep agents/callers from changing live or earlier observations.
 	return {
 		"tick": _tick,
 		"action": {"move_axis": _applied_axis, "jump_pressed": _applied_jump},
 		"position": position / UNIT,
 		"velocity": velocity / UNIT,
-		"grounded": _grounded_ready and is_on_floor(),
+		"grounded": grounded,
 		"wall_contact": is_on_wall() if _grounded_ready else false,
 		"ceiling_contact": is_on_ceiling() if _grounded_ready else false,
-		"jump_allowed": _grounded_ready and is_on_floor(),
+		"jump_allowed": grounded,
 		"ray_hits": _ray_hits.duplicate(),
 		"ray_clearances": _ray_clearances.duplicate(),
 	}
@@ -118,6 +122,7 @@ func get_state_string() -> String:
 
 
 func _sample_rays(ray_indices: Array) -> void:
+	var origin := global_position
 	# Only requested indices are current; the default get_state() requests all eight.
 	for i in ray_indices:
 		if _sampled_rays & (1 << i):
@@ -128,9 +133,7 @@ func _sample_rays(ray_indices: Array) -> void:
 		_ray_hits[i] = hit
 		var clearance := ray_range_units
 		if hit:
-			var direction: Vector2 = DIRECTIONS[i].normalized()
-			var boundary := 0.5 / maxf(absf(direction.x), absf(direction.y))
-			clearance = clampf(global_position.distance_to(ray.get_collision_point()) / UNIT - boundary, 0.0, ray_range_units)
+			clearance = clampf(origin.distance_to(ray.get_collision_point()) / UNIT - _ray_boundaries[i], 0.0, ray_range_units)
 		_ray_clearances[i] = clearance
 		_sampled_rays |= 1 << i
 

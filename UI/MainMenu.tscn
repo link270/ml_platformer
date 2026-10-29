@@ -52,8 +52,16 @@ text = "Platformer"
 [node name="Subtitle" type="Label" parent="Center/Panel/Content/Header" unique_id=1648179378]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.58, 0.65, 0.67, 1)
-text = "Run setup"
+text = "Level  "
 vertical_alignment = 1
+
+[node name="LevelSelect" type="OptionButton" parent="Center/Panel/Content/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(370, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+clip_text = true
+fit_to_longest_item = false
 
 [node name="Rule" type="HSeparator" parent="Center/Panel/Content" unique_id=1910654059]
 layout_mode = 2
@@ -160,7 +168,7 @@ vertical_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Additional complete episodes. Stops after this many successes, deaths, or timeouts."
+tooltip_text = "Additional complete episodes. Stops after this many successes, deaths, timeouts, or stuck attempts."
 min_value = 1.0
 max_value = 10000000.0
 value = 100.0
@@ -216,6 +224,12 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Run without drawing the level. Progress stays here."
 text = "Run headless"
+
+[node name="StuckToggle" type="CheckBox" parent="Center/Panel/Content/DisplayRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Stuck detection (8s)"
+tooltip_text = "End an agent attempt after 8 simulation seconds without another block of best progress toward the orb. Backtracking and repeated jumps do not refill patience."
 
 [node name="CheckInRow" type="HBoxContainer" parent="Center/Panel/Content" unique_id=1446167573]
 unique_name_in_owner = true

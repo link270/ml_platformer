@@ -14,18 +14,45 @@ shows the loaded archive's seed and milestone. Esc returns to the same selection
 | 4. Higher discount | Mode 3 with discount 0.99 instead of 0.95 |
 | 5. Richer horizontal rays | Mode 3 with left/right near, far, or no hit |
 | 6. Lower late learning rate | Mode 3 with learning rate tapering from 0.1 to 0.02 over episodes 3,000–10,000 |
+| 7. Fixed reward per block | Mode 3 with 0.005 reward per block of reduced orb distance, replacing normalized progress rewards |
 
-Modes 4–6 are separate experiments based on mode 3, not cumulative upgrades.
+Modes 4–7 are separate experiments based on mode 3, not cumulative upgrades.
 Horizontal near means a hit within one block of the character's edge; far means
 beyond one block within the existing two-block ray. The other four rays remain
 binary. All modes share the same physics, six actions, and decision timing.
 
-Each mode offers three training seeds (12345, 42, 98765) at nine milestones
+Modes 1–6 offer archived data for three training seeds (12345, 42, 98765) at nine milestones
 (0, 100, 300, 600, 1,000, 2,000, 3,000, 5,000, 10,000 episodes).
 Viewport evaluation of an archive starts with the diagnostic tie-break seed, so reopening the
 same archive repeats its recorded first evaluation. Subsequent episodes advance
 the random stream normally. To repeat a clip, return to the menu and reload;
 R only restarts the episode.
+
+## Fixed reward per block comparison
+
+Choose a larger **Level**, then compare **3. Longer exploration** against
+**7. Fixed reward per block**, starting each with **New training data** and the
+same run budget. Mode 7 has no archived results yet. Its learning rate (0.1),
+discount (0.95), exploration decay (0.999), exploration floor (0.05), observations,
+physics, action timing, timeout, and terminal rewards are the same as mode 3.
+
+For every nonterminal physics step, mode 7 uses:
+
+`reward = 0.005 * (previous_orb_distance - current_orb_distance) / 32 - 0.001 / 6`
+
+Distances are Euclidean pixels; one block is 32 pixels. Moving closer earns
+progress reward, moving away incurs the same progress cost, and standing still
+only pays the existing time penalty. This also applies beyond the starting
+distance, without clipping progress to the normalized proximity range. Death
+and timeout still give exactly -1; orb collection gives exactly +1. The standard
+normalized reward remains unchanged in the other modes.
+
+The separate preset ID, checkpoint reward schema, and filenames keep these
+results separate from normalized-reward saves. Visible training, evaluation,
+headless workers, recordings, and check-ins all use the selected reward preset.
+For a terminal run, add `--preset fixed_reward_per_block --level easy` (or
+`medium` / `hard`). `Tests/check_fixed_reward.gd` checks reward scaling, resets,
+terminal outcomes, checkpoint isolation, and the worker/check-in path.
 
 ## Training and saves
 

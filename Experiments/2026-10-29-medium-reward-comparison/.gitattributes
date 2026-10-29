@@ -1,0 +1,2 @@
+# Preserve archived artifacts byte-for-byte for SHA256 verification.
+* -text whitespace=cr-at-eol

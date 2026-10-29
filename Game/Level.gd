@@ -3,6 +3,7 @@ extends Node2D
 signal episode_completed
 signal check_in_cancelled
 
+const Player := preload("res://Game/Player.gd")
 const Agent := preload("res://Agents/Agent.gd")
 const RandomAgent := preload("res://Agents/RandomAgent.gd")
 const QLearningAgent := preload("res://Agents/QLearningAgent.gd")
@@ -10,18 +11,24 @@ const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const EpisodeRecorder := preload("res://Training/EpisodeRecorder.gd")
 const PathTrails := preload("res://Game/PathTrails.gd")
 const PathHeatMap := preload("res://Game/PathHeatMap.gd")
+const CourseBackground := preload("res://Game/CourseBackground.gd")
 const Action = Agent.Action
 const TICKS_PER_DECISION := Agent.TICKS_PER_DECISION
 const TIME_PENALTY_PER_DECISION := 0.001
 const ACTION_INPUTS := Agent.ACTION_INPUTS
-const TRAINING_SPEEDS := [1, 2, 4, 8]
+const TRAINING_SPEEDS := [0.5, 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0]
+const NORMAL_SPEED_INDEX := 1
+const STUCK_PATIENCE_SECONDS := 8.0
+static var whole_level_view := false
 
 enum ControlMode { HUMAN, RANDOM, Q_LEARNING }
 @export var control_mode := ControlMode.RANDOM
 @export var death_y := 600.0
 @export var episode_limit_seconds := 20.0
+@export var world_bounds := Rect2(0, 0, 960, 540)
+@export var stuck_detection_enabled := false
 
-@onready var player: CharacterBody2D = $Player
+@onready var player: Player = $Player
 @onready var spawn: Marker2D = $Spawn
 @onready var orb: Area2D = $Orb
 @onready var state_label: Label = %StateLabel
@@ -42,6 +49,10 @@ var deaths := 0
 var orb_collections := 0
 var timeouts := 0
 var timed_out := false
+var stuck := false
+var stuck_count := 0
+var _last_progress_tick := 0
+var _progress_checkpoint_distance := 0.0
 var agent: RefCounted
 var checkpoint_path := Checkpoint.DEFAULT_PATH
 var checkpoint_status := "Save before leaving to keep this training."
@@ -51,6 +62,7 @@ var last_episode_return := 0.0
 var _decision_state: Dictionary = {}
 var _decision_reward := 0.0
 var _previous_proximity := 0.0
+var _previous_orb_distance := 0.0
 var record_every := 0
 var recording_path := ""
 var recording_episode_offset := 0
@@ -65,10 +77,13 @@ var _held_action_id := Action.DO_NOTHING
 var _normal_tick_rate := Engine.physics_ticks_per_second
 var _normal_max_steps := Engine.max_physics_steps_per_frame
 var _normal_time_scale := Engine.time_scale
+var _view_camera: Camera2D
 
 
 func _ready() -> void:
 	_previous_proximity = _orb_proximity()
+	_previous_orb_distance = player.global_position.distance_to(orb.global_position)
+	_progress_checkpoint_distance = _previous_orb_distance
 	if control_mode != ControlMode.HUMAN and agent == null:
 		agent = QLearningAgent.new() if control_mode == ControlMode.Q_LEARNING else RandomAgent.new()
 	if control_mode == ControlMode.Q_LEARNING:
@@ -78,19 +93,25 @@ func _ready() -> void:
 		hide()
 		$HUD.hide()
 		player.show_rays = false
+		var camera := player.get_node_or_null("Camera2D") as Camera2D
+		if camera != null:
+			camera.enabled = false
+		set_process(false)
 		return
+	_setup_view()
+	if control_mode != ControlMode.HUMAN:
+		for speed in TRAINING_SPEEDS:
+			%SpeedSelect.add_item("%.1fx" % speed if speed < 1.0 else "%dx" % int(speed))
+		%SpeedSelect.select(NORMAL_SPEED_INDEX)
 	if control_mode == ControlMode.Q_LEARNING:
 		player.show_rays = true
 		player.visible_ray_indices = QLearningAgent.State.RAY_INDICES
-		for speed in TRAINING_SPEEDS:
-			%SpeedSelect.add_item("%dx" % speed)
-		%SpeedSelect.select(0)
 		%ModeLabel.tooltip_text = QLearningAgent.Presets.PRESETS[agent.preset_id].description
 		%SaveStatus.text = checkpoint_status
 		%SaveStatus.tooltip_text = ProjectSettings.globalize_path(checkpoint_path)
 		_update_agent_panel()
 	else:
-		%SpeedRow.hide()
+		%SpeedRow.visible = control_mode != ControlMode.HUMAN
 		%DetailsButton.hide()
 		%ModeLabel.text = "Human playable" if control_mode == ControlMode.HUMAN else "Random agent · Evaluation"
 	if control_mode == ControlMode.HUMAN:
@@ -99,10 +120,73 @@ func _ready() -> void:
 		%EvaluationButton.hide()
 		%SaveButton.hide()
 		%CheckpointControls.hide()
-		%SpeedRow.hide()
 		%MenuButton.text = "Stop check-in"
 		%MenuButton.tooltip_text = "Stop the batch. Training was saved before this check-in."
 	_update_stats()
+
+
+func _setup_view() -> void:
+	var background := CourseBackground.new()
+	background.bounds = world_bounds
+	add_child(background)
+	_view_camera = player.get_node_or_null("Camera2D") as Camera2D
+	if _view_camera == null:
+		_view_camera = Camera2D.new()
+		_view_camera.name = "Camera2D"
+		player.add_child(_view_camera)
+	_view_camera.top_level = true
+	var zoom_button := Button.new()
+	zoom_button.name = "WholeLevelView"
+	zoom_button.text = "Whole level"
+	zoom_button.toggle_mode = true
+	zoom_button.focus_mode = Control.FOCUS_NONE
+	zoom_button.tooltip_text = "Fit the whole level, or follow the player. Remembered for this app session."
+	zoom_button.set_pressed_no_signal(whole_level_view)
+	zoom_button.toggled.connect(_set_whole_level_view)
+	var top_bar := $HUD/TopBar
+	top_bar.add_child(zoom_button)
+	top_bar.move_child(zoom_button, %MenuButton.get_index())
+	_update_view_camera()
+
+
+func _set_whole_level_view(enabled: bool) -> void:
+	whole_level_view = enabled
+	_update_view_camera()
+
+
+func _process(_delta: float) -> void:
+	_update_view_camera()
+	_update_episode_timer()
+
+
+func _update_episode_timer() -> void:
+	if headless_training:
+		return
+	%EpisodeTimer.visible = control_mode != ControlMode.HUMAN
+	%EpisodeTimer.text = "Time  %.1f / %.1f s" % [player.tick / float(_normal_tick_rate), episode_limit_seconds]
+	if stuck_detection_enabled and control_mode != ControlMode.HUMAN:
+		var remaining := maxf(0.0, STUCK_PATIENCE_SECONDS - (player.tick - _last_progress_tick) / float(_normal_tick_rate))
+		%EpisodeTimer.text += "\nPatience  %.1f s left" % remaining
+
+
+func _update_view_camera() -> void:
+	if _view_camera == null:
+		return
+	var viewport_size := get_viewport_rect().size
+	var zoom_factor := minf(1.0, minf(viewport_size.x / world_bounds.size.x, viewport_size.y / world_bounds.size.y)) if whole_level_view else 1.0
+	_view_camera.zoom = Vector2.ONE * zoom_factor
+	var half_view := viewport_size / (2.0 * zoom_factor)
+	var center := world_bounds.get_center()
+	if not whole_level_view and world_bounds.size.x > viewport_size.x:
+		center.x = clampf(player.global_position.x, world_bounds.position.x + half_view.x, world_bounds.end.x - half_view.x)
+	_view_camera.global_position = center
+	# Pad camera limits when the view is taller than the course, so the overview
+	# remains centered instead of clamping to one edge of the level.
+	var course_center := world_bounds.get_center()
+	_view_camera.limit_left = floori(minf(world_bounds.position.x, course_center.x - half_view.x))
+	_view_camera.limit_right = ceili(maxf(world_bounds.end.x, course_center.x + half_view.x))
+	_view_camera.limit_top = floori(minf(world_bounds.position.y, course_center.y - half_view.y))
+	_view_camera.limit_bottom = ceili(maxf(world_bounds.end.y, course_center.y + half_view.y))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -121,12 +205,12 @@ func _return_to_menu() -> void:
 
 
 func _set_training_speed(index: int) -> void:
-	if control_mode != ControlMode.Q_LEARNING or check_in_mode:
+	if control_mode == ControlMode.HUMAN or headless_training:
 		return
-	var speed: int = TRAINING_SPEEDS[index]
+	var speed: float = TRAINING_SPEEDS[index]
 	# Scale both so each physics step still advances 1/60 of a game second.
-	Engine.physics_ticks_per_second = _normal_tick_rate * speed
-	Engine.max_physics_steps_per_frame = _normal_max_steps * speed
+	Engine.physics_ticks_per_second = maxi(1, roundi(_normal_tick_rate * speed))
+	Engine.max_physics_steps_per_frame = maxi(1, ceili(_normal_max_steps * speed))
 	Engine.time_scale = _normal_time_scale * speed
 	%SpeedSelect.select(index)
 
@@ -134,7 +218,7 @@ func _set_training_speed(index: int) -> void:
 func _exit_tree() -> void:
 	if episode_recorder != null:
 		episode_recorder.close()
-	if control_mode == ControlMode.Q_LEARNING:
+	if control_mode != ControlMode.HUMAN:
 		Engine.physics_ticks_per_second = _normal_tick_rate
 		Engine.max_physics_steps_per_frame = _normal_max_steps
 		Engine.time_scale = _normal_time_scale
@@ -158,8 +242,9 @@ func _show_details(expanded: bool) -> void:
 
 func _finish_session() -> void:
 	session_finished = true
+	_set_training_speed(NORMAL_SPEED_INDEX)
+	%SpeedSelect.disabled = true
 	if control_mode == ControlMode.Q_LEARNING:
-		_set_training_speed(0)
 		if autosave_training and agent.training:
 			_save_checkpoint()
 	_update_stats()
@@ -241,6 +326,7 @@ func _toggle_evaluation() -> void:
 	deaths = 0
 	orb_collections = 0
 	timeouts = 0
+	stuck_count = 0
 	agent.training = not agent.training
 	if path_trails != null:
 		path_trails.clear()
@@ -251,7 +337,7 @@ func _toggle_evaluation() -> void:
 		autosave_training = agent.training
 	agent.exploring = false
 	if not agent.training:
-		_set_training_speed(0)
+		_set_training_speed(NORMAL_SPEED_INDEX)
 		agent.evaluation_episodes = 0
 		agent.evaluation_wins = 0
 	# Discard the partial episode so one transition never spans training modes.
@@ -264,7 +350,7 @@ func _update_agent_panel() -> void:
 	if control_mode == ControlMode.Q_LEARNING:
 		%AgentPanel.update_display(agent, last_episode_return)
 		%ModeLabel.text = QLearningAgent.Presets.PRESETS[agent.preset_id].label + " · " + ("Training" if agent.training else "Evaluation")
-		%SpeedSelect.disabled = not agent.training or session_finished
+		%SpeedSelect.disabled = session_finished
 		%SaveButton.disabled = not agent.training
 
 
@@ -292,10 +378,15 @@ func _advance_tick(delta: float, action_id: int) -> void:
 	_on_orb_body_entered(player)
 	if done:
 		return
-	var proximity := _orb_proximity()
+	var distance := player.global_position.distance_to(orb.global_position)
+	var proximity := _orb_proximity(distance)
+	var progress_reward := 0.1 * (proximity - _previous_proximity)
+	if control_mode == ControlMode.Q_LEARNING and agent.preset_id == "fixed_reward_per_block":
+		progress_reward = QLearningAgent.Presets.FIXED_REWARD_PER_BLOCK * (_previous_orb_distance - distance) / player.UNIT
+		_previous_orb_distance = distance
 	# Spread the time cost across physics ticks, including partial decisions.
 	# Terminal rewards below remain exactly +1 / -1.
-	reward = 0.1 * (proximity - _previous_proximity) - time_penalty_per_decision / TICKS_PER_DECISION
+	reward = progress_reward - time_penalty_per_decision / TICKS_PER_DECISION
 	_previous_proximity = proximity
 	if player.position.y > death_y:
 		done = true
@@ -308,6 +399,18 @@ func _advance_tick(delta: float, action_id: int) -> void:
 		reward = -1.0
 		timeouts += 1
 		_update_stats()
+	elif stuck_detection_enabled and control_mode != ControlMode.HUMAN:
+		# Anchor to the last full block of best progress, so small advances add up
+		# and revisiting old positions never refreshes patience.
+		if distance <= _progress_checkpoint_distance - player.UNIT:
+			_progress_checkpoint_distance = distance
+			_last_progress_tick = player.tick
+		if player.tick - _last_progress_tick >= roundi(STUCK_PATIENCE_SECONDS * _normal_tick_rate):
+			done = true
+			stuck = true
+			reward = -1.0
+			stuck_count += 1
+			_update_stats()
 
 
 func reset_episode() -> Dictionary:
@@ -317,12 +420,17 @@ func reset_episode() -> Dictionary:
 	reward = 0.0
 	orb_collected = false
 	timed_out = false
+	stuck = false
+	_last_progress_tick = 0
 	episode_return = 0.0
 	_decision_state = {}
 	_decision_reward = 0.0
 	_held_action_id = Action.DO_NOTHING
 	_previous_proximity = _orb_proximity()
+	_previous_orb_distance = player.global_position.distance_to(orb.global_position)
+	_progress_checkpoint_distance = _previous_orb_distance
 	_begin_capture()
+	_update_episode_timer()
 	return get_state()
 
 
@@ -331,7 +439,7 @@ func _setup_capture() -> void:
 		return
 	if not headless_training:
 		heat_map = PathHeatMap.new()
-		heat_map.bounds = get_viewport_rect()
+		heat_map.bounds = world_bounds
 		add_child(heat_map)
 		%HeatMapControls.bind_heat_map(heat_map)
 	if show_path_trails and not headless_training:
@@ -343,12 +451,16 @@ func _setup_capture() -> void:
 		if recording_path.is_empty():
 			recording_path = EpisodeRecorder.new_path()
 		var fingerprints := {}
-		for source in ["res://Game/Level.tscn", "res://Game/Level.gd", "res://Game/Player.gd", "res://Agents/QLearningAgent.gd", "res://Agents/QState.gd", "res://Agents/QPresets.gd"]:
+		for source in [scene_file_path, "res://Game/Level.gd", "res://Game/Player.gd", "res://Agents/QLearningAgent.gd", "res://Agents/QState.gd", "res://Agents/QPresets.gd"]:
 			fingerprints[source] = FileAccess.get_sha256(source)
+		if scene_file_path != "res://Game/Level.tscn":
+			fingerprints["res://Game/Levels/CourseBase.tscn"] = FileAccess.get_sha256("res://Game/Levels/CourseBase.tscn")
 		var metadata := {"physics_hz": _normal_tick_rate, "ticks_per_decision": TICKS_PER_DECISION,
 			"record_every": record_every, "episode_offset": recording_episode_offset,
 			"controller": ControlMode.keys()[control_mode], "engine": Engine.get_version_info().string,
-			"source_sha256": fingerprints, "checkpoint": checkpoint_path}
+			"source_sha256": fingerprints, "checkpoint": checkpoint_path, "level_scene": scene_file_path,
+			"stuck_detection": stuck_detection_enabled, "stuck_patience_seconds": STUCK_PATIENCE_SECONDS,
+			"stuck_progress_blocks": 1.0}
 		if control_mode == ControlMode.Q_LEARNING:
 			metadata.preset_id = agent.preset_id
 			metadata.starting_training_episodes = agent.training_episodes
@@ -377,7 +489,7 @@ func _begin_capture() -> void:
 
 
 func _finish_capture() -> void:
-	var outcome := "success" if orb_collected else ("timeout" if timed_out else "death")
+	var outcome := "success" if orb_collected else ("stuck" if stuck else ("timeout" if timed_out else "death"))
 	if _record_this_episode:
 		if not episode_recorder.finish_episode(outcome, episode_return):
 			recording_error = episode_recorder.error
@@ -397,7 +509,7 @@ func _update_recording_status() -> void:
 	if record_every > 0:
 		text += ("\n" if not text.is_empty() else "") + ("Recording error: " + recording_error if not recording_error.is_empty() else "Recording every %d · %d saved" % [record_every, episode_recorder.recorded_episodes])
 	%RecordingStatus.text = text
-	%RecordingStatus.tooltip_text = ProjectSettings.globalize_path(recording_path) if record_every > 0 else "Green: success · Red: death · Amber: timeout. Older paths fade each episode."
+	%RecordingStatus.tooltip_text = ProjectSettings.globalize_path(recording_path) if record_every > 0 else "Green: success · Red: death · Amber: timeout · Purple: stuck. Older paths fade each episode."
 
 
 func get_state(ray_indices: Array = [0, 1, 2, 3, 4, 5, 6, 7]) -> Dictionary:
@@ -408,6 +520,7 @@ func get_state(ray_indices: Array = [0, 1, 2, 3, 4, 5, 6, 7]) -> Dictionary:
 	state["reward"] = reward
 	state["orb_collected"] = orb_collected
 	state["timed_out"] = timed_out
+	state["stuck"] = stuck
 	state["orb_offset"] = (orb.global_position - player.global_position) / player.UNIT
 	state["orb_proximity"] = _orb_proximity()
 	return state
@@ -418,9 +531,11 @@ func get_state_string() -> String:
 	return player.get_state_string() + "\naction_id: %s\ndecision_required: %s\ndone: %s\nreward: %s\norb_collected: %s\norb_proximity: %s" % [state.action_id, state.decision_required, done, reward, orb_collected, _orb_proximity()]
 
 
-func _orb_proximity() -> float:
+func _orb_proximity(distance: float = -1.0) -> float:
+	if distance < 0.0:
+		distance = player.global_position.distance_to(orb.global_position)
 	var start_distance := maxf(spawn.global_position.distance_to(orb.global_position), 1.0)
-	return clampf(1.0 - player.global_position.distance_to(orb.global_position) / start_distance, 0.0, 1.0)
+	return clampf(1.0 - distance / start_distance, 0.0, 1.0)
 
 
 func _on_orb_body_entered(body: Node2D) -> void:
@@ -442,9 +557,12 @@ func _on_orb_body_entered(body: Node2D) -> void:
 func _update_stats() -> void:
 	if headless_training:
 		return
-	var total := deaths + orb_collections + timeouts
+	_update_episode_timer()
+	var total := deaths + orb_collections + timeouts + stuck_count
 	var success := "—" if total == 0 else "%.0f%%" % (100.0 * orb_collections / total)
 	%StatsLabel.text = "Success  %s  ·  Wins  %d\nDeaths  %d  ·  Timeouts  %d" % [success, orb_collections, deaths, timeouts]
+	if stuck_detection_enabled or stuck_count > 0:
+		%StatsLabel.text += "\nStuck  %d" % stuck_count
 	if control_mode == ControlMode.HUMAN:
 		%RunLabel.text = "Free play"
 	else:

@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+Recording every 100 episodes: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\long_exploration\training\08000.mlpaths
+Training: 1000 runs with q-learning.
+Checkpoint every 100 runs and at completion: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\long_exploration\checkpoints\checkpoint-12345-8000.json
+0 / 1000 runs | 0.0 runs/s | success 0.0% | stuck 0
+47 / 1000 runs | 23.1 runs/s | success 38.3% | stuck 5
+128 / 1000 runs | 31.7 runs/s | success 14.8% | stuck 28
+210 / 1000 runs | 34.8 runs/s | success 16.2% | stuck 51
+279 / 1000 runs | 34.6 runs/s | success 20.1% | stuck 64
+362 / 1000 runs | 35.9 runs/s | success 17.4% | stuck 93
+474 / 1000 runs | 39.2 runs/s | success 15.2% | stuck 129
+546 / 1000 runs | 38.7 runs/s | success 17.2% | stuck 139
+622 / 1000 runs | 38.5 runs/s | success 17.7% | stuck 168
+720 / 1000 runs | 39.7 runs/s | success 15.7% | stuck 206
+809 / 1000 runs | 40.1 runs/s | success 15.0% | stuck 222
+887 / 1000 runs | 40.0 runs/s | success 15.3% | stuck 233
+955 / 1000 runs | 39.5 runs/s | success 15.6% | stuck 245
+1000 / 1000 runs | 39.1 runs/s | success 17.2% | stuck 247
+Finished. Checkpoint saved.
+WARNING: res://Game/Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Game/Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+   GDScript backtrace (most recent call first):
+       [0] start_training (res://Training/train.gd:72)

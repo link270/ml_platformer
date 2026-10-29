@@ -19,6 +19,8 @@ static func _schema(preset_id: String = Presets.DEFAULT_ID) -> Dictionary:
 		schema.horizontal_bins = ["no_hit", "near_0_to_1", "far_1_to_2"]
 	if preset_id == "late_learning_rate":
 		schema.learning_schedule = "alpha_0.1_through_3000_linear_to_0.02_at_10000"
+	if preset_id == "fixed_reward_per_block":
+		schema.reward_shaping = {"mode": "orb_distance_per_block", "reward_per_block": Presets.FIXED_REWARD_PER_BLOCK}
 	# JSON reads all numbers as floats, including numbers inside arrays.
 	return JSON.parse_string(JSON.stringify(schema))
 

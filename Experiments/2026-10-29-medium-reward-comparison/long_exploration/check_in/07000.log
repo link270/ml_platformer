@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WARNING: res://Game/Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Game/Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+   GDScript backtrace (most recent call first):
+       [0] start_training (res://Training/train.gd:72)
+Recording every 1 episodes: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\long_exploration\check_in\07000.mlpaths
+Evaluation: 1 runs with q-learning.
+0 / 1 runs | 0.0 runs/s | success 0.0% | stuck 0
+1 / 1 runs | 25.0 runs/s | success 0.0% | stuck 0
+Finished evaluation. Saved data unchanged.

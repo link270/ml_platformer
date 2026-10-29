@@ -13,6 +13,8 @@ var latest_status: Dictionary = {}
 var active := false
 var completed_episodes := 0
 var completed_wins := 0
+var completed_stuck := 0
+var stuck_detection_enabled := false
 var total_episodes := 0
 var check_in_every := 0
 var stopping := false
@@ -40,6 +42,8 @@ func start_run(selected_controller: int, evaluation: bool, path: String, resume:
 	stopping = false
 	completed_episodes = 0
 	completed_wins = 0
+	completed_stuck = 0
+	stuck_detection_enabled = %StuckToggle.button_pressed
 	total_episodes = int(%BatchEpisodes.value)
 	check_in_every = int(%BatchCheckEvery.value) if controller == 2 and not evaluating else 0
 	record_every = int(%RecordEvery.value)
@@ -63,6 +67,8 @@ func _launch_worker(resume: bool) -> void:
 		"--script", "res://Training/train.gd", "--", "--episodes", str(count),
 		"--agent", "random" if controller == 1 else "q-learning",
 		"--mode", "evaluation" if evaluating else "training", "--status", status_path,
+		"--level", get_parent().level_id,
+		"--stuck-detection", "on" if stuck_detection_enabled else "off",
 	])
 	if controller == 2:
 		args.append_array(["--save", checkpoint_path, "--preset", preset_id])
@@ -115,6 +121,8 @@ func _poll() -> void:
 		var success := 100.0 * (completed_wins + int(latest_status.get("wins", 0))) / maxi(count, 1)
 		%BatchProgress.value = count
 		%BatchStatus.text = "%d / %d runs · %.1f runs/s · %.1f%% success" % [count, total_episodes, latest_status.episodes_per_second, success]
+		if stuck_detection_enabled:
+			%BatchStatus.text += " · Stuck %d" % [completed_stuck + int(latest_status.get("stuck", 0))]
 	if running:
 		return
 	# Read again after exit: the final snapshot may have arrived during the poll.
@@ -131,6 +139,7 @@ func _poll() -> void:
 		"completed", "stopped":
 			completed_episodes += int(latest_status.completed)
 			completed_wins += int(latest_status.get("wins", 0))
+			completed_stuck += int(latest_status.get("stuck", 0))
 			%BatchProgress.value = completed_episodes
 			if stopping or latest_status.status == "stopped":
 				_finish("Stopped · %d / %d runs%s" % [completed_episodes, total_episodes, " · Saved" if controller == 2 and not evaluating else ""])
@@ -159,6 +168,8 @@ func complete_check_in(cancelled: bool = false, error: String = "") -> void:
 func _finish(message: String) -> void:
 	active = false
 	%BatchStatus.text = message
+	if stuck_detection_enabled:
+		%BatchStatus.text += " · Stuck %d" % completed_stuck
 	%BatchStop.disabled = true
 	busy_changed.emit(false)
 

@@ -1,0 +1,7 @@
+{
+  "same_seed": 12345,
+  "training_episodes_per_fixture": 1,
+  "checkpoint_bytes_match": true,
+  "episode_ticks_match": true,
+  "smoke_episodes_excluded_from_main_comparison": true
+}

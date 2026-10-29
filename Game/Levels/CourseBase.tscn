@@ -1,0 +1,191 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://Game/Player.tscn" id="1"]
+[ext_resource type="Script" path="res://Game/Level.gd" id="3"]
+[ext_resource type="Script" path="res://UI/AgentPanel.gd" id="4"]
+
+[ext_resource type="Theme" path="res://UI/InterfaceTheme.tres" id="5"]
+[ext_resource type="PackedScene" path="res://UI/HeatMapControls.tscn" id="6"]
+
+[sub_resource type="CircleShape2D" id="OrbShape"]
+radius = 12.0
+
+[node name="Level" type="Node2D"]
+script = ExtResource("3")
+control_mode = 0
+world_bounds = Rect2(0, 0, 3840, 540)
+episode_limit_seconds = 60.0
+
+[node name="Spawn" type="Marker2D" parent="."]
+position = Vector2(80, 464)
+
+[node name="Player" parent="." instance=ExtResource("1")]
+position = Vector2(80, 464)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(0, -194)
+limit_left = 0
+limit_top = 0
+limit_right = 3840
+limit_bottom = 540
+position_smoothing_enabled = false
+
+[node name="Orb" type="Area2D" parent="."]
+position = Vector2(3760, 456)
+collision_layer = 0
+collision_mask = 2
+
+[node name="Visual" type="Polygon2D" parent="Orb"]
+color = Color(1, 0.9, 0.2, 1)
+polygon = PackedVector2Array(0, -12, 8, -8, 12, 0, 8, 8, 0, 12, -8, 8, -12, 0, -8, -8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Orb"]
+shape = SubResource("OrbShape")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="TopBar" type="HBoxContainer" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 944.0
+offset_bottom = 46.0
+theme = ExtResource("5")
+theme_override_constants/separation = 16
+
+[node name="ModeLabel" type="Label" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RunLabel" type="Label" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.73, 0.74, 1)
+
+[node name="MenuButton" type="Button" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Menu"
+focus_mode = 0
+tooltip_text = "Esc · Return to setup."
+
+[node name="AgentPanel" type="PanelContainer" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 60.0
+offset_right = 244.0
+theme = ExtResource("5")
+script = ExtResource("4")
+
+[node name="Content" type="VBoxContainer" parent="HUD/AgentPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="StatsLabel" type="Label" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+
+[node name="EpisodeTimer" type="Label" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+tooltip_text = "Elapsed simulation time / run timeout. Changing speed changes viewing time, not the timeout."
+
+[node name="RecordingStatus" type="Label" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.8, 0.82, 1)
+
+[node name="HeatMapControls" parent="HUD/AgentPanel/Content" instance=ExtResource("6")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpeedRow" type="HBoxContainer" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpeedLabel" type="Label" parent="HUD/AgentPanel/Content/SpeedRow"]
+layout_mode = 2
+text = "Speed"
+size_flags_horizontal = 3
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 14
+
+[node name="SpeedSelect" type="OptionButton" parent="HUD/AgentPanel/Content/SpeedRow"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+
+[node name="DetailsButton" type="Button" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "More"
+toggle_mode = true
+focus_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="Details" type="VBoxContainer" parent="HUD/AgentPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 8
+
+[node name="AgentLabel" type="Label" parent="HUD/AgentPanel/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="Actions" type="VBoxContainer" parent="HUD/AgentPanel/Content/Details"]
+layout_mode = 2
+
+[node name="EvaluationButton" type="Button" parent="HUD/AgentPanel/Content/Details/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Evaluate"
+focus_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="SaveButton" type="Button" parent="HUD/AgentPanel/Content/Details/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save now"
+focus_mode = 0
+theme_override_font_sizes/font_size = 13
+
+[node name="CheckpointControls" type="VBoxContainer" parent="HUD/AgentPanel/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SaveStatus" type="Label" parent="HUD/AgentPanel/Content/Details/CheckpointControls"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
+
+[node name="StateLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 260.0
+offset_top = 60.0
+offset_right = 640.0
+theme = ExtResource("5")
+theme_override_font_sizes/font_size = 12
+
+[node name="ControlsHint" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 516.0
+offset_right = 944.0
+theme = ExtResource("5")
+text = "R  restart     V  sensors     Esc  menu"
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.55, 0.61, 0.63, 1)
+
+[connection signal="body_entered" from="Orb" to="." method="_on_orb_body_entered"]
+[connection signal="pressed" from="HUD/TopBar/MenuButton" to="." method="_return_to_menu"]
+[connection signal="item_selected" from="HUD/AgentPanel/Content/SpeedRow/SpeedSelect" to="." method="_set_training_speed"]
+[connection signal="pressed" from="HUD/AgentPanel/Content/Details/Actions/EvaluationButton" to="." method="_toggle_evaluation"]
+[connection signal="pressed" from="HUD/AgentPanel/Content/Details/Actions/SaveButton" to="." method="_save_checkpoint"]
+[connection signal="toggled" from="HUD/AgentPanel/Content/DetailsButton" to="." method="_show_details"]

@@ -60,7 +60,7 @@ func open(source: String) -> bool:
 			return _fail("Invalid episode metadata JSON.")
 		if not _positive_integer(metadata.get("episode")) or metadata.get("ticks") != count - 1:
 			return _fail("Invalid episode ordinal or tick count.")
-		if metadata.get("outcome") not in ["success", "death", "timeout"] or not metadata.get("training") is bool:
+		if metadata.get("outcome") not in ["success", "death", "timeout", "stuck"] or not metadata.get("training") is bool:
 			return _fail("Invalid episode outcome or mode.")
 		episodes.append({"metadata": metadata, "offset": _file.get_position(), "sample_count": count})
 		_file.seek(_file.get_position() + count * Recorder.SAMPLE_BYTES)

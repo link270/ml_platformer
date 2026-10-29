@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WARNING: res://Game/Player.tscn:3 - ext_resource, invalid UID: uid://clfkmwwrsadmf - using text path instead: res://Game/Player.gd
+   at: load (scene/resources/resource_format_text.cpp:501)
+   GDScript backtrace (most recent call first):
+       [0] start_training (res://Training/train.gd:72)
+Training: 1 runs with q-learning.
+Checkpoint every 100 runs and at completion: C:\Users\mitch\Documents\GoDot\Projects\ml_platformer\Experiments\2026-10-29-medium-reward-comparison\fixed_reward_per_block\smoke\unmodified-worker.json
+0 / 1 runs | 0.0 runs/s | success 0.0% | stuck 0
+1 / 1 runs | 41.7 runs/s | success 0.0% | stuck 1
+BENCHMARK {"behavior_sha256":"cc341239e356cd2bb54dd90cb4db11fb255ceeb644fd39a29531a2a1d6f76831","deaths":0,"episodes":1,"episodes_per_second":41.6666666666667,"physics_steps":952,"recorded_episodes":0,"recorded_samples":0,"recording_bytes":0,"seconds":0.024,"steps_per_second":39666.6666666667,"stuck":1,"timeouts":0,"updates":159,"wins":0}
+Finished. Checkpoint saved.

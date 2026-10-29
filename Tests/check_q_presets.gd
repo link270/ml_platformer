@@ -85,6 +85,8 @@ func run_check() -> void:
 	for id in Presets.IDS:
 		check(not saves.has(Presets.save_path(id)), "presets have separate save destinations")
 		saves[Presets.save_path(id)] = true
+		if not Presets.PRESETS[id].has("archive"):
+			continue
 		for seed_value in Presets.SEEDS:
 			for episode in Presets.MILESTONES:
 				var agent := QLearning.new()

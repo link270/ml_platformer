@@ -4,7 +4,8 @@ const Recording := preload("res://Training/EpisodeRecording.gd")
 const Recorder := preload("res://Training/EpisodeRecorder.gd")
 const Trails := preload("res://Game/PathTrails.gd")
 const HeatMap := preload("res://Game/PathHeatMap.gd")
-const LevelScene := preload("res://Game/Level.tscn")
+const Levels := preload("res://Game/Levels/LevelCatalog.gd")
+const CourseBackground := preload("res://Game/CourseBackground.gd")
 const SPEEDS := [0.25, 0.5, 1.0, 2.0, 4.0, 8.0]
 
 var recording_directory := Recorder.DIRECTORY
@@ -22,12 +23,20 @@ var _group_duration := 0.0
 var _polygon := PackedVector2Array()
 var history: Node2D
 var heat_map: Node2D
+var course_bounds := Rect2(0, 0, 960, 540)
+var course_camera: Camera2D
+var course_background: Node2D
 
 
 func _ready() -> void:
+	course_background = CourseBackground.new()
+	add_child(course_background)
 	_build_course()
+	course_camera = Camera2D.new()
+	add_child(course_camera)
+	_update_camera()
 	heat_map = HeatMap.new()
-	heat_map.bounds = get_viewport_rect()
+	heat_map.bounds = course_bounds
 	$HeatMapLayer.add_child(heat_map)
 	%HeatMapControls.bind_heat_map(heat_map)
 	history = Trails.new()
@@ -49,10 +58,15 @@ func _ready() -> void:
 	_update_status()
 
 
-func _build_course() -> void:
+func _build_course(scene_path: String = "res://Game/Level.tscn") -> void:
 	# Copy visuals before the level enters the tree: no agents, raycasts or bodies
 	# are instantiated into the playback world, and the level script never runs.
-	var template := LevelScene.instantiate()
+	for child in $Course.get_children():
+		child.free()
+	var template := (load(scene_path) as PackedScene).instantiate()
+	course_bounds = template.world_bounds
+	course_background.bounds = course_bounds
+	course_background.queue_redraw()
 	_polygon = template.get_node("Player/Visual").polygon
 	for child in template.get_children():
 		if child is StaticBody2D or child.name == "Orb":
@@ -85,6 +99,7 @@ func load_recordings(paths: PackedStringArray) -> bool:
 		_restart()
 		return false
 	var warnings: Array[String] = []
+	var selected_course := ""
 	for path in paths:
 		var recording := Recording.new()
 		if not recording.open(path):
@@ -95,10 +110,23 @@ func load_recordings(paths: PackedStringArray) -> bool:
 			_restart()
 			return false
 		recordings.append(recording)
+		var course := str(recording.header.get("level_scene", "res://Game/Level.tscn"))
+		if not Levels.PATHS.has(course) or (not selected_course.is_empty() and course != selected_course):
+			playback_error = "Choose recordings from one supported level at a time."
+			for opened in recordings:
+				opened.close()
+			recordings.clear()
+			_restart()
+			return false
+		selected_course = course
 		if not recording.warning.is_empty() and not warnings.has(recording.warning):
 			warnings.append(recording.warning)
-		var fingerprint: String = recording.header.get("source_sha256", {}).get("res://Game/Level.tscn", "")
-		if not fingerprint.is_empty() and fingerprint != FileAccess.get_sha256("res://Game/Level.tscn"):
+		var sources: Dictionary = recording.header.get("source_sha256", {})
+		var changed := false
+		for source in [course, "res://Game/Levels/CourseBase.tscn"]:
+			if sources.has(source) and sources[source] != FileAccess.get_sha256(source):
+				changed = true
+		if changed:
 			var message := "Course changed since recording; displaying the current course."
 			if not warnings.has(message):
 				warnings.append(message)
@@ -114,6 +142,8 @@ func load_recordings(paths: PackedStringArray) -> bool:
 	%SourceName.text = paths[0].get_file() if paths.size() == 1 else "%d recordings" % paths.size()
 	%SourceName.tooltip_text = "\n".join(paths)
 	%PlaybackWarning.text = "\n".join(warnings)
+	_build_course(selected_course)
+	heat_map.bounds = course_bounds
 	_restart()
 	return true
 
@@ -179,6 +209,18 @@ func _spawn_group() -> void:
 		active.append({"points": points, "hz": hz, "duration": duration, "tick": 0, "heat_id": _next,
 			"metadata": metadata, "trail": trail, "visual": visual})
 		_next += 1
+	_update_camera()
+
+
+func _update_camera() -> void:
+	var viewport_size := get_viewport_rect().size
+	var zoom_factor := minf(1.0, viewport_size.x / course_bounds.size.x) if %PlaybackMode.selected == 1 else 1.0
+	course_camera.zoom = Vector2.ONE * zoom_factor
+	var center := course_bounds.get_center()
+	if not active.is_empty() and zoom_factor == 1.0:
+		var half_width := viewport_size.x * 0.5
+		center.x = clampf(active[0].visual.position.x, course_bounds.position.x + half_width, maxf(course_bounds.end.x - half_width, course_bounds.position.x + half_width))
+	course_camera.position = center
 
 
 func _process(delta: float) -> void:
@@ -216,6 +258,7 @@ func advance(delta: float) -> void:
 				_spawn_group()
 			else:
 				finished = true
+	_update_camera()
 	_update_status()
 
 

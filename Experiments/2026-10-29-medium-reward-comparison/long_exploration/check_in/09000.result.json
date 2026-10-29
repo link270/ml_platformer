@@ -1,0 +1,28 @@
+{
+	"completed": 1,
+	"deaths": 1,
+	"episode_limit_seconds": 60.0,
+	"epsilon": 0.05,
+	"message": "",
+	"milestone": 9000,
+	"patience_seconds": 8.0,
+	"phase": "check_in",
+	"physics_hz": 60,
+	"preset": "long_exploration",
+	"q_states": 88,
+	"seconds": 0.028,
+	"seed": 1012353,
+	"settings": {
+		"discount": 0.95,
+		"epsilon_decay": 0.999,
+		"learning_rate": 0.1,
+		"minimum_epsilon": 0.05
+	},
+	"status": "completed",
+	"stuck": 0,
+	"stuck_detection": true,
+	"timeouts": 0,
+	"training_episodes": 9000,
+	"updates": 2061545,
+	"wins": 0
+}

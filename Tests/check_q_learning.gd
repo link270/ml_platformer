@@ -23,6 +23,34 @@ func _initialize() -> void:
 	call_deferred("run_check")
 
 
+func check_horizontal_keys() -> void:
+	var state := observation()
+	var keys := {}
+	for left in 3:
+		for right in 3:
+			for mask in 16:
+				for i in 2:
+					var index: int = QState.RAY_INDICES[i]
+					var value: int = left if i == 0 else right
+					state.ray_hits[index] = value > 0
+					state.ray_clearances[index] = 1.5 if value == 2 else 0.5
+				for i in 4:
+					state.ray_hits[QState.RAY_INDICES[i + 2]] = bool(mask & (1 << i))
+					state.ray_clearances[QState.RAY_INDICES[i + 2]] = 0.0
+				for x in [-2.0, 0.0, 2.0]:
+					for y in [-2.0, 0.0, 2.0]:
+						for phase in 3:
+							state.orb_offset = Vector2(x, y)
+							state.grounded = phase == 0
+							state.velocity.y = -1.0 if phase == 1 else 1.0
+							# Compare to the original uncached string representation.
+							for bins in [false, true]:
+								var expected := "%s|%d|%d|%d" % [QState.ray_bits(state, bins), QState.direction(x), QState.direction(y), phase]
+								check(QState.encode(state, bins) == expected, "cached keys preserve both checkpoint schemas as observations change")
+							keys[QState.encode(state, true)] = true
+	check(keys.size() == 3888, "horizontal encoding retains all 3888 distinct states")
+
+
 func run_check() -> void:
 	var state := observation()
 	check(QState.encode(state) == "101100|1|-1|0", "six bits use L R U D DL DR order and inclusive one-block threshold")
@@ -55,6 +83,7 @@ func run_check() -> void:
 					state.velocity.y = -1.0 if phase == 1 else 1.0
 					keys[QState.encode(state)] = true
 	check(keys.size() == 1728, "state encoding has exactly 1728 distinct combinations")
+	check_horizontal_keys()
 
 	var learner := QLearning.new()
 	check(learner is Agent, "Q-learning inherits the shared agent")
@@ -87,6 +116,7 @@ func run_check() -> void:
 	check(learner.evaluation_episodes == 1 and learner.evaluation_wins == 1, "evaluation stats are separate")
 
 	var level := preload("res://Game/Level.tscn").instantiate()
+	var normal_max_steps := Engine.max_physics_steps_per_frame
 	level.control_mode = level.ControlMode.Q_LEARNING
 	root.add_child(level)
 	level.set_physics_process(false)
@@ -94,6 +124,8 @@ func run_check() -> void:
 	learner.rng.seed = 12345
 	check(level.player.show_rays and level.player.visible_ray_indices == QState.RAY_INDICES, "Q-learning displays exactly the six input rays")
 	check(level.get_node("%AgentPanel").visible, "training panel visible")
+	check(level.get_node("%EpisodeTimer").text == "Time  0.0 / 20.0 s", "timer starts at zero and shows the course timeout")
+	check(level.get_node("%SpeedSelect").get_item_text(0) == "0.5x" and level.get_node("%SpeedSelect").selected == level.NORMAL_SPEED_INDEX, "watching defaults to 1x and offers half speed")
 	var start_state: Dictionary = level.get_state()
 	var initial_proximity: float = start_state.orb_proximity
 	for tick in 6:
@@ -102,6 +134,8 @@ func run_check() -> void:
 		check(learner.updates == (1 if tick == 5 else 0), "learning occurs once per six-frame decision")
 	check(is_equal_approx(learner.values(start_state)[level.get_state().action_id], 0.1 * level.episode_return), "decision reward aggregates the physics-frame rewards")
 	check(is_equal_approx(level.episode_return, 0.1 * (level.get_state().orb_proximity - initial_proximity) - 0.001), "six nonterminal ticks cost exactly 0.001 in addition to unchanged proximity shaping")
+	await process_frame
+	check(level.get_node("%EpisodeTimer").text == "Time  0.1 / 20.0 s", "timer advances with simulation ticks")
 	await physics_frame
 	level._physics_process(DT)
 	level.player.global_position.y = level.death_y + 10.0
@@ -115,11 +149,16 @@ func run_check() -> void:
 	await physics_frame
 	level._physics_process(DT)
 	check(level.done and learner.training_wins == 1 and learner.training_episodes == 2, "orb success trains and records one successful episode")
-	level.get_node("%SpeedSelect").item_selected.emit(3)
+	level.get_node("%SpeedSelect").item_selected.emit(level.TRAINING_SPEEDS.find(8.0))
 	check(Engine.time_scale == 8.0 and Engine.physics_ticks_per_second == 480, "speed selector applies 8x")
 	level.get_node("%EvaluationButton").pressed.emit()
-	check(Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60 and level.get_node("%SpeedSelect").selected == 0, "evaluation returns to normal speed")
+	check(Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60 and level.get_node("%SpeedSelect").selected == level.NORMAL_SPEED_INDEX, "evaluation returns to normal speed")
 	check(not learner.training and level.get_state().tick == 0, "evaluation button starts a fresh evaluation episode")
+	check(not level.get_node("%SpeedSelect").disabled, "evaluation allows speed adjustment")
+	level.get_node("%SpeedSelect").item_selected.emit(0)
+	await physics_frame
+	await physics_frame
+	check(Engine.time_scale == 0.5 and Engine.physics_ticks_per_second == 30 and is_equal_approx(root.get_physics_process_delta_time(), DT), "half-speed evaluation preserves the physics step")
 	table_before = learner.q_table.duplicate(true)
 	updates_before = learner.updates
 	level.episode_limit_seconds = DT * 2
@@ -127,15 +166,19 @@ func run_check() -> void:
 		await physics_frame
 		level._physics_process(DT)
 	check(level.done and level.timed_out and level.timeouts == 1 and level.reward == -1.0, "stuck episodes time out separately from deaths")
+	var stopped_timer: String = level.get_node("%EpisodeTimer").text
+	await process_frame
+	check(level.get_node("%EpisodeTimer").text == stopped_timer, "completed run timer remains stopped")
 	check(learner.evaluation_episodes == 1 and learner.training_episodes == 2, "timeout counts in evaluation only")
 	check(learner.q_table == table_before and learner.updates == updates_before, "running evaluation leaves the trained table untouched")
 	level.get_node("%EvaluationButton").pressed.emit()
 	check(learner.training and not level.done and learner.q_table == table_before, "resume training preserves learned values")
 	level.reset_episode()
+	check(level.get_node("%EpisodeTimer").text.begins_with("Time  0.0 /"), "reset clears the run timer")
 	check(learner.training_episodes == 2, "manual resets do not count abandoned training episodes")
-	var normal_max_steps := Engine.max_physics_steps_per_frame
 	for index in level.TRAINING_SPEEDS.size():
 		level.get_node("%SpeedSelect").item_selected.emit(index)
+		check(Engine.physics_ticks_per_second == roundi(60 * level.TRAINING_SPEEDS[index]) and is_equal_approx(Engine.time_scale, level.TRAINING_SPEEDS[index]), "every requested viewing speed is applied without clamping")
 		await physics_frame
 		await physics_frame
 		var actual_delta := root.get_physics_process_delta_time()
@@ -156,6 +199,23 @@ func run_check() -> void:
 	level.queue_free()
 	await process_frame
 	check(Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60 and Engine.max_physics_steps_per_frame == normal_max_steps, "leaving a fast level restores engine timing")
+	level = preload("res://Game/Levels/TrainingEasy.tscn").instantiate()
+	level.control_mode = level.ControlMode.RANDOM
+	level.run_limit = 1
+	root.add_child(level)
+	level.set_physics_process(false)
+	check(level.get_node("%EpisodeTimer").text == "Time  0.0 / 60.0 s", "large course timer uses its longer timeout")
+	check(level.get_node("%SpeedSelect").is_visible_in_tree() and not level.get_node("%SpeedSelect").disabled, "random evaluation exposes speed controls")
+	level.get_node("%SpeedSelect").item_selected.emit(level.TRAINING_SPEEDS.find(4.0))
+	check(Engine.time_scale == 4.0 and Engine.physics_ticks_per_second == 240, "random evaluation applies 4x")
+	level.episode_limit_seconds = DT * 2
+	for tick in 2:
+		await physics_frame
+		level._physics_process(DT)
+	check(level.session_finished and Engine.time_scale == 1.0 and Engine.physics_ticks_per_second == 60, "finishing random evaluation restores normal engine timing")
+	check(level.get_node("%SpeedSelect").disabled, "finished evaluation disables its speed control")
+	level.queue_free()
+	await process_frame
 	if not failed:
 		print("Q-learning check passed")
 	quit(1 if failed else 0)

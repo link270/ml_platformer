@@ -1,9 +1,12 @@
 extends SceneTree
 
-const LevelScene := preload("res://Game/Level.tscn")
+const Levels := preload("res://Game/Levels/LevelCatalog.gd")
+var level_id := "original"
+var stuck_detection_enabled := false
 const QLearning := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const Presets := preload("res://Agents/QPresets.gd")
+const HEADLESS_TICKS_PER_FRAME := 16
 
 var episodes := 10_000
 var save_every := 100
@@ -34,6 +37,8 @@ func start_training() -> void:
 	if args.has("--help"):
 		print("Usage: ./train.sh [--episodes 10000] [--load PATH] [--save PATH] [--save-every 100]")
 		print("Optional --preset: ", ", ".join(Presets.IDS))
+		print("Optional --level: ", ", ".join(Levels.IDS))
+		print("Optional --stuck-detection on|off (default off): 8 seconds without a block of best progress.")
 		print("Episodes are additional episodes this run. Paths accept user:// or absolute paths.")
 		print("Options: --agent q-learning|random --mode training|evaluation")
 		print("Recording: --record-every 0 (off), 1 (all), or X; optional --record-to PATH.mlpaths")
@@ -52,6 +57,10 @@ func start_training() -> void:
 		agent.training = run_mode == "training"
 		if not args.has("--save"):
 			save_path = Presets.save_path(preset_id)
+			if level_id != "original":
+				save_path = save_path.get_basename() + "_" + level_id + ".json"
+			if stuck_detection_enabled:
+				save_path = save_path.get_basename() + "_stuck.json"
 	if not load_path.is_empty():
 		error = Checkpoint.load_checkpoint(agent, load_path)
 		if not error.is_empty():
@@ -60,9 +69,10 @@ func start_training() -> void:
 	if agent_name == "q-learning":
 		starting_episodes = agent.training_episodes
 		starting_wins = agent.training_wins
-	var level := LevelScene.instantiate()
+	var level := (load(Levels.scene_path(level_id)) as PackedScene).instantiate()
 	level.control_mode = level.ControlMode.RANDOM if agent_name == "random" else level.ControlMode.Q_LEARNING
 	level.headless_training = true
+	level.stuck_detection_enabled = stuck_detection_enabled
 	level.agent = agent
 	level.record_every = record_every
 	level.recording_path = recording_path
@@ -82,6 +92,11 @@ func start_training() -> void:
 	if _saves_training():
 		print("Checkpoint every %d runs and at completion: %s" % [save_every, ProjectSettings.globalize_path(save_path)])
 	report_progress()
+	# Amortize non-physics frame work while keeping every simulated physics step
+	# at the same duration. The level captured normal timing before this change.
+	Engine.physics_ticks_per_second *= HEADLESS_TICKS_PER_FRAME
+	Engine.max_physics_steps_per_frame *= HEADLESS_TICKS_PER_FRAME
+	Engine.time_scale *= HEADLESS_TICKS_PER_FRAME
 
 
 func parse_options(args: PackedStringArray) -> String:
@@ -91,6 +106,14 @@ func parse_options(args: PackedStringArray) -> String:
 		var option := args[i]
 		var value := args[i + 1]
 		match option:
+			"--stuck-detection":
+				if value not in ["on", "off"]:
+					return "--stuck-detection must be on or off."
+				stuck_detection_enabled = value == "on"
+			"--level":
+				if not Levels.IDS.has(value):
+					return "Unknown level: " + value
+				level_id = value
 			"--record-every", "--record-offset":
 				if not value.is_valid_int() or value.to_int() < 0:
 					return option + " must be a non-negative integer."
@@ -163,6 +186,8 @@ func on_episode_completed() -> void:
 			current_scene.episode_recorder.close()
 		report_progress("completed" if completed == episodes else "stopped")
 		print("Finished. Checkpoint saved." if _saves_training() else "Finished evaluation. Saved data unchanged.")
+		# A frame can contain more physics ticks after a completion or stop request.
+		current_scene.session_finished = true
 		quit()
 	elif Time.get_ticks_msec() - last_report_at >= 2000:
 		report_progress()
@@ -173,11 +198,13 @@ func report_progress(status: String = "running", message: String = "") -> void:
 	var completed := completed_runs
 	var elapsed := maxf((last_report_at - started_at) / 1000.0, 0.001)
 	var success := 100.0 * successful_runs / maxi(completed, 1)
-	print("%d / %d runs | %.1f runs/s | success %.1f%%" % [completed, episodes, completed / elapsed, success])
+	var stuck_count: int = current_scene.stuck_count if is_instance_valid(current_scene) else 0
+	print("%d / %d runs | %.1f runs/s | success %.1f%% | stuck %d" % [completed, episodes, completed / elapsed, success, stuck_count])
 	if status_path.is_empty():
 		return
 	var data := {"status": status, "message": message, "completed": completed, "target": episodes,
-		"episodes_per_second": completed / elapsed, "success": success, "wins": successful_runs}
+		"episodes_per_second": completed / elapsed, "success": success, "wins": successful_runs,
+		"stuck": stuck_count, "stuck_detection": stuck_detection_enabled}
 	if is_instance_valid(current_scene) and current_scene.get("episode_recorder") != null:
 		data.recording_path = current_scene.recording_path
 		data.recorded_episodes = current_scene.episode_recorder.recorded_episodes
@@ -186,6 +213,8 @@ func report_progress(status: String = "running", message: String = "") -> void:
 	var file := FileAccess.open(status_path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		printerr("Cannot write training progress: ", error_string(FileAccess.get_open_error()))
+		if is_instance_valid(current_scene):
+			current_scene.session_finished = true
 		quit(1)
 		return
 	file.store_string(JSON.stringify(data))
@@ -201,10 +230,14 @@ func report_progress(status: String = "running", message: String = "") -> void:
 			OS.delay_msec(5)
 	if error != OK:
 		printerr("Cannot update training progress: ", error_string(error))
+		if is_instance_valid(current_scene):
+			current_scene.session_finished = true
 		quit(1)
 
 
 func fail(message: String) -> void:
+	if is_instance_valid(current_scene):
+		current_scene.session_finished = true
 	printerr("Training stopped: ", message)
 	report_progress("error", message)
 	quit(1)

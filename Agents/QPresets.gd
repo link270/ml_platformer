@@ -2,7 +2,8 @@ extends RefCounted
 
 # Each follow-up changes ONE thing from longer exploration; they do not stack.
 const DEFAULT_ID := "long_exploration"
-const IDS := ["baseline", "time_penalty", "long_exploration", "discount_099", "horizontal_bins", "late_learning_rate"]
+const IDS := ["baseline", "time_penalty", "long_exploration", "discount_099", "horizontal_bins", "late_learning_rate", "fixed_reward_per_block"]
+const FIXED_REWARD_PER_BLOCK := 0.005
 const PRESETS := {
 	"baseline": {
 		"label": "1. Original baseline",
@@ -34,6 +35,10 @@ const PRESETS := {
 		"description": "Longer exploration + smaller late updates.\nLearning rate 0.1 → 0.02 over episodes 3k–10k.",
 		"archive": "2026-10-19-q-learning-followups/late_learning_rate",
 	},
+	"fixed_reward_per_block": {
+		"label": "7. Fixed reward per block",
+		"description": "0.005 per block closer; no distance normalization.\nOther settings match Longer exploration.",
+	},
 }
 const SEEDS := [12345, 42, 98765]
 const MILESTONES := [10000, 5000, 3000, 2000, 1000, 600, 300, 100, 0]
@@ -56,4 +61,5 @@ static func save_path(id: String) -> String:
 
 
 static func archive_path(id: String, seed_value: int, episodes: int) -> String:
-	return "res://Experiments/%s/checkpoints/checkpoint-%d-%d.json" % [PRESETS[id].archive, seed_value, episodes]
+	var archive: String = PRESETS[id].get("archive", "")
+	return "" if archive.is_empty() else "res://Experiments/%s/checkpoints/checkpoint-%d-%d.json" % [archive, seed_value, episodes]
