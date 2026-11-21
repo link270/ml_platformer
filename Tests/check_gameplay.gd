@@ -18,7 +18,7 @@ func run_check() -> void:
 	var level := preload("res://Game/Level.tscn").instantiate()
 	root.add_child(level)
 	level.set_physics_process(false)
-	check(level.get_node("%StatsLabel").text == "Success  —  ·  Wins  0\nDeaths  0  ·  Timeouts  0", "session stats start at zero")
+	check(level.get_node("%StatsLabel").text == "Success  —  ·  Wins  0  ·  Deaths  0  ·  Timeouts  0", "session stats start at zero")
 	var player: CharacterBody2D = level.get_node("Player")
 	await physics_frame
 	player.physics_step(DT)

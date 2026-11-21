@@ -1,0 +1,74 @@
+[gd_resource type="Theme" format=3]
+
+[sub_resource type="StyleBoxFlat" id="Bar"]
+content_margin_left = 12.0
+content_margin_top = 2.0
+content_margin_right = 12.0
+content_margin_bottom = 2.0
+bg_color = Color(0.073, 0.092, 0.107, 0.98)
+border_width_top = 1
+border_width_bottom = 1
+border_color = Color(0.19, 0.24, 0.26, 1)
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.093, 0.115, 0.13, 0.99)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.23, 0.29, 0.31, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="Button"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.135, 0.167, 0.183, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="Hover"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.19, 0.24, 0.26, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="Pressed"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.14, 0.29, 0.32, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[resource]
+default_font_size = 13
+Button/styles/hover = SubResource("Hover")
+Button/styles/normal = SubResource("Button")
+Button/styles/pressed = SubResource("Pressed")
+Label/colors/font_color = Color(0.88, 0.92, 0.93, 1)
+OptionButton/styles/disabled = SubResource("Button")
+OptionButton/styles/hover = SubResource("Hover")
+OptionButton/styles/normal = SubResource("Button")
+OptionButton/styles/pressed = SubResource("Pressed")
+PanelContainer/styles/panel = SubResource("Panel")
+HUDBar/base_type = &"PanelContainer"
+HUDBar/styles/panel = SubResource("Bar")

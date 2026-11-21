@@ -1,0 +1,31 @@
+{
+  "completed": 30,
+  "deaths": 19,
+  "episode_limit_seconds": 60.0,
+  "epsilon": 1.0,
+  "message": "",
+  "milestone": 0,
+  "patience_seconds": 8.0,
+  "phase": "evaluation",
+  "physics_hz": 60,
+  "preset": "baseline",
+  "q_states": 0,
+  "seconds": 0.774,
+  "seed": 78436300,
+  "settings": {
+    "discount": 0.95,
+    "epsilon_decay": 0.995,
+    "learning_rate": 0.1,
+    "minimum_epsilon": 0.05
+  },
+  "status": "completed",
+  "stuck": 11,
+  "stuck_detection": true,
+  "timeouts": 0,
+  "training_episodes": 0,
+  "updates": 0,
+  "wins": 0,
+  "checkpoint": "00000.json",
+  "checkpoint_sha256": "aea3ef2bc38b0ac8b76f46ac0cb462cbf2212106646684f7e896763a3f6fd1ee",
+  "recording": "eval-00000.mlpaths"
+}

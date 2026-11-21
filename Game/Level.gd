@@ -112,14 +112,17 @@ func _ready() -> void:
 		_update_agent_panel()
 	else:
 		%SpeedRow.visible = control_mode != ControlMode.HUMAN
-		%DetailsButton.hide()
+		%DetailsButton.visible = control_mode != ControlMode.HUMAN
+		%AgentLabel.hide()
+		%EvaluationButton.hide()
+		%CheckpointControls.hide()
 		%ModeLabel.text = "Human playable" if control_mode == ControlMode.HUMAN else "Random agent · Evaluation"
 	if control_mode == ControlMode.HUMAN:
-		%ControlsHint.text = "A / D  move     Space  jump     R  restart     V  sensors     Esc  menu"
+		%ControlsHint.text = "A / D  move   ·   Space  jump   ·   " + %ControlsHint.text
 	if check_in_mode:
 		%EvaluationButton.hide()
-		%SaveButton.hide()
 		%CheckpointControls.hide()
+		%ControlsHint.text = "Esc  stop check-in"
 		%MenuButton.text = "Stop check-in"
 		%MenuButton.tooltip_text = "Stop the batch. Training was saved before this check-in."
 	_update_stats()
@@ -135,17 +138,7 @@ func _setup_view() -> void:
 		_view_camera.name = "Camera2D"
 		player.add_child(_view_camera)
 	_view_camera.top_level = true
-	var zoom_button := Button.new()
-	zoom_button.name = "WholeLevelView"
-	zoom_button.text = "Whole level"
-	zoom_button.toggle_mode = true
-	zoom_button.focus_mode = Control.FOCUS_NONE
-	zoom_button.tooltip_text = "Fit the whole level, or follow the player. Remembered for this app session."
-	zoom_button.set_pressed_no_signal(whole_level_view)
-	zoom_button.toggled.connect(_set_whole_level_view)
-	var top_bar := $HUD/TopBar
-	top_bar.add_child(zoom_button)
-	top_bar.move_child(zoom_button, %MenuButton.get_index())
+	%WholeLevelView.set_pressed_no_signal(whole_level_view)
 	_update_view_camera()
 
 
@@ -163,10 +156,11 @@ func _update_episode_timer() -> void:
 	if headless_training:
 		return
 	%EpisodeTimer.visible = control_mode != ControlMode.HUMAN
-	%EpisodeTimer.text = "Time  %.1f / %.1f s" % [player.tick / float(_normal_tick_rate), episode_limit_seconds]
+	var text := "Time  %.1f / %.1f s" % [player.tick / float(_normal_tick_rate), episode_limit_seconds]
 	if stuck_detection_enabled and control_mode != ControlMode.HUMAN:
 		var remaining := maxf(0.0, STUCK_PATIENCE_SECONDS - (player.tick - _last_progress_tick) / float(_normal_tick_rate))
-		%EpisodeTimer.text += "\nPatience  %.1f s left" % remaining
+		text += "  ·  Patience  %.1f s" % remaining
+	%EpisodeTimer.text = text
 
 
 func _update_view_camera() -> void:
@@ -237,7 +231,6 @@ func _save_checkpoint() -> bool:
 
 func _show_details(expanded: bool) -> void:
 	%Details.visible = expanded
-	%DetailsButton.text = "Less" if expanded else "More"
 
 
 func _finish_session() -> void:
@@ -349,7 +342,8 @@ func _toggle_evaluation() -> void:
 func _update_agent_panel() -> void:
 	if control_mode == ControlMode.Q_LEARNING:
 		%AgentPanel.update_display(agent, last_episode_return)
-		%ModeLabel.text = QLearningAgent.Presets.PRESETS[agent.preset_id].label + " · " + ("Training" if agent.training else "Evaluation")
+		if not check_in_mode:
+			%ModeLabel.text = QLearningAgent.Presets.PRESETS[agent.preset_id].label + " · " + ("Training" if agent.training else "Evaluation")
 		%SpeedSelect.disabled = session_finished
 		%SaveButton.disabled = not agent.training
 
@@ -504,12 +498,13 @@ func _finish_capture() -> void:
 func _update_recording_status() -> void:
 	if headless_training:
 		return
-	%RecordingStatus.visible = record_every > 0 or path_trails != null
 	var text := "Trails · last 50 attempts" if path_trails != null else ""
+	var tooltip := "Green: success · Red: death · Amber: timeout · Purple: stuck. Older paths fade each episode." if path_trails != null else ""
 	if record_every > 0:
 		text += ("\n" if not text.is_empty() else "") + ("Recording error: " + recording_error if not recording_error.is_empty() else "Recording every %d · %d saved" % [record_every, episode_recorder.recorded_episodes])
+		tooltip = text + "\n" + ProjectSettings.globalize_path(recording_path)
 	%RecordingStatus.text = text
-	%RecordingStatus.tooltip_text = ProjectSettings.globalize_path(recording_path) if record_every > 0 else "Green: success · Red: death · Amber: timeout · Purple: stuck. Older paths fade each episode."
+	%RecordingStatus.tooltip_text = tooltip
 
 
 func get_state(ray_indices: Array = [0, 1, 2, 3, 4, 5, 6, 7]) -> Dictionary:
@@ -560,9 +555,9 @@ func _update_stats() -> void:
 	_update_episode_timer()
 	var total := deaths + orb_collections + timeouts + stuck_count
 	var success := "—" if total == 0 else "%.0f%%" % (100.0 * orb_collections / total)
-	%StatsLabel.text = "Success  %s  ·  Wins  %d\nDeaths  %d  ·  Timeouts  %d" % [success, orb_collections, deaths, timeouts]
+	%StatsLabel.text = "Success  %s  ·  Wins  %d  ·  Deaths  %d  ·  Timeouts  %d" % [success, orb_collections, deaths, timeouts]
 	if stuck_detection_enabled or stuck_count > 0:
-		%StatsLabel.text += "\nStuck  %d" % stuck_count
+		%StatsLabel.text += "  ·  Stuck  %d" % stuck_count
 	if control_mode == ControlMode.HUMAN:
 		%RunLabel.text = "Free play"
 	else:

@@ -1,0 +1,42 @@
+EASY STEPS AND HILLS — Q-LEARNING COMPARISON
+
+Open report.html for the comparison and filming-notes.txt for the recommended clips.
+summary.json includes the detailed training and frozen-policy metrics, including
+the episode numbers of the fastest and representative median replay runs.
+
+All eight trained variants started from empty Q-tables with seed 78436291 and
+trained continuously through 10,000 episodes. Every 1,000-, 5,000-, and 10,000-run
+checkpoint was evaluated for 30 frozen episodes with matched seeds 78436300–78436329.
+The empty baseline ran only the 30 evaluations. Stuck detection was on for every
+run and the overall timeout was 60 simulation seconds.
+
+PLAY THE FOOTAGE
+In the game, open Playback recordings, then Open recordings, and choose an
+eval-XXXXX.mlpaths file. Use sequential playback to show a single block or
+simultaneous playback to show multiple paths. The training.mlpaths files contain
+every 100th training episode, including both wins and failures.
+
+To watch a standard saved policy live, copy the selected checkpoint JSON under
+a descriptive name into the personal checkpoint folder opened by the setup
+screen's Folder button. Select Easy, the matching Q-learning experiment,
+Evaluation, and Stuck detection on. The live tie-break seed may differ from the
+recordings. The course-position experiment uses its own checkpoint schema and
+its recorded episodes open in the standard viewer.
+
+FILES
+results/            Seven standard presets, each with three checkpoints,
+                    per-episode training metrics, and three evaluation batches.
+position-results/   Fixed reward plus the four-block course-position observation.
+control-results/    Fresh baseline at zero trained episodes.
+source.zip          Frozen standard and course-position project sources.
+run.py              Reproducible runner. Give each invocation a fresh output
+                    and runtime directory. Use --course-position for the extra
+                    variant or --untrained for the empty-table control.
+analyze.py          Validates checkpoints and recordings and regenerates metrics
+                    from the three completed output folders.
+
+All durations are simulation seconds. The first training win gives both the
+episode number and the duration of that episode. The training rate shows
+performance with exploration enabled; frozen evaluation shows the learned policy
+without epsilon exploration. Repeated paths from the same fixed spawn are not
+independent tests on new layouts.

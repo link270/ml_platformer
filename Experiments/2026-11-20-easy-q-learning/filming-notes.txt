@@ -1,0 +1,70 @@
+Q-LEARNING ON EASY STEPS AND HILLS
+
+OPEN — An empty table has to guess
+Use the untrained baseline. It went 0/30 (19 deaths, 11 stuck endings).
+Replay 1 falls off the course near spawn in 3.13 seconds. Then show what
+ordinary Q-learning learns: the original preset first won during training on
+episode 77 (57.43 seconds). Its 1,000-run checkpoint won 30/30 at 22.65 seconds.
+Its 5,000-run checkpoint was even faster at 21.03 seconds, but at 10,000 it
+got stuck on all 30 frozen attempts. Let the first trained win play before
+cutting to the later failure so the audience sees both behaviors.
+
+  control-results/untrained/eval-00000.mlpaths
+  results/baseline/eval-01000.mlpaths
+  results/baseline/eval-10000.mlpaths
+
+MIDDLE — Pay the same amount for each block of progress
+Use Fixed reward per block at 5,000. To show the effect of the reward by
+itself, compare it with Longer exploration at 5,000. Both won 30/30, but
+rewarding each block of progress cut the median route from 25.82 to 19.93
+seconds (about 23%). The fixed-reward preset was also 30/30 at 1,000 (21.17 s).
+
+Keep the 10,000-run clip as a short reversal. The fixed-reward table won
+992/1,000 late training attempts, but its frozen policy died near spawn in
+1.73 seconds on all 30 evaluations. The footage shows the same repeated
+failure. Saveable intermediate policies matter because the learned route
+can get worse with further training.
+
+  results/long_exploration/eval-05000.mlpaths
+  results/fixed_reward_per_block/eval-05000.mlpaths
+  results/fixed_reward_per_block/eval-10000.mlpaths
+
+FINALE — Tell the agent roughly where it is
+Keep the fixed reward and add one observation: the signed horizontal
+distance to the orb, grouped into four-block bands. Now two hills with
+similar nearby ray readings can use different rows of the Q-table.
+The policy went 30/30 at every checkpoint. Its median times improved
+20.27 → 19.43 → 19.23 seconds, the fastest frozen finish in the comparison.
+Its fastest training win was 19.20 seconds. It won its final 9,401
+consecutive training episodes. The strongest comparison for the finale is
+the two 10,000-run clips: the fixed-reward policy dies near spawn, and the
+position-aware variant clears the course.
+
+On this fixed map a distance band also reveals which stretch of the course
+the agent occupies. These results cover one training seed and one fixed
+course and spawn, and the evaluation runs can repeat the same route.
+
+  position-results/course_position/eval-05000.mlpaths
+  position-results/course_position/eval-10000.mlpaths
+
+SHORT SIDE EXPERIMENTS
+
+* Small time penalty: 0/30 at 1,000, then 30/30 at 5,000 and 10,000, around
+  27.4 seconds. Reliable late checkpoints, slower than the successful baseline
+  checkpoints.
+* Longer exploration by itself: all three checkpoints won 30/30, but its
+  route went 21.72 → 25.82 → 22.47 seconds. It was less consistent during
+  training than the original baseline and found its first win later.
+* Higher discount: a fast 20.92-second winner at 1,000 became a 32.98-second
+  winner at 5,000, then went 0/30 at 10,000. An honest example of a promising
+  setting getting worse on this seed.
+* Richer horizontal rays: both it and Longer exploration went 30/30 at all
+  three checkpoints. At 10,000 the richer-ray policy was 0.35 seconds slower
+  (22.82 vs 22.47 seconds), after being faster at 5,000.
+* Lower late learning rate: raised the last 1,000 training win rate from
+  79.9% to 88.5% versus Longer exploration, but the final frozen route was
+  slower (25.55 vs 22.47 seconds). Both won 30/30 at all checkpoints.
+
+Open report.html for all evaluation times, training win rates, and replay
+links. Most frozen clips repeat exactly across the 30 matched evaluation
+seeds, so the minimum, median, and mean for those checkpoints coincide.
