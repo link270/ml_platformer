@@ -1,0 +1,35 @@
+LANDING MEMORY MADE HARD WINS MORE COMMON
+
+The landing-memory variant won 1,534 of 10,000 Hard training episodes.
+The grounded-only gap-ray preset won 2, and plain fixed reward won 146.
+The new variant's first win came at episode 1,675 in 35.33 seconds.
+Its fastest training win took 21.97 seconds and its winning median was
+30.28 seconds. It won 262 of its last 1,000 training attempts.
+
+The frozen policy went 0/30 at 1,000, 30/30 at 5,000, and 0/30 at 10,000.
+Every win at 5,000 took 22.73 seconds. Plain fixed reward had a faster
+5,000-run checkpoint at 21.23 seconds. The grounded-only gap-ray variant
+went 0/30 at all three checkpoints. At 10,000, the landing-memory policy
+reached 21.7% median best progress before falling, against 12.7% for
+grounded gap rays. The gain was in finding winning behavior during
+training. The final frozen checkpoint still lost the route.
+
+A physics test verified that the remembered lip moves from far ahead
+to near ahead as the player approaches, that vertical clearance
+changes during the jump, and that touchdown clears the target even
+before the next action decision. With landing memory disabled, the
+original gap-ray preset's 1,000-run Hard checkpoint reproduced byte for
+byte using the updated game code.
+
+FILMING PICKS
+Compare the grounded-only gap-ray failure and the landing-memory clear
+at 5,000 training runs. Both use the same grounded observations, fixed
+reward, actions, and timing. Start a live evaluation and press V to show
+the cyan landing marker while the agent jumps. Then show the 10,000-run
+failure if you want to illustrate why the intermediate save matters.
+
+  ../2026-11-23-gap-rays/results/hard/eval-05000.mlpaths
+  results/hard/eval-05000.mlpaths
+  results/hard/eval-10000.mlpaths
+
+These results use one matched seed and the standard Hard spawn.

@@ -1,0 +1,48 @@
+WHAT THE GAP RAYS CHANGED
+
+The gap observations separate two grounded positions on Hard that the
+original rays encoded identically. About 67 pixels from the second edge,
+the new state identifies a gap in the third distance bin. About 29 pixels
+from that edge, it identifies the first bin. Both see the same two-block
+gap and higher landing. The V overlay shows local support and missing
+ground during play.
+
+EASY
+The new preset won 30/30 at all three checkpoints. Its winning times were
+21.17, 30.27, and 19.48 seconds. Plain fixed reward won at 1,000 and 5,000
+and failed at 10,000. At 5,000, the new preset took longer to clear the
+course (30.27 against 19.93). The new preset won 9,380 of 10,000 training
+attempts, compared with 9,342 for plain fixed reward. Course position
+remained slightly faster at the last Easy checkpoint (19.23 seconds).
+
+MEDIUM
+The gap-ray policy won 0/30, 30/30, and 30/30. Its first successful frozen
+checkpoint was 5,000 runs, which beat the orb in 19.63 seconds. Plain fixed
+reward went 0/30 at 5,000 and won in 20.52 seconds at 10,000. Gap rays gave
+the fastest frozen Medium route among the three matched presets, and the
+new policy's final route slowed to 22.62 seconds. It won 4,335 training
+attempts against 3,313 for plain fixed reward. Course position still won
+30/30 at every Medium checkpoint.
+
+HARD
+The gap-ray preset went 0/30 at every checkpoint and won 2 of 10,000
+training attempts. Plain fixed reward won 146 training attempts and
+cleared all 30 frozen evaluations at 5,000. In the final gap-ray replay,
+the agent detects a near gap with a higher landing and jumps right from
+the lip. Once airborne it idles over the gap, then falls. The additional
+features distinguish the takeoff situation. The airborne state still
+uses the original ray and movement-phase data.
+
+FILMING PICKS
+The cleanest comparison is the 5,000-run Medium checkpoint. Use the
+plain fixed-reward failure followed by the gap-ray clear. The 10,000-run
+Hard replay shows the agent jumping from the edge and then falling. Use
+live Evaluation and toggle V to show the sensor probes.
+
+  ../2026-11-23-medium-q-learning/results/fixed_reward_per_block/eval-05000.mlpaths
+  results/medium/eval-05000.mlpaths
+  results/hard/eval-10000.mlpaths
+
+All three comparisons use the same matched training seed and one spawn
+per course. The experiment isolates grounded gap sensing with the original
+fixed-reward settings and action timing.

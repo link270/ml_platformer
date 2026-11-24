@@ -1,0 +1,32 @@
+MEDIUM PLATFORMS AND GAPS — MATCHED Q-LEARNING COMPARISON
+
+Open report.html for the paired Easy and Medium tables. findings.txt explains
+which results held up and suggests clips. summary.json holds first wins, win
+rates, fastest, median and mean completion times, outcomes, and replay paths.
+
+All eight Medium agents started with empty Q-tables and training seed 78436291,
+using the same frozen source, settings and episode budget as the Easy study.
+Checkpoints at 1,000, 5,000, and 10,000 runs each got 30 frozen evaluations
+with matched seeds 78436300–78436329. The empty-table baseline got 30
+evaluations. Stuck detection was on, and the overall limit was 60 seconds.
+The two transfer batches evaluate the Easy 5,000-run fixed-reward policies
+from the Medium spawn with their tables frozen and no extra training.
+
+PLAYBACK
+Open Playback recordings in the game and select an eval-XXXXX.mlpaths file
+from the report. Recordings contain every frozen run. Each training.mlpaths
+file contains every 100th training run. The transfer-results folder contains
+only evaluations of policies trained on Easy.
+
+REPRODUCE
+Use run.py and source.zip from ../2026-11-20-easy-q-learning. Add --level
+medium and specify a Godot 4.7.2 executable with --godot. Run once for the
+seven standard variants, once with --course-position, and once with
+--untrained. Give each invocation a fresh --output and --runtime directory.
+compare.py --transfer --godot <executable> --runtime <scratch directory>
+repeats the transfer comparison using the two archived Easy checkpoints.
+Run compare.py against the completed archive to regenerate the tables.
+
+This comparison tests one training seed and one fixed spawn per course.
+Identical frozen runs can repeat the same route. Training wins include epsilon
+exploration. Frozen evaluation uses the saved policy with learning disabled.

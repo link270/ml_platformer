@@ -1,0 +1,1552 @@
+{
+  "medium": {
+    "untrained": {
+      "0": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 19,
+            "stuck": 11
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0181701557905374
+        },
+        "training_through_milestone": null,
+        "last_1000_training": null,
+        "replay": "control-results/untrained/eval-00000.mlpaths",
+        "checkpoint": "control-results/untrained/00000.json"
+      }
+    },
+    "baseline": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.183733824727087
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 105,
+          "outcomes": {
+            "death": 724,
+            "stuck": 159,
+            "timeout": 12,
+            "success": 105
+          },
+          "win_rate": 0.105,
+          "first_win_episode": 112,
+          "first_win_seconds": 46.0166666666667,
+          "fastest_episode": 697,
+          "fastest_seconds": 23.3166666666667,
+          "median_episode": 994,
+          "median_seconds": 29.0166666666667,
+          "mean_seconds": 31.695079365079373,
+          "longest_win_streak": 14,
+          "median_best_progress": 0.37551597803694947
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 105,
+          "outcomes": {
+            "death": 724,
+            "stuck": 159,
+            "timeout": 12,
+            "success": 105
+          },
+          "win_rate": 0.105,
+          "first_win_episode": 112,
+          "first_win_seconds": 46.0166666666667,
+          "fastest_episode": 697,
+          "fastest_seconds": 23.3166666666667,
+          "median_episode": 994,
+          "median_seconds": 29.0166666666667,
+          "mean_seconds": 31.695079365079373,
+          "longest_win_streak": 14,
+          "median_best_progress": 0.37551597803694947
+        },
+        "replay": "results/baseline/eval-01000.mlpaths",
+        "checkpoint": "results/baseline/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 23.9166666666667,
+          "fastest_episode": 1,
+          "fastest_seconds": 23.9166666666667,
+          "median_episode": 1,
+          "median_seconds": 23.9166666666667,
+          "mean_seconds": 23.9166666666667,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.992592593967047
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 1127,
+          "outcomes": {
+            "death": 3051,
+            "stuck": 781,
+            "timeout": 41,
+            "success": 1127
+          },
+          "win_rate": 0.2254,
+          "first_win_episode": 112,
+          "first_win_seconds": 46.0166666666667,
+          "fastest_episode": 4910,
+          "fastest_seconds": 19.9166666666667,
+          "median_episode": 1793,
+          "median_seconds": 27.1,
+          "mean_seconds": 29.557453416149077,
+          "longest_win_streak": 14,
+          "median_best_progress": 0.386059079501816
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 284,
+          "outcomes": {
+            "death": 550,
+            "success": 284,
+            "stuck": 157,
+            "timeout": 9
+          },
+          "win_rate": 0.284,
+          "first_win_episode": 4008,
+          "first_win_seconds": 43.3166666666667,
+          "fastest_episode": 4910,
+          "fastest_seconds": 19.9166666666667,
+          "median_episode": 4024,
+          "median_seconds": 26.116666666666703,
+          "mean_seconds": 29.358509389671365,
+          "longest_win_streak": 12,
+          "median_best_progress": 0.4538675000245465
+        },
+        "replay": "results/baseline/eval-05000.mlpaths",
+        "checkpoint": "results/baseline/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 22.05,
+          "fastest_episode": 1,
+          "fastest_seconds": 22.05,
+          "median_episode": 1,
+          "median_seconds": 22.05,
+          "mean_seconds": 22.05,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.99345789118748
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 2297,
+          "outcomes": {
+            "death": 5889,
+            "stuck": 1736,
+            "timeout": 78,
+            "success": 2297
+          },
+          "win_rate": 0.2297,
+          "first_win_episode": 112,
+          "first_win_seconds": 46.0166666666667,
+          "fastest_episode": 4910,
+          "fastest_seconds": 19.9166666666667,
+          "median_episode": 1037,
+          "median_seconds": 27.1166666666667,
+          "mean_seconds": 29.540922942969097,
+          "longest_win_streak": 16,
+          "median_best_progress": 0.495399917310829
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 172,
+          "outcomes": {
+            "death": 557,
+            "stuck": 263,
+            "success": 172,
+            "timeout": 8
+          },
+          "win_rate": 0.172,
+          "first_win_episode": 9015,
+          "first_win_seconds": 33.8,
+          "fastest_episode": 9297,
+          "fastest_seconds": 22.5333333333333,
+          "median_episode": 9107,
+          "median_seconds": 28.00833333333335,
+          "mean_seconds": 30.14292635658916,
+          "longest_win_streak": 7,
+          "median_best_progress": 0.376102643903969
+        },
+        "replay": "results/baseline/eval-10000.mlpaths",
+        "checkpoint": "results/baseline/10000.json"
+      }
+    },
+    "time_penalty": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 79,
+          "outcomes": {
+            "death": 747,
+            "stuck": 162,
+            "timeout": 12,
+            "success": 79
+          },
+          "win_rate": 0.079,
+          "first_win_episode": 83,
+          "first_win_seconds": 49.4,
+          "fastest_episode": 392,
+          "fastest_seconds": 23.2333333333333,
+          "median_episode": 293,
+          "median_seconds": 31.4,
+          "mean_seconds": 34.30970464135021,
+          "longest_win_streak": 5,
+          "median_best_progress": 0.373819271088061
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 79,
+          "outcomes": {
+            "death": 747,
+            "stuck": 162,
+            "timeout": 12,
+            "success": 79
+          },
+          "win_rate": 0.079,
+          "first_win_episode": 83,
+          "first_win_seconds": 49.4,
+          "fastest_episode": 392,
+          "fastest_seconds": 23.2333333333333,
+          "median_episode": 293,
+          "median_seconds": 31.4,
+          "mean_seconds": 34.30970464135021,
+          "longest_win_streak": 5,
+          "median_best_progress": 0.373819271088061
+        },
+        "replay": "results/time_penalty/eval-01000.mlpaths",
+        "checkpoint": "results/time_penalty/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.368702812307524
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 1006,
+          "outcomes": {
+            "death": 3039,
+            "stuck": 915,
+            "timeout": 40,
+            "success": 1006
+          },
+          "win_rate": 0.2012,
+          "first_win_episode": 83,
+          "first_win_seconds": 49.4,
+          "fastest_episode": 3878,
+          "fastest_seconds": 21.05,
+          "median_episode": 1409,
+          "median_seconds": 26.99166666666665,
+          "mean_seconds": 29.21153081510935,
+          "longest_win_streak": 15,
+          "median_best_progress": 0.38076326403559746
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 234,
+          "outcomes": {
+            "stuck": 217,
+            "death": 542,
+            "success": 234,
+            "timeout": 7
+          },
+          "win_rate": 0.234,
+          "first_win_episode": 4009,
+          "first_win_seconds": 25.95,
+          "fastest_episode": 4064,
+          "fastest_seconds": 21.7,
+          "median_episode": 4366,
+          "median_seconds": 26.1666666666667,
+          "mean_seconds": 28.44985754985756,
+          "longest_win_streak": 13,
+          "median_best_progress": 0.3807553029472745
+        },
+        "replay": "results/time_penalty/eval-05000.mlpaths",
+        "checkpoint": "results/time_penalty/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0608266953336611
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 2259,
+          "outcomes": {
+            "death": 5787,
+            "stuck": 1878,
+            "timeout": 76,
+            "success": 2259
+          },
+          "win_rate": 0.2259,
+          "first_win_episode": 83,
+          "first_win_seconds": 49.4,
+          "fastest_episode": 3878,
+          "fastest_seconds": 21.05,
+          "median_episode": 2671,
+          "median_seconds": 27.0,
+          "mean_seconds": 29.231444592002372,
+          "longest_win_streak": 20,
+          "median_best_progress": 0.445187409326521
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 272,
+          "outcomes": {
+            "success": 272,
+            "death": 577,
+            "stuck": 138,
+            "timeout": 13
+          },
+          "win_rate": 0.272,
+          "first_win_episode": 9001,
+          "first_win_seconds": 31.8833333333333,
+          "fastest_episode": 9931,
+          "fastest_seconds": 22.0166666666667,
+          "median_episode": 9317,
+          "median_seconds": 26.6166666666667,
+          "mean_seconds": 29.10189950980394,
+          "longest_win_streak": 10,
+          "median_best_progress": 0.71634196151663
+        },
+        "replay": "results/time_penalty/eval-10000.mlpaths",
+        "checkpoint": "results/time_penalty/10000.json"
+      }
+    },
+    "long_exploration": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.104325949247
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 17,
+          "outcomes": {
+            "death": 777,
+            "stuck": 182,
+            "timeout": 24,
+            "success": 17
+          },
+          "win_rate": 0.017,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 784,
+          "fastest_seconds": 33.9166666666667,
+          "median_episode": 934,
+          "median_seconds": 42.2166666666667,
+          "mean_seconds": 42.997058823529414,
+          "longest_win_streak": 1,
+          "median_best_progress": 0.375165225753908
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 17,
+          "outcomes": {
+            "death": 777,
+            "stuck": 182,
+            "timeout": 24,
+            "success": 17
+          },
+          "win_rate": 0.017,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 784,
+          "fastest_seconds": 33.9166666666667,
+          "median_episode": 934,
+          "median_seconds": 42.2166666666667,
+          "mean_seconds": 42.997058823529414,
+          "longest_win_streak": 1,
+          "median_best_progress": 0.375165225753908
+        },
+        "replay": "results/long_exploration/eval-01000.mlpaths",
+        "checkpoint": "results/long_exploration/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.722403235625127
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 690,
+          "outcomes": {
+            "death": 3247,
+            "stuck": 1006,
+            "timeout": 57,
+            "success": 690
+          },
+          "win_rate": 0.138,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 3005,
+          "fastest_seconds": 19.8333333333333,
+          "median_episode": 3042,
+          "median_seconds": 28.258333333333297,
+          "mean_seconds": 30.226159420289864,
+          "longest_win_streak": 9,
+          "median_best_progress": 0.37804329186756247
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 176,
+          "outcomes": {
+            "stuck": 242,
+            "death": 574,
+            "timeout": 8,
+            "success": 176
+          },
+          "win_rate": 0.176,
+          "first_win_episode": 4015,
+          "first_win_seconds": 40.7166666666667,
+          "fastest_episode": 4482,
+          "fastest_seconds": 21.8833333333333,
+          "median_episode": 4129,
+          "median_seconds": 27.375,
+          "mean_seconds": 28.922064393939394,
+          "longest_win_streak": 6,
+          "median_best_progress": 0.375165225753908
+        },
+        "replay": "results/long_exploration/eval-05000.mlpaths",
+        "checkpoint": "results/long_exploration/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 28.6166666666667,
+          "fastest_episode": 1,
+          "fastest_seconds": 28.6166666666667,
+          "median_episode": 1,
+          "median_seconds": 28.6166666666667,
+          "mean_seconds": 28.6166666666667,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.99323204298991
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 1867,
+          "outcomes": {
+            "death": 5943,
+            "stuck": 2077,
+            "timeout": 113,
+            "success": 1867
+          },
+          "win_rate": 0.1867,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 3005,
+          "fastest_seconds": 19.8333333333333,
+          "median_episode": 2182,
+          "median_seconds": 28.1166666666667,
+          "mean_seconds": 30.42043385109803,
+          "longest_win_streak": 15,
+          "median_best_progress": 0.380755336118476
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 299,
+          "outcomes": {
+            "stuck": 169,
+            "death": 522,
+            "success": 299,
+            "timeout": 10
+          },
+          "win_rate": 0.299,
+          "first_win_episode": 9007,
+          "first_win_seconds": 30.5166666666667,
+          "fastest_episode": 9895,
+          "fastest_seconds": 21.9166666666667,
+          "median_episode": 9655,
+          "median_seconds": 27.5166666666667,
+          "mean_seconds": 29.889743589743603,
+          "longest_win_streak": 9,
+          "median_best_progress": 0.7212656292749391
+        },
+        "replay": "results/long_exploration/eval-10000.mlpaths",
+        "checkpoint": "results/long_exploration/10000.json"
+      }
+    },
+    "discount_099": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0625120577316896
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 14,
+          "outcomes": {
+            "death": 684,
+            "stuck": 252,
+            "timeout": 50,
+            "success": 14
+          },
+          "win_rate": 0.014,
+          "first_win_episode": 421,
+          "first_win_seconds": 58.2333333333333,
+          "fastest_episode": 569,
+          "fastest_seconds": 45.1333333333333,
+          "median_episode": 837,
+          "median_seconds": 53.725,
+          "mean_seconds": 52.919047619047625,
+          "longest_win_streak": 1,
+          "median_best_progress": 0.37263084645740896
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 14,
+          "outcomes": {
+            "death": 684,
+            "stuck": 252,
+            "timeout": 50,
+            "success": 14
+          },
+          "win_rate": 0.014,
+          "first_win_episode": 421,
+          "first_win_seconds": 58.2333333333333,
+          "fastest_episode": 569,
+          "fastest_seconds": 45.1333333333333,
+          "median_episode": 837,
+          "median_seconds": 53.725,
+          "mean_seconds": 52.919047619047625,
+          "longest_win_streak": 1,
+          "median_best_progress": 0.37263084645740896
+        },
+        "replay": "results/discount_099/eval-01000.mlpaths",
+        "checkpoint": "results/discount_099/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0574005082889525
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 566,
+          "outcomes": {
+            "death": 3238,
+            "stuck": 1102,
+            "timeout": 94,
+            "success": 566
+          },
+          "win_rate": 0.1132,
+          "first_win_episode": 421,
+          "first_win_seconds": 58.2333333333333,
+          "fastest_episode": 4769,
+          "fastest_seconds": 20.2333333333333,
+          "median_episode": 2135,
+          "median_seconds": 26.6333333333333,
+          "mean_seconds": 29.257597173144884,
+          "longest_win_streak": 15,
+          "median_best_progress": 0.375165225753908
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 231,
+          "outcomes": {
+            "success": 231,
+            "death": 580,
+            "stuck": 184,
+            "timeout": 5
+          },
+          "win_rate": 0.231,
+          "first_win_episode": 4001,
+          "first_win_seconds": 24.7166666666667,
+          "fastest_episode": 4769,
+          "fastest_seconds": 20.2333333333333,
+          "median_episode": 4001,
+          "median_seconds": 24.7166666666667,
+          "mean_seconds": 26.447691197691203,
+          "longest_win_streak": 14,
+          "median_best_progress": 0.4113106233558695
+        },
+        "replay": "results/discount_099/eval-05000.mlpaths",
+        "checkpoint": "results/discount_099/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.717245926510132
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 1997,
+          "outcomes": {
+            "death": 5871,
+            "stuck": 2006,
+            "timeout": 126,
+            "success": 1997
+          },
+          "win_rate": 0.1997,
+          "first_win_episode": 421,
+          "first_win_seconds": 58.2333333333333,
+          "fastest_episode": 4769,
+          "fastest_seconds": 20.2333333333333,
+          "median_episode": 4533,
+          "median_seconds": 26.1,
+          "mean_seconds": 28.247379402436998,
+          "longest_win_streak": 23,
+          "median_best_progress": 0.380755767344093
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 220,
+          "outcomes": {
+            "stuck": 191,
+            "death": 582,
+            "success": 220,
+            "timeout": 7
+          },
+          "win_rate": 0.22,
+          "first_win_episode": 9014,
+          "first_win_seconds": 28.8166666666667,
+          "fastest_episode": 9782,
+          "fastest_seconds": 22.4166666666667,
+          "median_episode": 9357,
+          "median_seconds": 27.675,
+          "mean_seconds": 29.6644696969697,
+          "longest_win_streak": 9,
+          "median_best_progress": 0.468623725529273
+        },
+        "replay": "results/discount_099/eval-10000.mlpaths",
+        "checkpoint": "results/discount_099/10000.json"
+      }
+    },
+    "horizontal_bins": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.156394916685884
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 22,
+          "outcomes": {
+            "death": 703,
+            "stuck": 220,
+            "timeout": 55,
+            "success": 22
+          },
+          "win_rate": 0.022,
+          "first_win_episode": 479,
+          "first_win_seconds": 56.65,
+          "fastest_episode": 920,
+          "fastest_seconds": 31.9,
+          "median_episode": 631,
+          "median_seconds": 46.94166666666665,
+          "mean_seconds": 45.94848484848486,
+          "longest_win_streak": 2,
+          "median_best_progress": 0.375103328292195
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 22,
+          "outcomes": {
+            "death": 703,
+            "stuck": 220,
+            "timeout": 55,
+            "success": 22
+          },
+          "win_rate": 0.022,
+          "first_win_episode": 479,
+          "first_win_seconds": 56.65,
+          "fastest_episode": 920,
+          "fastest_seconds": 31.9,
+          "median_episode": 631,
+          "median_seconds": 46.94166666666665,
+          "mean_seconds": 45.94848484848486,
+          "longest_win_streak": 2,
+          "median_best_progress": 0.375103328292195
+        },
+        "replay": "results/horizontal_bins/eval-01000.mlpaths",
+        "checkpoint": "results/horizontal_bins/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 27.3166666666667,
+          "fastest_episode": 1,
+          "fastest_seconds": 27.3166666666667,
+          "median_episode": 1,
+          "median_seconds": 27.3166666666667,
+          "mean_seconds": 27.3166666666667,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.993238676711879
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 683,
+          "outcomes": {
+            "death": 3165,
+            "stuck": 1053,
+            "timeout": 99,
+            "success": 683
+          },
+          "win_rate": 0.1366,
+          "first_win_episode": 479,
+          "first_win_seconds": 56.65,
+          "fastest_episode": 3422,
+          "fastest_seconds": 21.2666666666667,
+          "median_episode": 3892,
+          "median_seconds": 29.4166666666667,
+          "mean_seconds": 31.816178623718894,
+          "longest_win_streak": 9,
+          "median_best_progress": 0.378975800679824
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 157,
+          "outcomes": {
+            "success": 157,
+            "death": 584,
+            "stuck": 249,
+            "timeout": 10
+          },
+          "win_rate": 0.157,
+          "first_win_episode": 4001,
+          "first_win_seconds": 26.7166666666667,
+          "fastest_episode": 4017,
+          "fastest_seconds": 22.3333333333333,
+          "median_episode": 4969,
+          "median_seconds": 28.1333333333333,
+          "mean_seconds": 29.673779193205956,
+          "longest_win_streak": 6,
+          "median_best_progress": 0.3752045336275045
+        },
+        "replay": "results/horizontal_bins/eval-05000.mlpaths",
+        "checkpoint": "results/horizontal_bins/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0103328292195294
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 2098,
+          "outcomes": {
+            "death": 5814,
+            "stuck": 1947,
+            "timeout": 141,
+            "success": 2098
+          },
+          "win_rate": 0.2098,
+          "first_win_episode": 479,
+          "first_win_seconds": 56.65,
+          "fastest_episode": 3422,
+          "fastest_seconds": 21.2666666666667,
+          "median_episode": 4623,
+          "median_seconds": 28.5166666666667,
+          "mean_seconds": 31.000428979980946,
+          "longest_win_streak": 23,
+          "median_best_progress": 0.3812742995635465
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 261,
+          "outcomes": {
+            "stuck": 248,
+            "timeout": 8,
+            "death": 483,
+            "success": 261
+          },
+          "win_rate": 0.261,
+          "first_win_episode": 9020,
+          "first_win_seconds": 28.9833333333333,
+          "fastest_episode": 9193,
+          "fastest_seconds": 22.6833333333333,
+          "median_episode": 9113,
+          "median_seconds": 27.4833333333333,
+          "mean_seconds": 29.904916985951484,
+          "longest_win_streak": 10,
+          "median_best_progress": 0.6060278806601015
+        },
+        "replay": "results/horizontal_bins/eval-10000.mlpaths",
+        "checkpoint": "results/horizontal_bins/10000.json"
+      }
+    },
+    "late_learning_rate": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.104325949247
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 17,
+          "outcomes": {
+            "death": 777,
+            "stuck": 182,
+            "timeout": 24,
+            "success": 17
+          },
+          "win_rate": 0.017,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 784,
+          "fastest_seconds": 33.9166666666667,
+          "median_episode": 934,
+          "median_seconds": 42.2166666666667,
+          "mean_seconds": 42.997058823529414,
+          "longest_win_streak": 1,
+          "median_best_progress": 0.375165225753908
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 17,
+          "outcomes": {
+            "death": 777,
+            "stuck": 182,
+            "timeout": 24,
+            "success": 17
+          },
+          "win_rate": 0.017,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 784,
+          "fastest_seconds": 33.9166666666667,
+          "median_episode": 934,
+          "median_seconds": 42.2166666666667,
+          "mean_seconds": 42.997058823529414,
+          "longest_win_streak": 1,
+          "median_best_progress": 0.375165225753908
+        },
+        "replay": "results/late_learning_rate/eval-01000.mlpaths",
+        "checkpoint": "results/late_learning_rate/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "stuck": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.0207866669815719
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 681,
+          "outcomes": {
+            "death": 3276,
+            "stuck": 982,
+            "timeout": 61,
+            "success": 681
+          },
+          "win_rate": 0.1362,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 3005,
+          "fastest_seconds": 19.8333333333333,
+          "median_episode": 1836,
+          "median_seconds": 28.05,
+          "mean_seconds": 30.313950073421445,
+          "longest_win_streak": 12,
+          "median_best_progress": 0.377303275536717
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 233,
+          "outcomes": {
+            "stuck": 185,
+            "death": 574,
+            "success": 233,
+            "timeout": 8
+          },
+          "win_rate": 0.233,
+          "first_win_episode": 4015,
+          "first_win_seconds": 36.0333333333333,
+          "fastest_episode": 4637,
+          "fastest_seconds": 21.65,
+          "median_episode": 4903,
+          "median_seconds": 26.8833333333333,
+          "mean_seconds": 29.43175965665237,
+          "longest_win_streak": 12,
+          "median_best_progress": 0.717245926510132
+        },
+        "replay": "results/late_learning_rate/eval-05000.mlpaths",
+        "checkpoint": "results/late_learning_rate/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 23.15,
+          "fastest_episode": 1,
+          "fastest_seconds": 23.15,
+          "median_episode": 1,
+          "median_seconds": 23.15,
+          "mean_seconds": 23.15,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.991079563216216
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 2282,
+          "outcomes": {
+            "death": 5996,
+            "stuck": 1616,
+            "timeout": 106,
+            "success": 2282
+          },
+          "win_rate": 0.2282,
+          "first_win_episode": 539,
+          "first_win_seconds": 51.0833333333333,
+          "fastest_episode": 3005,
+          "fastest_seconds": 19.8333333333333,
+          "median_episode": 5721,
+          "median_seconds": 27.2333333333333,
+          "mean_seconds": 29.170238095238105,
+          "longest_win_streak": 19,
+          "median_best_progress": 0.6103304674299934
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 394,
+          "outcomes": {
+            "death": 515,
+            "success": 394,
+            "stuck": 84,
+            "timeout": 7
+          },
+          "win_rate": 0.394,
+          "first_win_episode": 9002,
+          "first_win_seconds": 35.1,
+          "fastest_episode": 9849,
+          "fastest_seconds": 22.85,
+          "median_episode": 9328,
+          "median_seconds": 26.99166666666665,
+          "mean_seconds": 28.367343485617607,
+          "longest_win_streak": 15,
+          "median_best_progress": 0.8927607443843144
+        },
+        "replay": "results/late_learning_rate/eval-10000.mlpaths",
+        "checkpoint": "results/late_learning_rate/10000.json"
+      }
+    },
+    "fixed_reward_per_block": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.893809945336514
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 44,
+          "outcomes": {
+            "death": 779,
+            "stuck": 144,
+            "timeout": 33,
+            "success": 44
+          },
+          "win_rate": 0.044,
+          "first_win_episode": 452,
+          "first_win_seconds": 48.1333333333333,
+          "fastest_episode": 856,
+          "fastest_seconds": 30.0166666666667,
+          "median_episode": 988,
+          "median_seconds": 37.6333333333333,
+          "mean_seconds": 39.81666666666667,
+          "longest_win_streak": 2,
+          "median_best_progress": 0.376062175038326
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 44,
+          "outcomes": {
+            "death": 779,
+            "stuck": 144,
+            "timeout": 33,
+            "success": 44
+          },
+          "win_rate": 0.044,
+          "first_win_episode": 452,
+          "first_win_seconds": 48.1333333333333,
+          "fastest_episode": 856,
+          "fastest_seconds": 30.0166666666667,
+          "median_episode": 988,
+          "median_seconds": 37.6333333333333,
+          "mean_seconds": 39.81666666666667,
+          "longest_win_streak": 2,
+          "median_best_progress": 0.376062175038326
+        },
+        "replay": "results/fixed_reward_per_block/eval-01000.mlpaths",
+        "checkpoint": "results/fixed_reward_per_block/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 0,
+          "outcomes": {
+            "death": 30
+          },
+          "win_rate": 0.0,
+          "first_win_episode": null,
+          "first_win_seconds": null,
+          "fastest_episode": null,
+          "fastest_seconds": null,
+          "median_episode": null,
+          "median_seconds": null,
+          "mean_seconds": null,
+          "longest_win_streak": 0,
+          "median_best_progress": 0.895782520581404
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 1257,
+          "outcomes": {
+            "death": 3333,
+            "stuck": 370,
+            "timeout": 40,
+            "success": 1257
+          },
+          "win_rate": 0.2514,
+          "first_win_episode": 452,
+          "first_win_seconds": 48.1333333333333,
+          "fastest_episode": 3415,
+          "fastest_seconds": 19.7833333333333,
+          "median_episode": 2895,
+          "median_seconds": 23.95,
+          "mean_seconds": 25.792482100238676,
+          "longest_win_streak": 13,
+          "median_best_progress": 0.722403235625127
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 446,
+          "outcomes": {
+            "success": 446,
+            "death": 479,
+            "stuck": 72,
+            "timeout": 3
+          },
+          "win_rate": 0.446,
+          "first_win_episode": 4001,
+          "first_win_seconds": 21.0166666666667,
+          "fastest_episode": 4283,
+          "fastest_seconds": 20.0,
+          "median_episode": 4039,
+          "median_seconds": 23.5166666666667,
+          "mean_seconds": 24.529446935724977,
+          "longest_win_streak": 13,
+          "median_best_progress": 0.8956270222822904
+        },
+        "replay": "results/fixed_reward_per_block/eval-05000.mlpaths",
+        "checkpoint": "results/fixed_reward_per_block/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 20.5166666666667,
+          "fastest_episode": 1,
+          "fastest_seconds": 20.5166666666667,
+          "median_episode": 1,
+          "median_seconds": 20.5166666666667,
+          "mean_seconds": 20.5166666666667,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.992948192873585
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 3313,
+          "outcomes": {
+            "death": 5963,
+            "stuck": 672,
+            "timeout": 52,
+            "success": 3313
+          },
+          "win_rate": 0.3313,
+          "first_win_episode": 452,
+          "first_win_seconds": 48.1333333333333,
+          "fastest_episode": 3415,
+          "fastest_seconds": 19.7833333333333,
+          "median_episode": 1970,
+          "median_seconds": 23.4166666666667,
+          "mean_seconds": 25.188469664956244,
+          "longest_win_streak": 21,
+          "median_best_progress": 0.890054053136019
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 407,
+          "outcomes": {
+            "death": 543,
+            "success": 407,
+            "stuck": 46,
+            "timeout": 4
+          },
+          "win_rate": 0.407,
+          "first_win_episode": 9002,
+          "first_win_seconds": 24.4166666666667,
+          "fastest_episode": 9296,
+          "fastest_seconds": 20.6666666666667,
+          "median_episode": 9053,
+          "median_seconds": 23.1166666666667,
+          "mean_seconds": 24.631326781326788,
+          "longest_win_streak": 13,
+          "median_best_progress": 0.8948037711144645
+        },
+        "replay": "results/fixed_reward_per_block/eval-10000.mlpaths",
+        "checkpoint": "results/fixed_reward_per_block/10000.json"
+      }
+    },
+    "course_position": {
+      "1000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 19.8,
+          "fastest_episode": 1,
+          "fastest_seconds": 19.8,
+          "median_episode": 1,
+          "median_seconds": 19.8,
+          "mean_seconds": 19.8,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.99269634985676
+        },
+        "training_through_milestone": {
+          "runs": 1000,
+          "wins": 98,
+          "outcomes": {
+            "death": 722,
+            "stuck": 153,
+            "timeout": 27,
+            "success": 98
+          },
+          "win_rate": 0.098,
+          "first_win_episode": 444,
+          "first_win_seconds": 55.4333333333333,
+          "fastest_episode": 1000,
+          "fastest_seconds": 28.2,
+          "median_episode": 758,
+          "median_seconds": 39.349999999999994,
+          "mean_seconds": 40.6889455782313,
+          "longest_win_streak": 3,
+          "median_best_progress": 0.37827137704802305
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 98,
+          "outcomes": {
+            "death": 722,
+            "stuck": 153,
+            "timeout": 27,
+            "success": 98
+          },
+          "win_rate": 0.098,
+          "first_win_episode": 444,
+          "first_win_seconds": 55.4333333333333,
+          "fastest_episode": 1000,
+          "fastest_seconds": 28.2,
+          "median_episode": 758,
+          "median_seconds": 39.349999999999994,
+          "mean_seconds": 40.6889455782313,
+          "longest_win_streak": 3,
+          "median_best_progress": 0.37827137704802305
+        },
+        "replay": "position-results/course_position/eval-01000.mlpaths",
+        "checkpoint": "position-results/course_position/01000.json"
+      },
+      "5000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 22.8166666666667,
+          "fastest_episode": 1,
+          "fastest_seconds": 22.8166666666667,
+          "median_episode": 1,
+          "median_seconds": 22.8166666666667,
+          "mean_seconds": 22.8166666666667,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.992577422807131
+        },
+        "training_through_milestone": {
+          "runs": 5000,
+          "wins": 2809,
+          "outcomes": {
+            "death": 1709,
+            "stuck": 455,
+            "timeout": 27,
+            "success": 2809
+          },
+          "win_rate": 0.5618,
+          "first_win_episode": 444,
+          "first_win_seconds": 55.4333333333333,
+          "fastest_episode": 3181,
+          "fastest_seconds": 20.3333333333333,
+          "median_episode": 1751,
+          "median_seconds": 25.0166666666667,
+          "mean_seconds": 26.095241485700736,
+          "longest_win_streak": 57,
+          "median_best_progress": 0.991048332530148
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 691,
+          "outcomes": {
+            "death": 162,
+            "success": 691,
+            "stuck": 147
+          },
+          "win_rate": 0.691,
+          "first_win_episode": 4003,
+          "first_win_seconds": 23.1166666666667,
+          "fastest_episode": 4750,
+          "fastest_seconds": 21.7166666666667,
+          "median_episode": 4314,
+          "median_seconds": 26.0166666666667,
+          "mean_seconds": 26.30559575494454,
+          "longest_win_streak": 32,
+          "median_best_progress": 0.992320701809658
+        },
+        "replay": "position-results/course_position/eval-05000.mlpaths",
+        "checkpoint": "position-results/course_position/05000.json"
+      },
+      "10000": {
+        "frozen": {
+          "runs": 30,
+          "wins": 30,
+          "outcomes": {
+            "success": 30
+          },
+          "win_rate": 1.0,
+          "first_win_episode": 1,
+          "first_win_seconds": 22.4166666666667,
+          "fastest_episode": 1,
+          "fastest_seconds": 22.4166666666667,
+          "median_episode": 1,
+          "median_seconds": 22.4166666666667,
+          "mean_seconds": 22.4166666666667,
+          "longest_win_streak": 30,
+          "median_best_progress": 0.993457558438866
+        },
+        "training_through_milestone": {
+          "runs": 10000,
+          "wins": 7143,
+          "outcomes": {
+            "death": 2270,
+            "stuck": 560,
+            "timeout": 27,
+            "success": 7143
+          },
+          "win_rate": 0.7143,
+          "first_win_episode": 444,
+          "first_win_seconds": 55.4333333333333,
+          "fastest_episode": 3181,
+          "fastest_seconds": 20.3333333333333,
+          "median_episode": 2462,
+          "median_seconds": 23.9,
+          "mean_seconds": 24.62468150636989,
+          "longest_win_streak": 103,
+          "median_best_progress": 0.992576293949686
+        },
+        "last_1000_training": {
+          "runs": 1000,
+          "wins": 900,
+          "outcomes": {
+            "success": 900,
+            "death": 83,
+            "stuck": 17
+          },
+          "win_rate": 0.9,
+          "first_win_episode": 9001,
+          "first_win_seconds": 22.4166666666667,
+          "fastest_episode": 9066,
+          "fastest_seconds": 20.5166666666667,
+          "median_episode": 9010,
+          "median_seconds": 23.125,
+          "mean_seconds": 23.356092592592617,
+          "longest_win_streak": 82,
+          "median_best_progress": 0.9925829600654065
+        },
+        "replay": "position-results/course_position/eval-10000.mlpaths",
+        "checkpoint": "position-results/course_position/10000.json"
+      }
+    }
+  },
+  "easy_transfer_to_medium": {
+    "fixed_reward_per_block": {
+      "frozen": {
+        "runs": 30,
+        "wins": 22,
+        "outcomes": {
+          "success": 22,
+          "death": 8
+        },
+        "win_rate": 0.7333333333333333,
+        "first_win_episode": 1,
+        "first_win_seconds": 21.1,
+        "fastest_episode": 5,
+        "fastest_seconds": 21.0,
+        "median_episode": 1,
+        "median_seconds": 21.1,
+        "mean_seconds": 21.154545454545456,
+        "longest_win_streak": 10,
+        "median_best_progress": 0.992908669905481
+      },
+      "replay": "transfer-results/fixed_reward_per_block/eval-05000.mlpaths"
+    },
+    "course_position": {
+      "frozen": {
+        "runs": 30,
+        "wins": 5,
+        "outcomes": {
+          "death": 25,
+          "success": 5
+        },
+        "win_rate": 0.16666666666666666,
+        "first_win_episode": 7,
+        "first_win_seconds": 22.7333333333333,
+        "fastest_episode": 27,
+        "fastest_seconds": 22.6166666666667,
+        "median_episode": 13,
+        "median_seconds": 23.75,
+        "mean_seconds": 23.526666666666678,
+        "longest_win_streak": 1,
+        "median_best_progress": 0.374745510543267
+      },
+      "replay": "transfer-results/course_position/eval-05000.mlpaths"
+    }
+  }
+}

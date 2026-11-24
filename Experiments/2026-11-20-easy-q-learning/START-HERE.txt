@@ -16,12 +16,12 @@ eval-XXXXX.mlpaths file. Use sequential playback to show a single block or
 simultaneous playback to show multiple paths. The training.mlpaths files contain
 every 100th training episode, including both wins and failures.
 
-To watch a standard saved policy live, copy the selected checkpoint JSON under
-a descriptive name into the personal checkpoint folder opened by the setup
-screen's Folder button. Select Easy, the matching Q-learning experiment,
-Evaluation, and Stuck detection on. The live tie-break seed may differ from the
-recordings. The course-position experiment uses its own checkpoint schema and
-its recorded episodes open in the standard viewer.
+To watch a saved policy live, select Easy, Q-learning, and Evaluation. The first
+three experiments select the filming checkpoints: the untrained baseline,
+Fixed reward per block at 5,000, and Fixed reward + course position at 10,000.
+To pick another milestone, choose an Easy archive under Training data. Easy
+archives enable the recorded stuck cutoff, and live evaluation starts with the
+first recorded seed. The recordings preserve all 30 evaluation runs.
 
 FILES
 results/            Seven standard presets, each with three checkpoints,

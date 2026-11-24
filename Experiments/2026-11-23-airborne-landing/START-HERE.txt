@@ -1,0 +1,26 @@
+LANDING MEMORY ON HARD
+
+Open report.html for the matched Hard comparison and findings.txt for
+the result and replay picks. summary.json holds all checkpoint metrics.
+
+Fixed reward + landing memory uses the same grounded gap rays and fixed
+reward as the original gap-ray preset. During a jump it remembers the
+last visible far lip and bins its horizontal distance and vertical
+clearance. Touchdown or restart clears the target. With no known landing
+the agent uses the original airborne state.
+
+This run starts from an empty table and trains for 10,000 Hard episodes
+with seed 78436291. Checkpoints at 1,000, 5,000 and 10,000 each receive
+30 frozen evaluations using seeds 78436300–78436329. The 60-second
+limit and eight-second stuck cutoff match the earlier comparison.
+
+To watch a checkpoint live, select Hard, Q-learning, Evaluation, and
+Fixed reward + landing memory, then choose a checkpoint under Training
+data. The V overlay shows the remembered landing as a cyan marker during
+a jump. Evaluation recordings also open in the normal replay viewer.
+
+To reproduce, use run_gap_rays.py in ../2026-11-23-gap-rays with
+--preset airborne_landing --levels hard, --source results/source.zip,
+and fresh --runtime and --output directories. Pass the Godot 4.7.2
+console executable with --godot. Run analyze_landing.py with the
+completed archive in place to regenerate the report.

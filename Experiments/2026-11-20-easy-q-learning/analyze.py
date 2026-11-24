@@ -37,7 +37,7 @@ def validate_recording(path, rows, training, milestone, manifest):
         assert file.read(8) == b"MLPATH01", path
         size, = struct.unpack("<I", file.read(4))
         header = json.loads(file.read(size))
-        assert header["level_scene"] == "res://Game/Levels/TrainingEasy.tscn"
+        assert header["level_scene"] == f"res://Game/Levels/Training{manifest['level'].title()}.tscn"
         assert header["physics_hz"] == 60 and header["sample_bytes"] == 13
         assert header["stuck_detection"] and header["stuck_patience_seconds"] == 8
         assert header["starting_training_episodes"] == (0 if training else milestone)
@@ -104,8 +104,8 @@ def collect(directory, label):
             "frozen": measures(frozen),
             "training_through_milestone": measures(training[:milestone]) if training else None,
             "last_1000_training": measures(training[milestone - 1000:milestone]) if training else None,
-            "replay": recording.relative_to(ROOT).as_posix(),
-            "checkpoint": checkpoint.relative_to(ROOT).as_posix(),
+            "replay": recording.relative_to(directory.parent).as_posix(),
+            "checkpoint": checkpoint.relative_to(directory.parent).as_posix(),
         }
     return checkpoints
 
@@ -174,8 +174,8 @@ td,th{{padding:.5rem .7rem;border:1px solid #d4dfe2;text-align:left}} thead{{bac
 """
 
 
-def main():
-    normal, extra, control = (ROOT / name for name in ("results", "position-results", "control-results"))
+def collect_all(root):
+    normal, extra, control = (root / name for name in ("results", "position-results", "control-results"))
     normal_hashes = read(normal / "settings.json")["source_sha256"]
     extra_hashes = read(extra / "settings.json")["source_sha256"]
     control_hashes = read(control / "settings.json")["source_sha256"]
@@ -187,6 +187,11 @@ def main():
     data = {"untrained": collect(control, "untrained")}
     data.update({label: collect(normal, label) for label in PRESETS})
     data["course_position"] = collect(extra, "course_position")
+    return data
+
+
+def main():
+    data = collect_all(ROOT)
     dump(ROOT / "summary.json", data)
     (ROOT / "report.html").write_text(html_report(data), encoding="utf-8")
     for label, checkpoints in data.items():

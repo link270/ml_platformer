@@ -1,27 +1,35 @@
 # Q-learning experiment modes
 
 Select **Q-learning**, then choose an **Experiment**. Its description shows what
-changed. Choose **Evaluation** and an **Archive · seed … · … episodes** under
-**Training data**, then **Start evaluation** to film it. Leave **Run headless**
-off to watch the viewport. The mode name stays visible in the level; **More**
-shows the loaded archive's seed and milestone. Esc returns to the same selection.
+changed. Choose **Evaluation** and a checkpoint under **Training data**, then
+**Start evaluation**. Leave **Run headless** off to watch the viewport. **Options**
+shows the loaded archive label. Esc returns to setup.
+
+For the filming sequence, select **Easy · steps and hills** and **Evaluation**
+before switching between the first three experiments. The menu picks the
+untrained Original baseline, Fixed reward per block at 5,000 runs, and Fixed
+reward + course position at 10,000 runs. The selector also offers the 1,000,
+5,000, and 10,000 checkpoints for each experiment on Easy. Choosing an Easy
+archive enables the eight-second stuck cutoff used in the comparison.
 
 | Mode | Change |
 | --- | --- |
-| 1. Original baseline | Six binary rays, no time cost, exploration decay 0.995 |
-| 2. Small time penalty | Baseline plus 0.001 cost per six-frame decision |
-| 3. Longer exploration | Mode 2 with exploration decay 0.999 (existing default) |
-| 4. Higher discount | Mode 3 with discount 0.99 instead of 0.95 |
-| 5. Richer horizontal rays | Mode 3 with left/right near, far, or no hit |
-| 6. Lower late learning rate | Mode 3 with learning rate tapering from 0.1 to 0.02 over episodes 3,000–10,000 |
-| 7. Fixed reward per block | Mode 3 with 0.005 reward per block of reduced orb distance, replacing normalized progress rewards |
+| Original baseline | Six binary rays, no time cost, exploration decay 0.995 |
+| Fixed reward per block | Longer exploration with 0.005 reward per block of reduced orb distance |
+| Fixed reward + course position | Fixed reward per block with signed horizontal distance to the orb in four-block bands |
+| Fixed reward + gap rays | Fixed reward per block with bounded ground probes for runway, gap width, and landing height |
+| Fixed reward + landing memory | Gap rays with a remembered far lip during the jump |
+| Small time penalty | Baseline plus 0.001 cost per six-frame decision |
+| Longer exploration | Small time penalty with exploration decay 0.999 (default) |
+| Higher discount | Longer exploration with discount 0.99 instead of 0.95 |
+| Richer horizontal rays | Longer exploration with left/right near, far, or no hit |
+| Lower late learning rate | Longer exploration with learning rate tapering from 0.1 to 0.02 over episodes 3,000–10,000 |
 
-Modes 4–7 are separate experiments based on mode 3, not cumulative upgrades.
 Horizontal near means a hit within one block of the character's edge; far means
 beyond one block within the existing two-block ray. The other four rays remain
 binary. All modes share the same physics, six actions, and decision timing.
 
-Modes 1–6 offer archived data for three training seeds (12345, 42, 98765) at nine milestones
+The original course offers archived data for three training seeds (12345, 42, 98765) at nine milestones
 (0, 100, 300, 600, 1,000, 2,000, 3,000, 5,000, 10,000 episodes).
 Viewport evaluation of an archive starts with the diagnostic tie-break seed, so reopening the
 same archive repeats its recorded first evaluation. Subsequent episodes advance
@@ -30,13 +38,13 @@ R only restarts the episode.
 
 ## Fixed reward per block comparison
 
-Choose a larger **Level**, then compare **3. Longer exploration** against
-**7. Fixed reward per block**, starting each with **New training data** and the
-same run budget. Mode 7 has no archived results yet. Its learning rate (0.1),
+Choose a larger **Level**, then compare **Longer exploration** against
+**Fixed reward per block**, starting each with **New training data** and the
+same run budget. The fixed-reward preset's learning rate (0.1),
 discount (0.95), exploration decay (0.999), exploration floor (0.05), observations,
-physics, action timing, timeout, and terminal rewards are the same as mode 3.
+physics, action timing, timeout, and terminal rewards match Longer exploration.
 
-For every nonterminal physics step, mode 7 uses:
+For every nonterminal physics step, both fixed-reward presets use:
 
 `reward = 0.005 * (previous_orb_distance - current_orb_distance) / 32 - 0.001 / 6`
 
@@ -53,6 +61,28 @@ headless workers, recordings, and check-ins all use the selected reward preset.
 For a terminal run, add `--preset fixed_reward_per_block --level easy` (or
 `medium` / `hard`). `Tests/check_fixed_reward.gd` checks reward scaling, resets,
 terminal outcomes, checkpoint isolation, and the worker/check-in path.
+Use `--preset course_position --level easy` to train with the additional position observation.
+
+## Gap ray comparison
+
+**Fixed reward + gap rays** keeps the six original rays, six actions, and
+fixed-reward training settings. On the ground it samples nearby surfaces
+every 16 pixels toward the orb's horizontal direction. It looks for a gap
+within 96 pixels and for the far platform within 160 pixels, up to 64 pixels
+above or below the player's feet. The Q-table receives the edge-distance bin
+and a combined gap-width and landing-height bin. Missing landings have their
+own value, and airborne decisions keep the original observations.
+
+The **V** sensor overlay also shows these probes. In **Evaluation**, choose
+Easy, Medium, or Hard and select one of this preset's archives under
+**Training data**. The matched archive enables the recorded stuck cutoff.
+For new command-line training, use `--preset gap_rays`.
+
+**Fixed reward + landing memory** keeps the same grounded scan. While
+airborne, its Q-table distinguishes a remembered lip behind, aligned,
+near ahead, or far ahead, plus whether the player has enough vertical
+clearance. The target clears on touchdown and restart. A Hard archive is
+available at each milestone. Use `--preset airborne_landing` for training.
 
 ## Training and saves
 

@@ -7,8 +7,10 @@ var level_id := "original"
 const Level := preload("res://Game/Level.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const Presets := preload("res://Agents/QPresets.gd")
+const EASY_FILM_MILESTONES := {"baseline": 0, "fixed_reward_per_block": 5000, "course_position": 10000}
 static var last_preset := Presets.DEFAULT_ID
 static var last_checkpoint := ""
+static var last_learning_mode := 0
 var preset_id := Presets.DEFAULT_ID
 const CHECKPOINT_DIRECTORY := "user://checkpoints"
 # These can be overridden by tests without touching the player's saved data.
@@ -42,9 +44,11 @@ func _ready() -> void:
 	%ControllerSelect.select(Level.ControlMode.Q_LEARNING)
 	%ModeSelect.add_item("Training", 0)
 	%ModeSelect.add_item("Evaluation", 1)
+	if checkpoint_directory == CHECKPOINT_DIRECTORY:
+		%ModeSelect.select(last_learning_mode)
 	%ControllerSelect.item_selected.connect(_controller_changed)
-	%ModeSelect.item_selected.connect(_refresh_form.unbind(1))
-	%DataSelect.item_selected.connect(_select_data)
+	%ModeSelect.item_selected.connect(_select_mode)
+	%DataSelect.item_selected.connect(_choose_checkpoint)
 	%HeadlessToggle.toggled.connect(_refresh_form.unbind(1))
 	%RefreshData.pressed.connect(_refresh_data)
 	%OpenFolder.pressed.connect(_open_data_folder)
@@ -62,7 +66,8 @@ func _select_level(index: int) -> void:
 	last_level = level_id
 	# New courses start fresh rather than updating an original-course checkpoint.
 	%DataSelect.select(0)
-	_select_data(0)
+	_refresh_data(_easy_film_checkpoint())
+	_choose_checkpoint(%DataSelect.selected)
 
 
 func _select_experiment(index: int) -> void:
@@ -70,8 +75,21 @@ func _select_experiment(index: int) -> void:
 	%ExperimentInfo.text = Presets.PRESETS[preset_id].description.replace("\n", " ")
 	if checkpoint_directory == CHECKPOINT_DIRECTORY:
 		checkpoint_path = Presets.save_path(preset_id)
-	_refresh_data(Presets.archive_path(preset_id, 12345, 10000))
-	_select_data(0)
+	var preferred := _easy_film_checkpoint() if level_id == "easy" else Presets.archive_path(preset_id, 12345, 10000)
+	_refresh_data(preferred)
+	_choose_checkpoint(%DataSelect.selected)
+
+
+func _easy_film_checkpoint() -> String:
+	if level_id == "easy" and %ModeSelect.selected == 1 and EASY_FILM_MILESTONES.has(preset_id):
+		return Presets.easy_archive_path(preset_id, EASY_FILM_MILESTONES[preset_id])
+	return ""
+
+
+func _choose_checkpoint(index: int) -> void:
+	if Presets.is_matched_archive(str(%DataSelect.get_item_metadata(index))):
+		%StuckToggle.button_pressed = true
+	_select_data(index)
 
 
 func _select_data(_index: int) -> void:
@@ -101,33 +119,59 @@ func _refresh_data(preferred: String = "") -> void:
 		var json := JSON.new()
 		json.parse(FileAccess.get_file_as_string(path))
 		var data = json.data
-		if data is Dictionary and data.has("preset_id") and data.preset_id != preset_id:
-			continue
+		if data is Dictionary:
+			var saved_preset := Checkpoint.saved_preset(data)
+			if not saved_preset.is_empty() and saved_preset != preset_id:
+				continue
 		var label := "Original saved data" if path == Checkpoint.DEFAULT_PATH else path.get_file().get_basename().replace("_", " ")
 		%DataSelect.add_item(label)
 		var index: int = %DataSelect.item_count - 1
 		%DataSelect.set_item_metadata(index, path)
 		if path == preferred:
 			%DataSelect.select(index)
+	if Presets.uses_gap_rays(preset_id):
+		for episodes in [10000, 5000, 1000]:
+			_add_archive("%s archive · %d episodes" % [level_id.capitalize(), episodes],
+				Presets.gap_ray_archive_path(level_id, episodes, preset_id), preferred)
+	elif level_id == "easy":
+		for episodes in [10000, 5000, 1000, 0]:
+			var label := "Easy archive · Untrained" if episodes == 0 else "Easy archive · %d episodes" % episodes
+			_add_archive(label, Presets.easy_archive_path(preset_id, episodes), preferred)
+	var original_label := "Original archive" if level_id == "easy" else "Archive"
 	for seed_value in Presets.SEEDS:
 		for episodes in Presets.MILESTONES:
-			var path := Presets.archive_path(preset_id, seed_value, episodes)
-			if path.is_empty() or not FileAccess.file_exists(path):
-				continue
-			%DataSelect.add_item("Archive · seed %d · %d episodes" % [seed_value, episodes])
-			var index: int = %DataSelect.item_count - 1
-			%DataSelect.set_item_metadata(index, path)
-			if path == preferred:
-				%DataSelect.select(index)
+			_add_archive("%s · seed %d · %d episodes" % [original_label, seed_value, episodes],
+				Presets.archive_path(preset_id, seed_value, episodes), preferred)
 	_refresh_form()
+
+
+func _add_archive(label: String, path: String, preferred: String) -> void:
+	if path.is_empty() or not FileAccess.file_exists(path):
+		return
+	%DataSelect.add_item(label)
+	var index: int = %DataSelect.item_count - 1
+	%DataSelect.set_item_metadata(index, path)
+	if path == preferred:
+		%DataSelect.select(index)
 
 
 func _controller_changed(_index: int) -> void:
 	if %ControllerSelect.get_selected_id() != Level.ControlMode.Q_LEARNING:
 		%ModeSelect.select(1)
 	else:
-		%ModeSelect.select(0)
+		%ModeSelect.select(last_learning_mode if checkpoint_directory == CHECKPOINT_DIRECTORY else 0)
 	_refresh_form()
+
+
+func _select_mode(index: int) -> void:
+	if checkpoint_directory == CHECKPOINT_DIRECTORY:
+		last_learning_mode = index
+	var preferred := _easy_film_checkpoint()
+	if not preferred.is_empty() and str(%DataSelect.get_selected_metadata()).is_empty():
+		_refresh_data(preferred)
+		_choose_checkpoint(%DataSelect.selected)
+	else:
+		_refresh_form()
 
 
 func _refresh_form() -> void:
@@ -251,7 +295,10 @@ func _start_selected() -> void:
 			selected_path = _new_checkpoint_path()
 		if evaluating and source_path.begins_with("res://Experiments/"):
 			# Match the archived evaluation's first episode, including random tie breaks.
-			saved_agent.rng.seed = int(source_path.get_file().split("-")[1]) + 1_000_000
+			if Presets.is_matched_archive(source_path):
+				saved_agent.rng.seed = Presets.EASY_EVALUATION_SEED
+			else:
+				saved_agent.rng.seed = int(source_path.get_file().split("-")[1]) + 1_000_000
 		saved_agent.training = not evaluating
 		checkpoint_path = selected_path
 	%BatchStatus.text = ""

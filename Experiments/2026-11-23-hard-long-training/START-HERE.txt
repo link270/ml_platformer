@@ -1,0 +1,33 @@
+LONGER TRAINING ON HARD ELEVATED GAP CHAINS
+
+Open report.html for the frozen checkpoint comparisons and training win
+rates. findings.txt summarizes what changed after 10,000 runs. summary.json
+contains completion times, outcome counts, first wins, and checkpoint paths.
+
+The two variants are Fixed reward per block and Lower late learning rate.
+Both found winning policies in the earlier Hard experiment. Here they start
+from empty Q-tables with the same seed 78436291 and train continuously to
+50,000 episodes. The original frozen project, level geometry, action timing,
+60-second timeout, and eight-second stuck cutoff are used again. Learning
+rates, reward settings, and exploration schedules match the original presets.
+
+Every 5,000 episodes a saved checkpoint gets 30 frozen evaluations using
+seeds 78436300–78436329. These evaluations run separately and leave the
+training RNG and Q-tables intact. Training still includes exploration.
+
+PLAYBACK
+Open Playback recordings in the game and choose any eval-XXXXX.mlpaths linked
+in the report. Each contains all 30 evaluation episodes. The training
+recordings contain every 100th attempt.
+
+REPRODUCE
+Run run_long.py with --godot pointing at the Godot 4.7.2 console executable
+and --runtime pointing at a new scratch directory. Use --output to select a
+new results folder. The runner extracts the standard source from the Easy
+experiment's source.zip and checks it against the original Hard manifest.
+With the completed results in results/, run analyze_long.py to regenerate
+the report and validate the data. No existing personal or archived Q-tables
+are used to initialize training.
+
+One seed and one spawn are held fixed. Repeated evaluation wins can replay
+the same route. The checkpoints sample the run every 5,000 episodes.

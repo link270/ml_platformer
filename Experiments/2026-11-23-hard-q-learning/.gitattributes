@@ -1,0 +1,2 @@
+# Preserve the exact Q-table bytes used by the evaluation reports.
+**/[0-9][0-9][0-9][0-9][0-9].json -text

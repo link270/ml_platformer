@@ -28,7 +28,7 @@ func _init() -> void:
 
 func values(state: Dictionary) -> Array:
 	# Reading unseen states during evaluation must not grow the table.
-	var key := State.encode(state, preset_id == "horizontal_bins")
+	var key := _state_key(state)
 	if q_table.has(key):
 		return q_table[key]
 	return [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -51,7 +51,7 @@ func choose_action(state: Dictionary) -> int:
 func learn(state: Dictionary, action: int, reward: float, next_state: Dictionary) -> void:
 	if not training:
 		return
-	var key := State.encode(state, preset_id == "horizontal_bins")
+	var key := _state_key(state)
 	var scores: Array = q_table[key] if q_table.has(key) else [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	var target := reward
 	if not next_state.done:
@@ -59,6 +59,17 @@ func learn(state: Dictionary, action: int, reward: float, next_state: Dictionary
 	scores[action] += learning_rate * (target - scores[action])
 	q_table[key] = scores
 	updates += 1
+
+
+func _state_key(state: Dictionary) -> String:
+	var key := State.encode(state, preset_id == "horizontal_bins")
+	if preset_id == "course_position":
+		key += "|%d" % floori(state.orb_offset.x / float(Presets.COURSE_POSITION_BAND_BLOCKS))
+	elif Presets.uses_gap_rays(preset_id):
+		var gap: Vector2i = state.gap_observation
+		var prefix := "a" if not state.grounded and gap != Vector2i.ZERO else ""
+		key += "|%s%d%d" % [prefix, gap.x, gap.y]
+	return key
 
 
 func finish_episode(success: bool) -> void:

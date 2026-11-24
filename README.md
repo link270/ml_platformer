@@ -121,6 +121,10 @@ Other checks are `check_q_learning.gd`, `check_q_checkpoint.gd`, `check_headless
 
 See [the project design and training guide](Docs/godot-platformer-plan.md) for controls, agent behavior, checkpoint details, and benchmarking. Experiment folders preserve historical snapshots and their original paths.
 
-For filming the six Q-learning experiment stages, see [Q-learning experiment modes](Docs/experiment-modes.md). The setup form includes matching archived Q-tables.
+For filming, choose **Easy · steps and hills** and **Evaluation**, then choose one of the first three experiments. The setup form selects its recommended archived Q-table. See [Q-learning experiment modes](Docs/experiment-modes.md).
 
-**7. Fixed reward per block** is a separate experiment based on **3. Longer exploration**. It replaces normalized progress with **0.005 per 32 pixels closer to the orb**, with an equal cost for moving away. All other settings, the time penalty, and terminal rewards stay the same. Compare the two on the same larger level with fresh training data and equal run budgets. The new experiment has separate saves and no archived results yet; CLI runs accept `--preset fixed_reward_per_block`. See the [reward comparison](Docs/experiment-modes.md#fixed-reward-per-block-comparison) for the exact formula.
+**Fixed reward per block** gives **0.005 per 32 pixels closer to the orb**, with an equal cost for moving away. **Fixed reward + course position** adds signed horizontal orb distance in four-block bands. The CLI accepts `--preset fixed_reward_per_block` and `--preset course_position`. See the [reward comparison](Docs/experiment-modes.md#fixed-reward-per-block-comparison) for the exact formula.
+
+**Fixed reward + gap rays** adds local ground probes for edge distance, gap width, and landing height. Choose an Easy, Medium, or Hard archive under **Training data** to evaluate the saved policy. The **V** overlay displays the probes, and the CLI accepts `--preset gap_rays`. See the [gap-ray comparison](Docs/experiment-modes.md#gap-ray-comparison).
+
+**Fixed reward + landing memory** carries the last visible landing into the jump. The **V** overlay marks that target while airborne. The Hard evaluation archives are under **Training data**, and the CLI accepts `--preset airborne_landing`.

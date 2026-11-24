@@ -1,0 +1,56 @@
+HARD RESULTS AND FILMING PICKS
+
+The strongest result from Easy and Medium flipped on Hard. Fixed reward +
+course position won all 90 frozen evaluations on each earlier course. On
+Hard it won 0/90 and only 2 of 10,000 training runs. Its best frozen
+checkpoint by progress was at 5,000. All 30 attempts ended in falls, with
+55.6% median best progress toward the orb.
+
+Two Hard checkpoints won. At 5,000 runs, Fixed reward per block cleared
+30/30 in 21.23 seconds. Lower late learning rate also cleared 30/30, with
+32.28 seconds fastest and median and 32.54 seconds mean. At 1,000 and
+10,000 every variant went 0/30. By 10,000, the fixed-reward agent was
+falling around 13.3% of the way to the orb, and the slower learning-rate
+agent was getting stuck around 7.3%. The empty baseline went 0/30.
+
+Fixed reward improved overall training wins over the matched Longer
+exploration preset on all three courses. The Hard improvement was 92 to
+146 wins per 10,000 training runs. Lower late learning rate recorded the
+most Hard training wins (162 of 10,000, including 105 in the last 1,000),
+and still lost its winning frozen route at 10,000. The original baseline
+won 32 training runs and failed all 90 frozen evaluations. Higher discount,
+the time penalty, and richer horizontal rays also failed every sampled
+frozen checkpoint.
+
+Both 5,000-run Easy policies that won every frozen Easy evaluation died in
+all 30 attempts on Hard. On Medium, those same frozen tables had won 22/30
+with fixed reward and 5/30 with course position. On Hard, both made about
+13% median best progress. The comparison covers these two source policies,
+three fixed layouts, and one matched training seed.
+
+The course is playable under the same actions and six-tick timing. The
+project's scripted course check cleared Hard in 19.03–19.10 seconds across
+three takeoff margins. That is a scripted route check, separate from the
+learned-agent results.
+
+FILMING ORDER
+
+1. Show fixed reward at 5,000 runs clearing Hard in 21.23 seconds. Then cut
+   to the 10,000-run version falling early. Both are frozen evaluations.
+
+   results/fixed_reward_per_block/eval-05000.mlpaths
+   results/fixed_reward_per_block/eval-10000.mlpaths
+
+2. If you want a second winning route, show the 5,000-run lower learning
+   rate clip. Its median win took 11.05 seconds longer than fixed reward.
+
+   results/late_learning_rate/eval-05000.mlpaths
+
+3. Contrast the success of course position on Medium with the 5,000-run
+   Hard checkpoint falling around halfway through. This shows where the
+   improvement stopped holding in the matched comparison.
+
+   ../2026-11-23-medium-q-learning/position-results/course_position/eval-05000.mlpaths
+   position-results/course_position/eval-05000.mlpaths
+
+Open report.html for the full paired results and replay links.

@@ -3,6 +3,7 @@ extends RefCounted
 const Agent := preload("res://Agents/Agent.gd")
 const State := preload("res://Agents/QState.gd")
 const Presets := preload("res://Agents/QPresets.gd")
+const GapRays := preload("res://Game/GapRays.gd")
 const DEFAULT_PATH := "user://q_learning_checkpoint.json"
 # Bump this if the encoding or checkpoint structure changes incompatibly.
 const FORMAT_VERSION := 1
@@ -19,8 +20,14 @@ static func _schema(preset_id: String = Presets.DEFAULT_ID) -> Dictionary:
 		schema.horizontal_bins = ["no_hit", "near_0_to_1", "far_1_to_2"]
 	if preset_id == "late_learning_rate":
 		schema.learning_schedule = "alpha_0.1_through_3000_linear_to_0.02_at_10000"
-	if preset_id == "fixed_reward_per_block":
+	if Presets.uses_fixed_reward(preset_id):
 		schema.reward_shaping = {"mode": "orb_distance_per_block", "reward_per_block": Presets.FIXED_REWARD_PER_BLOCK}
+	if preset_id == "course_position":
+		schema.orb_x_band_blocks = Presets.COURSE_POSITION_BAND_BLOCKS
+	if Presets.uses_gap_rays(preset_id):
+		schema.gap_rays = GapRays.SCHEMA
+	if preset_id == "airborne_landing":
+		schema.landing_memory = GapRays.MEMORY_SCHEMA
 	# JSON reads all numbers as floats, including numbers inside arrays.
 	return JSON.parse_string(JSON.stringify(schema))
 
@@ -55,7 +62,8 @@ static func load_checkpoint(agent: RefCounted, path: String = DEFAULT_PATH) -> S
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return "Cannot open checkpoint: " + error_string(FileAccess.get_open_error())
-	if file.get_length() > 2_000_000:
+	var size_limit := 32_000_000 if agent.preset_id == "course_position" or Presets.uses_gap_rays(agent.preset_id) else 2_000_000
+	if file.get_length() > size_limit:
 		return "Checkpoint is too large."
 	var json := JSON.new()
 	if json.parse(file.get_as_text()) != OK:
@@ -79,11 +87,21 @@ static func _number(value: Variant) -> bool:
 	return (value is float or value is int) and is_finite(float(value))
 
 
+static func saved_preset(data: Dictionary) -> String:
+	var id := str(data.get("preset_id", ""))
+	var schema = data.get("schema")
+	# The Easy experiment used the fixed reward ID with its own observation schema.
+	if id == "fixed_reward_per_block" and schema is Dictionary and schema.has("orb_x_band_blocks"):
+		return "course_position"
+	return id
+
+
 static func _validate(data: Variant, preset_id: String = Presets.DEFAULT_ID) -> String:
 	if not data is Dictionary:
 		return "Checkpoint must contain an object."
 	# Archived v1 tables predate preset IDs; their menu folder supplies the mode.
-	if not Presets.PRESETS.has(preset_id) or data.get("preset_id", preset_id) != preset_id:
+	var id := saved_preset(data)
+	if not Presets.PRESETS.has(preset_id) or (data.has("preset_id") and id != preset_id):
 		return "Checkpoint belongs to a different experiment mode."
 	if data.get("format_version") != FORMAT_VERSION or data.get("schema") != _schema(preset_id):
 		return "Checkpoint uses a different state/action format."
@@ -101,11 +119,22 @@ static func _validate(data: Variant, preset_id: String = Presets.DEFAULT_ID) -> 
 		return "Training wins exceed completed episodes."
 	var table: Variant = data.get("q_table")
 	var max_states := 3888 if preset_id == "horizontal_bins" else State.MAX_STATES
+	if preset_id == "course_position":
+		max_states *= 64
+	elif preset_id == "gap_rays":
+		max_states *= 22 # Neutral, plus three edge distances times seven landing profiles.
+	elif preset_id == "airborne_landing":
+		max_states *= 30 # The grounded profiles plus eight airborne landing profiles.
 	if not table is Dictionary or table.size() > max_states:
 		return "Invalid Q-table."
 	var key_pattern := RegEx.new()
 	var rays := "[012]{2}[01]{4}" if preset_id == "horizontal_bins" else "[01]{6}"
-	key_pattern.compile("^" + rays + "\\|(-1|0|1)\\|(-1|0|1)\\|[012]\\z")
+	var band := "\\|-?[0-9]+" if preset_id == "course_position" else ""
+	if preset_id == "gap_rays":
+		band = GapRays.KEY_SUFFIX
+	elif preset_id == "airborne_landing":
+		band = GapRays.MEMORY_KEY_SUFFIX
+	key_pattern.compile("^" + rays + "\\|(-1|0|1)\\|(-1|0|1)\\|[012]" + band + "\\z")
 	for key in table:
 		if not key is String or key_pattern.search(key) == null:
 			return "Invalid Q-table state key."

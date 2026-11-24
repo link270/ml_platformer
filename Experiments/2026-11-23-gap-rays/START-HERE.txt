@@ -1,0 +1,40 @@
+GAP RAY Q-LEARNING COMPARISON
+
+Open report.html for the Easy, Medium, and Hard results. findings.txt
+summarizes the comparison and names clips for filming. summary.json contains
+the training and frozen-policy timings and outcomes.
+
+Fixed reward + gap rays keeps the original six rays, controls, and fixed
+distance reward. It adds a grounded scan toward the goal that samples
+local surfaces at 16-pixel increments. It looks for missing support
+within 96 pixels and checks for a landing within 160 pixels. The probes
+cover up to 64 pixels above and below the player's feet. The Q-table gets
+the binned edge distance and a visible landing category that combines gap
+width and whether the landing is higher. Airborne states keep the original
+six-ray observations.
+
+All three agents start with empty tables and training seed 78436291. They
+train continuously to 10,000 episodes on separate courses. Checkpoints
+at 1,000, 5,000 and 10,000 get 30 frozen evaluations with matched seeds
+78436300–78436329. The 60-second limit and eight-second stuck cutoff match
+the original fixed-reward comparison.
+
+WATCH LIVE
+Choose a course, Q-learning, Fixed reward + gap rays, and Evaluation. Pick
+a milestone under Training data. The selected archive enables the recorded
+stuck cutoff. V toggles the six original rays and the new downward probes.
+Gold probes hit a nearby surface and red probes miss. The probes display
+the grounded scan used at the agent's decision boundaries.
+
+PLAYBACK AND REPRODUCTION
+Open Playback recordings in Godot and choose an eval-XXXXX.mlpaths file
+linked from the report. Each file contains the full frozen batch.
+Training recordings sample every 100th episode.
+
+Run run_gap_rays.py with --godot pointing to Godot 4.7.2, --runtime pointing
+to a new scratch directory, --output pointing to a new results directory,
+and --source pointing to the archived results/source.zip. Run
+analyze_gap_rays.py with the resulting archive in place to regenerate
+the report.
+
+The comparison uses one training seed and one spawn per course.

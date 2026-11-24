@@ -1,0 +1,2 @@
+# Preserve the exact checkpoints used to produce the recorded evaluations.
+**/[0-9][0-9][0-9][0-9][0-9].json -text

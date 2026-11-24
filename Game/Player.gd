@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const UNIT := 32.0
+const GapRays := preload("res://Game/GapRays.gd")
 # Clockwise from up; clearances are in units beyond the player's edge.
 const DIRECTIONS := [Vector2.UP, Vector2(1, -1), Vector2.RIGHT, Vector2(1, 1), Vector2.DOWN, Vector2(-1, 1), Vector2.LEFT, Vector2(-1, -1)]
 
@@ -10,6 +11,7 @@ const DIRECTIONS := [Vector2.UP, Vector2(1, -1), Vector2.RIGHT, Vector2(1, 1), V
 @export var max_fall_speed := 14.0
 @export_range(2.0, 20.0) var ray_range_units := 2.0
 @export var show_rays := false
+var gap_rays: GapRays
 var visible_ray_indices := [0, 1, 2, 3, 4, 5, 6, 7]
 
 var _move_axis := 0.0
@@ -52,6 +54,7 @@ func set_action(move_axis: float, jump_pressed: bool) -> void:
 
 
 func physics_step(delta: float) -> void:
+	var was_grounded := _grounded_ready and is_on_floor()
 	_applied_axis = _move_axis
 	_applied_jump = _jump_requested
 	velocity.x = _move_axis * horizontal_speed * UNIT
@@ -64,6 +67,8 @@ func physics_step(delta: float) -> void:
 	_jump_requested = false
 
 	move_and_slide()
+	if gap_rays != null and gap_rays.tracks_landing and not was_grounded and is_on_floor():
+		gap_rays.clear_landing()
 	_grounded_ready = true
 	if is_on_floor():
 		if velocity.y > 0.0:
@@ -90,6 +95,8 @@ func reset_to(spawn_position: Vector2) -> void:
 	_applied_axis = 0.0
 	_applied_jump = false
 	_sampled_rays = 0
+	if gap_rays != null:
+		gap_rays.reset()
 	if show_rays:
 		_sample_rays(visible_ray_indices)
 		queue_redraw()
@@ -149,3 +156,5 @@ func _draw() -> void:
 		var endpoint := to_local(ray.get_collision_point()) if hit else ray.target_position
 		draw_line(Vector2.ZERO, endpoint, color, 1.0)
 		draw_circle(endpoint, 3.0, color)
+	if gap_rays != null:
+		gap_rays.draw(self)

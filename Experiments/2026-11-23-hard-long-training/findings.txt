@@ -1,0 +1,42 @@
+WHAT 50,000 RUNS CHANGED ON HARD
+
+Fixed reward found two new winning policies after the original 10,000-run
+budget. The 15,000 checkpoint went 30/30 in 24.23 seconds, and the 30,000
+checkpoint went 30/30 in 19.83 seconds. The latter is 1.40 seconds faster
+than the original 5,000-run policy. The fastest, median, and mean frozen
+winning times were identical for all three fixed-reward successes.
+
+The improvement did not persist. Fixed reward went 0/30 at 20,000 and
+25,000, then at every sampled checkpoint from 35,000 through 50,000.
+At 50,000 all 30 attempts got stuck with 2.1% median best progress.
+
+Lower late learning rate won 30/30 at 5,000 with a 32.28-second median.
+Every sampled checkpoint from 10,000 through 50,000 went 0/30. It still
+won 367 of its last 5,000 training runs. At the 50,000-run frozen
+checkpoint all 30 attempts got stuck with 7.3% median best progress.
+
+Across all 50,000 training episodes, Fixed reward won 980 times (1.96%)
+and Lower late learning rate won 1,378 times (2.76%). The slower
+learning-rate preset had more wins during exploration, while Fixed reward
+had more successful frozen checkpoints and the fastest frozen route.
+
+The first 10,000 training records matched the original experiment for both
+variants after accounting for the recorded run budget. The 1,000-, 5,000-,
+and 10,000-run Q-table hashes also matched. These results come from the
+same training seed and fixed spawn. The frozen checks tell us what held at
+5,000-episode intervals.
+
+REPLAY PICKS
+
+Show Fixed reward at 30,000 clearing Hard, then the 50,000 checkpoint
+getting stuck. This captures both the benefit of extra practice and the
+reason to preserve earlier checkpoints.
+
+  results/fixed_reward_per_block/eval-30000.mlpaths
+  results/fixed_reward_per_block/eval-50000.mlpaths
+
+For a speed comparison, use the original 5,000-run route. For a comparison
+between variants, add the winning Lower late learning rate route at 5,000.
+
+  results/fixed_reward_per_block/eval-05000.mlpaths
+  results/late_learning_rate/eval-05000.mlpaths

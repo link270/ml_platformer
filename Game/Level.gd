@@ -88,6 +88,8 @@ func _ready() -> void:
 		agent = QLearningAgent.new() if control_mode == ControlMode.Q_LEARNING else RandomAgent.new()
 	if control_mode == ControlMode.Q_LEARNING:
 		time_penalty_per_decision = QLearningAgent.Presets.time_penalty(agent.preset_id)
+		if QLearningAgent.Presets.uses_gap_rays(agent.preset_id):
+			player.gap_rays = Player.GapRays.new(agent.preset_id == "airborne_landing")
 	_setup_capture()
 	if headless_training:
 		hide()
@@ -375,7 +377,7 @@ func _advance_tick(delta: float, action_id: int) -> void:
 	var distance := player.global_position.distance_to(orb.global_position)
 	var proximity := _orb_proximity(distance)
 	var progress_reward := 0.1 * (proximity - _previous_proximity)
-	if control_mode == ControlMode.Q_LEARNING and agent.preset_id == "fixed_reward_per_block":
+	if control_mode == ControlMode.Q_LEARNING and QLearningAgent.Presets.uses_fixed_reward(agent.preset_id):
 		progress_reward = QLearningAgent.Presets.FIXED_REWARD_PER_BLOCK * (_previous_orb_distance - distance) / player.UNIT
 		_previous_orb_distance = distance
 	# Spread the time cost across physics ticks, including partial decisions.
@@ -517,6 +519,9 @@ func get_state(ray_indices: Array = [0, 1, 2, 3, 4, 5, 6, 7]) -> Dictionary:
 	state["timed_out"] = timed_out
 	state["stuck"] = stuck
 	state["orb_offset"] = (orb.global_position - player.global_position) / player.UNIT
+	if player.gap_rays != null:
+		var direction := -1 if state.orb_offset.x < 0.0 else 1
+		state["gap_observation"] = player.gap_rays.sample(player, player.tick, state.grounded, direction, player.show_rays)
 	state["orb_proximity"] = _orb_proximity()
 	return state
 

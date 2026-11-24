@@ -51,6 +51,82 @@ func check_horizontal_keys() -> void:
 	check(keys.size() == 3888, "horizontal encoding retains all 3888 distinct states")
 
 
+func check_gap_rays() -> void:
+	var level := preload("res://Game/Levels/TrainingHard.tscn").instantiate()
+	var learner := QLearning.new()
+	QLearning.Presets.configure(learner, "gap_rays")
+	level.agent = learner
+	level.control_mode = level.ControlMode.Q_LEARNING
+	level.headless_training = true
+	root.add_child(level)
+	level.set_physics_process(false)
+	var states: Array[Dictionary] = []
+	# Two points on the approach to Hard's second gap share the original key.
+	for x in [444.8, 483.2]:
+		level.player.reset_to(Vector2(x, 400.0))
+		for step in 3:
+			await physics_frame
+			level.player.physics_step(DT)
+		states.append(level.get_state(learner.observation_rays))
+	var far := states[0]
+	var near := states[1]
+	check(far.grounded and near.grounded, "the ray test observes two grounded states")
+	check(QState.encode(far) == QState.encode(near), "the original six rays alias the two approaches")
+	check(far.gap_observation == Vector2i(3, 4) and near.gap_observation == Vector2i(1, 4),
+		"gap rays distinguish runway length and detect the same elevated landing across a two-block gap")
+	check(learner._state_key(far) != learner._state_key(near), "the new observations get different Q-table rows")
+	await physics_frame
+	level.player.set_action(0.0, true)
+	level.player.physics_step(DT)
+	var air: Dictionary = level.get_state(learner.observation_rays)
+	check(not air.grounded and air.gap_observation == Vector2i.ZERO, "airborne decisions skip the grounded scan")
+	level.queue_free()
+	await process_frame
+
+
+func check_landing_memory() -> void:
+	var level := preload("res://Game/Levels/TrainingHard.tscn").instantiate()
+	var learner := QLearning.new()
+	QLearning.Presets.configure(learner, "airborne_landing")
+	level.agent = learner
+	level.control_mode = level.ControlMode.Q_LEARNING
+	level.headless_training = true
+	root.add_child(level)
+	level.set_physics_process(false)
+	level.player.reset_to(Vector2(483.2, 400.0))
+	for step in 3:
+		await physics_frame
+		level.player.physics_step(DT)
+	var ground: Dictionary = level.get_state(learner.observation_rays)
+	check(ground.gap_observation == Vector2i(1, 4), "landing memory sees the same gap while grounded")
+
+	var landed := false
+	for step in 42:
+		await physics_frame
+		level.player.set_action(1.0, step == 0)
+		level.player.physics_step(DT)
+		if step == 0 or step == 15:
+			var air: Dictionary = level.get_state(learner.observation_rays)
+			var expected := Vector2i(4, 2) if step == 0 else Vector2i(3, 1)
+			check(not air.grounded and air.gap_observation == expected,
+				"airborne state tracks distance and clearance from the remembered lip")
+			check(learner._state_key(air).ends_with("|a%d%d" % [expected.x, expected.y]),
+				"airborne memory uses a distinct key from the grounded scan")
+		if step > 0 and level.player.is_on_floor():
+			landed = true
+			break
+	check(landed, "the diagnostic jump reaches the landing")
+	# No ground sample between landing and the next jump.
+	await physics_frame
+	level.player.set_action(0.0, true)
+	level.player.physics_step(DT)
+	var second_jump: Dictionary = level.get_state(learner.observation_rays)
+	check(not second_jump.grounded and second_jump.gap_observation == Vector2i.ZERO,
+		"touchdown clears the previous target even between decisions")
+	level.queue_free()
+	await process_frame
+
+
 func run_check() -> void:
 	var state := observation()
 	check(QState.encode(state) == "101100|1|-1|0", "six bits use L R U D DL DR order and inclusive one-block threshold")
@@ -84,6 +160,8 @@ func run_check() -> void:
 					keys[QState.encode(state)] = true
 	check(keys.size() == 1728, "state encoding has exactly 1728 distinct combinations")
 	check_horizontal_keys()
+	await check_gap_rays()
+	await check_landing_memory()
 
 	var learner := QLearning.new()
 	check(learner is Agent, "Q-learning inherits the shared agent")

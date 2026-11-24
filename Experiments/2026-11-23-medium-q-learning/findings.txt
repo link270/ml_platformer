@@ -1,0 +1,75 @@
+WHAT HELD UP ON MEDIUM
+
+Course position was the only variant that cleared all 30 frozen evaluations
+at every measured Medium checkpoint. It also won 71.4% of training attempts,
+compared with 33.1% for fixed reward alone. Over the final 1,000 training
+episodes the gap was 90.0% to 40.7%. On Easy the position-aware agent won
+95.9% of training attempts and all of its last 9,401. Adding position still
+helped on Medium, where the longest training win streak was 103.
+
+Fixed reward remained a meaningful improvement over its direct comparison,
+Longer exploration. It raised overall Medium training wins from 18.7% to
+33.1%. Both final tables cleared 30/30, and the fixed-reward route took
+20.52 seconds compared with 28.62 seconds, about 28% faster.
+
+WHAT CHANGED
+
+Fixed reward alone went 0/30 at 1,000 and 5,000 Medium episodes, then reached
+30/30 at 10,000. On Easy it had won all frozen runs at 1,000 and 5,000 and
+failed all at 10,000. The earlier Medium study with a different training
+seed also found a winning fixed-reward checkpoint before a failed final
+save. The strong checkpoint depends on the run.
+
+The position-aware route did not get steadily faster on Medium. Its three
+winning times were 19.80, 22.82, and 22.42 seconds. The 1,000-run save was the
+fastest frozen policy in the Medium comparison. Fixed reward alone had the
+fastest winning 10,000-run save at 20.52 seconds, ahead of position at 22.42.
+Position was the stronger choice for consistent wins across checkpoints.
+
+The original baseline also improved on Medium in the frozen checks. It got
+stuck 30/30 at 1,000, cleared 30/30 in 23.92 seconds at 5,000 and cleared
+30/30 again in 22.05 seconds at 10,000. Its final Easy checkpoint had failed
+30/30. The empty baseline went 0/30 on both levels.
+
+SIDE EXPERIMENTS
+
+The small time penalty and higher discount failed every sampled frozen
+Medium checkpoint. Richer horizontal rays won at 5,000 and got stuck at
+10,000. The lower late learning rate recovered to 30/30 by 10,000 and ran
+in 23.15 seconds, ahead of Longer exploration at 28.62 seconds. On Easy the
+late taper had instead slowed the final frozen route.
+
+TRANSFER WITHOUT RETRAINING
+
+Both matched 5,000-run Easy policies won 30/30 on Easy. The exact Easy tables
+were frozen and moved to Medium. Fixed reward won 22/30, with a 21.10-second
+median win. Course position won 5/30, with a 23.75-second median win. This
+shows why the extra position input can be valuable when training for a
+specific course even when the resulting policy transfers less well. It
+compares these two saved policies and one new layout.
+
+FILMING PICKS
+
+For the original baseline's progression, show the 1,000-run failure followed
+by the 5,000-run win on Medium.
+
+  results/baseline/eval-01000.mlpaths
+  results/baseline/eval-05000.mlpaths
+
+For an isolated reward comparison, show the two 10,000-run policies. They
+share their settings apart from how progress is rewarded.
+
+  results/long_exploration/eval-10000.mlpaths
+  results/fixed_reward_per_block/eval-10000.mlpaths
+
+For the position comparison, put both 1,000-run policies side by side. Fixed
+reward dies, and adding position clears Medium in 19.80 seconds. Use the
+10,000-run clips for the follow-up that shows the speed ranking reversed.
+
+  results/fixed_reward_per_block/eval-01000.mlpaths
+  position-results/course_position/eval-01000.mlpaths
+  position-results/course_position/eval-10000.mlpaths
+
+Open report.html for every checkpoint and its recording. All fresh Medium
+variants use the same seed as Easy. This is a matched comparison on one
+training seed and one spawn per level. Repeated frozen wins can be identical.

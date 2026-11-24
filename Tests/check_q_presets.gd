@@ -4,6 +4,7 @@ const Presets := preload("res://Agents/QPresets.gd")
 const QLearning := preload("res://Agents/QLearningAgent.gd")
 const Checkpoint := preload("res://Agents/QCheckpoint.gd")
 const Menu := preload("res://UI/MainMenu.tscn")
+const Levels := preload("res://Game/Levels/LevelCatalog.gd")
 var failed := false
 var scratch: DirAccess
 var directory := ""
@@ -72,6 +73,61 @@ func replay(id: String, seed_value: int, episode: int, expected: Dictionary) -> 
 	check(var_to_bytes(level.agent.q_table) == table_before, "evaluation freezes Q-values")
 	level.queue_free()
 	await process_frame
+
+
+func check_easy_filming_presets() -> void:
+	for episodes in [1000, 5000, 10000]:
+		var menu := make_menu("baseline")
+		menu.get_node("%ModeSelect").select(1)
+		menu._select_level(Levels.IDS.find("easy"))
+		var experiments := menu.get_node("%ExperimentSelect") as OptionButton
+		var data := menu.get_node("%DataSelect") as OptionButton
+		for index in 3:
+			var id: String = ["baseline", "fixed_reward_per_block", "course_position"][index]
+			var milestone: int = [0, 5000, 10000][index]
+			check(experiments.get_item_text(index) == Presets.PRESETS[id].label, "filming preset order")
+			menu._select_experiment(index)
+			check(data.get_selected_metadata() == Presets.easy_archive_path(id, milestone), "Easy evaluation selects the filming checkpoint")
+		check(menu.get_node("%StuckToggle").button_pressed, "Easy archive selects the recorded stuck cutoff")
+
+		var source := Presets.easy_archive_path("course_position", episodes)
+		for index in data.item_count:
+			if data.get_item_metadata(index) == source:
+				data.select(index)
+				data.item_selected.emit(index)
+				break
+		check(data.get_selected_metadata() == source, "all Easy milestones can be selected")
+		var expected_path := source.get_base_dir().path_join("eval-%05d.jsonl" % episodes)
+		var expected: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(expected_path).get_slice("\n", 0))
+		var archive := FileAccess.get_file_as_bytes(source)
+		menu.get_node("%BatchStart").pressed.emit()
+		var level := current_scene
+		check(level != menu, "course-position checkpoint starts from the menu")
+		if level == menu:
+			menu.queue_free()
+			await process_frame
+			continue
+		level.set_physics_process(false)
+		check(level.agent.preset_id == "course_position" and level.agent.training_episodes == episodes, "new preset loads the archived position observations")
+		var original_table := var_to_bytes(level.agent.q_table)
+		for tick in 3600:
+			if level.done:
+				break
+			await physics_frame
+			level._physics_process(1.0 / 60.0)
+		check(level.orb_collected and level.player.tick == int(expected.ticks), "live route matches the archived Easy evaluation")
+		check(is_equal_approx(level.last_episode_return, expected["return"]), "course position uses the archived fixed reward")
+		check(var_to_bytes(level.agent.q_table) == original_table, "evaluation preserves learned values")
+		var fixed := QLearning.new()
+		Presets.configure(fixed, "fixed_reward_per_block")
+		check(not Checkpoint.load_checkpoint(fixed, source).is_empty(), "fixed reward rejects position-aware data")
+		check(Checkpoint.save_checkpoint(level.agent, level.checkpoint_path).is_empty(), "new preset saves a personal copy")
+		var saved: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(level.checkpoint_path))
+		check(saved.preset_id == "course_position", "new saves have a distinct preset ID")
+		check(Checkpoint.load_checkpoint(level.agent, level.checkpoint_path).is_empty(), "position-aware saves round-trip")
+		check(FileAccess.get_file_as_bytes(source) == archive, "source archive stays unchanged")
+		level.queue_free()
+		await process_frame
 
 
 func run_check() -> void:
@@ -153,6 +209,7 @@ func run_check() -> void:
 	var candidates: Array = JSON.parse_string(FileAccess.get_file_as_string("res://Experiments/2026-10-19-q-learning-followups/video-candidates.json"))
 	for candidate in candidates:
 		await replay(candidate.condition, int(candidate.seed), int(candidate.episode), candidate.first_run)
+	await check_easy_filming_presets()
 	var agent := QLearning.new()
 	Presets.configure(agent, "late_learning_rate")
 	agent.training_episodes = 2999
@@ -165,5 +222,5 @@ func run_check() -> void:
 	check(agent.learning_rate == 0.02, "late learning rate floor holds")
 	scratch = null
 	if not failed:
-		print("Q-presets check passed: %d archives loaded; 18 final + %d video replays; 6 worker/check-in round trips." % [loaded, candidates.size()])
+		print("Q-presets check passed: %d original archives loaded; 18 final + %d video replays; 3 Easy position replays; 6 worker/check-in round trips." % [loaded, candidates.size()])
 	quit(1 if failed else 0)
